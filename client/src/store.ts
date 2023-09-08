@@ -1,11 +1,13 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
 
-import questionReducer from "./features/questions/questionsSlice";
+import modalReducer from './features/modal/modalSlice';
+import questionsReducer from './features/questions/questionsSlice';
 
 export const store = configureStore({
-  reducer: {
-    questions: questionReducer,
-  },
+	reducer: {
+		questions: questionsReducer,
+		modal: modalReducer,
+	},
 });
 
 export type RootState = ReturnType<typeof store.getState>;
