@@ -41,7 +41,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({ index, question }) => {
 			</td>
 			<td className="py-2 px-3 border-b text-center">{question.category}</td>
 			<td className="py-2 px-3 border-b text-center">{question.complexity}</td>
-			<td className="py-2 px-3 border-b text-center text-ellipsis overflow-hidden">
+			<td className="py-2 px-3 border-b text-center text-ellipsis overflow-hidden whitespace-nowrap">
 				{question.description}
 			</td>
 			<td className="py-2 border-b z-10">

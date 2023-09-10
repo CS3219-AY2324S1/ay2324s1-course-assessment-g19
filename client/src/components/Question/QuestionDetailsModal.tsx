@@ -27,7 +27,18 @@ const QuestionDetailsModal = () => {
 			</section>
 			<section>
 				<header className="font-semibold">Description</header>
-				<p className="px-8 py-2">{modal.data?.description}</p>
+				<p className="px-8 py-2">
+					{modal.data?.description.split('\n').map((str, index, arr) =>
+						index === arr.length - 1 ? (
+							str
+						) : (
+							<a key={index}>
+								{str}
+								<br />
+							</a>
+						)
+					)}
+				</p>
 			</section>
 		</div>
 	);
@@ -35,7 +46,7 @@ const QuestionDetailsModal = () => {
 	return (
 		<Modal
 			isOpen={modal.isOpen}
-			title="Add Question"
+			title={modal.data?.title}
 			onClose={onClose}
 			body={bodyContent}
 		/>

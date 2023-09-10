@@ -26,9 +26,9 @@ const QuestionModal = () => {
 	} = useForm<FieldValues>({
 		defaultValues: {
 			title: '',
-			description: '',
 			category: '',
 			complexity: '',
+			description: '',
 		},
 	});
 
