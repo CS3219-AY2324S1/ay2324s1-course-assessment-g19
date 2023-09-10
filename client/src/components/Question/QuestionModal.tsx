@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	closeQuestionModal,
 	selectQuestionModal,
-} from '../features/modal/modalSlice';
-import { addQuestion } from '../features/questions/questionsSlice';
-import { Question } from '../types';
-import Heading from './Heading';
-import Input from './Input';
-import Modal from './Modal';
+} from '../../features/modal/modalSlice';
+import { addQuestion } from '../../features/questions/questionsSlice';
+import { Question } from '../../types';
+import Heading from '../Heading';
+import Input from '../Input';
+import Modal from '../Modal';
+import TextArea from '../TextArea';
 
 const QuestionModal = () => {
 	const dispatch = useDispatch();
@@ -56,14 +57,6 @@ const QuestionModal = () => {
 				required
 			/>
 			<Input
-				id="description"
-				label="Description"
-				disabled={isLoading}
-				register={register}
-				errors={errors}
-				required
-			/>
-			<Input
 				id="category"
 				label="Category"
 				disabled={isLoading}
@@ -79,7 +72,13 @@ const QuestionModal = () => {
 				errors={errors}
 				required
 			/>
-			<div className="w-full relative h-[68px]"></div>
+			<TextArea
+				id="description"
+				label="Description"
+				disabled={isLoading}
+				register={register}
+				errors={errors}
+			/>
 		</div>
 	);
 

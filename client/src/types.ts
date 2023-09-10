@@ -4,7 +4,7 @@ export type Modal<T> = {
 };
 
 export type Question = {
-	id: number;
+	id: string;
 	title: string;
 	description: string;
 	category: string;

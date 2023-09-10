@@ -1,10 +1,9 @@
 import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
 import { BiDollar } from 'react-icons/bi';
 
-interface InputProps {
+interface TextAreaProps {
 	id: string;
 	label: string;
-	type?: string;
 	disabled?: boolean;
 	formatPrice?: boolean;
 	required?: boolean;
@@ -12,10 +11,9 @@ interface InputProps {
 	errors: FieldErrors;
 }
 
-const Input: React.FC<InputProps> = ({
+const TextArea: React.FC<TextAreaProps> = ({
 	id,
 	label,
-	type,
 	disabled,
 	formatPrice,
 	required,
@@ -35,15 +33,15 @@ const Input: React.FC<InputProps> = ({
           "
 				/>
 			)}
-			<input
+			<textarea
 				id={id}
 				disabled={disabled}
 				{...register(id, { required })}
 				placeholder=" "
-				type={type}
 				className={`
           peer
           w-full
+          h-[200px]
           p-4
           pt-6
           font-light
@@ -87,4 +85,4 @@ const Input: React.FC<InputProps> = ({
 	);
 };
 
-export default Input;
+export default TextArea;
