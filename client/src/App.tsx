@@ -1,4 +1,4 @@
-import QuestionTable from './components/QuestionTable';
+import QuestionTable from './components/Question/QuestionTable';
 
 function App() {
 	return (
