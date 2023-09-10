@@ -27,9 +27,7 @@ const QuestionDetailsModal = () => {
 			</section>
 			<section>
 				<header className="font-semibold">Description</header>
-				<p className="px-8 py-2 text-ellipsis overflow-hidden">
-					{modal.data?.description}
-				</p>
+				<p className="px-8 py-2">{modal.data?.description}</p>
 			</section>
 		</div>
 	);
