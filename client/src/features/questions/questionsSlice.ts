@@ -22,10 +22,13 @@ export const questionsSlice = createSlice({
 				id: generateRandomId(),
 			};
 
+			if (state.data.map((e) => e.title).includes(question.title)) {
+				throw new Error('Question already exists!');
+			}
+
 			state.data.push(question);
 		},
 		removeQuestion: (state, action: PayloadAction<Question>) => {
-			console.log('removeQuestion', action.payload.id);
 			state.data = state.data.filter((e) => e.id !== action.payload.id);
 		},
 	},

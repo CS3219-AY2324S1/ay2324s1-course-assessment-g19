@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	closeQuestionModal,
@@ -38,8 +39,8 @@ const QuestionModal = () => {
 			dispatch(addQuestion(data as Question));
 			dispatch(closeQuestionModal());
 			reset();
-		} catch (error) {
-			console.log(error);
+		} catch (error: any) {
+			toast.error(error.message);
 		} finally {
 			setIsLoading(false);
 		}

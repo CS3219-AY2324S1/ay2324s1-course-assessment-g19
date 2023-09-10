@@ -1,3 +1,11 @@
+export type SerializableValue =
+	| string
+	| number
+	| boolean
+	| null
+	| { [key: string]: SerializableValue }
+	| SerializableValue[];
+
 export type Modal<T> = {
 	isOpen: boolean;
 	data?: T;
