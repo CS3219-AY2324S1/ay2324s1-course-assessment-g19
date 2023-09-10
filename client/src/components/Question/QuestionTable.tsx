@@ -15,8 +15,8 @@ const QuestionTable = () => {
 	}, [dispatch]);
 
 	return (
-		<div className="overflow-x-auto">
-			<table className="min-w-full bg-white table-auto">
+		<div className="w-full">
+			<table className="w-full bg-white table-fixed">
 				<thead>
 					<QuestionHeader />
 				</thead>
