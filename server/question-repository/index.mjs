@@ -13,5 +13,5 @@ app.use("/question", questions);
 
 // start the Express server
 app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
+  console.log(`Question Repository Server is running on port: ${PORT}`);
 });
