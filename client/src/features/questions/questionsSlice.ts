@@ -25,7 +25,8 @@ export const questionsSlice = createSlice({
 			state.data.push(question);
 		},
 		removeQuestion: (state, action: PayloadAction<Question>) => {
-			state.data.filter((e) => e.id !== action.payload.id);
+			console.log('removeQuestion', action.payload.id);
+			state.data = state.data.filter((e) => e.id !== action.payload.id);
 		},
 	},
 });

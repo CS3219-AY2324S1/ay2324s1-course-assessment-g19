@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useDispatch } from 'react-redux';
+import {
+	openQuestionDetailsModal,
+	updateQuestionDetailsModal,
+} from '../../features/modal/modalSlice';
 import { removeQuestion } from '../../features/questions/questionsSlice';
 import { Question } from '../../types';
 
@@ -12,18 +16,31 @@ interface QuestionRowProps {
 const QuestionRow: React.FC<QuestionRowProps> = ({ index, question }) => {
 	const dispatch = useDispatch();
 
-	const onDelete = useCallback(() => {
-		dispatch(removeQuestion(question));
+	const onOpen = useCallback(() => {
+		dispatch(updateQuestionDetailsModal(question));
+		dispatch(openQuestionDetailsModal());
 	}, [dispatch, question]);
 
+	const onDelete = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			e.stopPropagation();
+			dispatch(removeQuestion(question));
+		},
+		[dispatch, question]
+	);
+
 	return (
-		<tr key={question.id}>
+		<tr
+			key={question.id}
+			onClick={onOpen}
+			className="transition hover:opacity-70 cursor-pointer"
+		>
 			<td className="py-2 px-3 border-b text-center">{index}</td>
 			<td className="py-2 px-3 border-b text-center">{question.title}</td>
 			<td className="py-2 px-3 border-b text-center">{question.description}</td>
 			<td className="py-2 px-3 border-b text-center">{question.category}</td>
 			<td className="py-2 px-3 border-b text-center">{question.complexity}</td>
-			<td className="py-2 border-b">
+			<td className="py-2 border-b z-10">
 				<button
 					onClick={onDelete}
 					className="
