@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
+import { AiOutlinePlus } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
-import { openQuestionModal } from '../features/modal/modalSlice';
-import { selectQuestions } from '../features/questions/questionsSlice';
+import { openQuestionModal } from '../../features/modal/modalSlice';
+import { selectQuestions } from '../../features/questions/questionsSlice';
 import QuestionHeader from './QuestionHeader';
 import QuestionRow from './QuestionRow';
 
@@ -14,22 +15,36 @@ const QuestionTable = () => {
 	}, [dispatch]);
 
 	return (
-		<div className="flex flex-col items-end overflow-x-auto border border-lime-500">
+		<div className="overflow-x-auto">
 			<table className="min-w-full bg-white table-auto">
 				<thead>
 					<QuestionHeader />
 				</thead>
 				<tbody>
-					{data.map((question) => (
-						<QuestionRow question={question} />
+					{data.map((question, i) => (
+						<QuestionRow key={i} index={i + 1} question={question} />
 					))}
 				</tbody>
 			</table>
 			<button
 				onClick={onOpen}
-				className="m-4 px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600"
+				className="
+						flex
+						justify-center
+						items-center
+						my-4
+						mx-11
+						p-2
+						cursor-pointer 
+						rounded-full
+						transition 
+						bg-sky-500
+						text-white
+						hover:shadow-inner
+						hover:bg-white
+						hover:text-sky-500"
 			>
-				Add
+				<AiOutlinePlus size={18} />
 			</button>
 		</div>
 	);
