@@ -1,10 +1,10 @@
 import { MongoClient } from "mongodb";
 
-const connectionString = process.env.ATLAS_URI ?? "";
+const connectionString = process.env.MONGO_URI || "";
 
 const client = new MongoClient(connectionString);
 
-async function connect() {
+async function run() {
   try {
     return await client.connect();
   } catch(e) {
@@ -12,8 +12,8 @@ async function connect() {
   }
 }
 
-const db = connect().then((conn) => {
-  return conn.db("question-repository");
+const db = run().then((connection) => {
+  return connection.db("question-repository");
 });
 
 export default db;

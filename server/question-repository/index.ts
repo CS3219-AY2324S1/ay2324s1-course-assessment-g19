@@ -1,11 +1,9 @@
 import cors from 'cors';
 import express, { Application } from 'express';
-import dotenv from 'dotenv';
+import "./loadEnvironment";
 import questions from "./routes/question";
 
-dotenv.config();
-
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.MONGO_PORT || 5050;
 const app: Application = express();
 
 app.use(cors());
