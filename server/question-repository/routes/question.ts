@@ -1,5 +1,5 @@
-import express from "express";
-import db from "../db/conn.mjs";
+import express, { Request, Response } from "express";
+import db from "../db/conn";
 import { ObjectId } from "mongodb";
 
 const router = express.Router();
@@ -10,8 +10,8 @@ const router = express.Router();
  * @returns {Array} Array of question objects
  * @throws {Error} 500 - Server error
  */
-router.get("/", async (req, res) => {
-  let collection = db.collection("questions");
+router.get("/", async (req: Request, res: Response) => {
+  let collection = (await db).collection("questions");
   let results = await collection.find({}).toArray();
   res.send(results).status(200);
 });
@@ -24,8 +24,8 @@ router.get("/", async (req, res) => {
  * @throws {Error} 404 - Not found
  * @throws {Error} 500 - Server error
  */
-router.get("/:id", async (req, res) => {
-  let collection = db.collection("questions");
+router.get("/:id", async (req: Request, res: Response) => {
+  let collection = (await db).collection("questions");
   let query = {_id: new ObjectId(req.params.id)};
   let result = await collection.findOne(query);
 
@@ -44,14 +44,14 @@ router.get("/:id", async (req, res) => {
  * @returns {Object} The newly added question object
  * @throws {Error} 500 - Server error
  */
-router.post("/", async (req, res) => {
+router.post("/", async (req: Request, res: Response) => {
   let newDocument = {
     title: req.body.title,
     description: req.body.description,
     category: req.body.category,
     complexity: req.body.complexity,
   };
-  let collection = db.collection("questions");
+  let collection = (await db).collection("questions");
   let result = await collection.insertOne(newDocument);
   res.send(result).status(204);
 });
@@ -68,7 +68,7 @@ router.post("/", async (req, res) => {
  * @returns {Object} The updated question object
  * @throws {Error} 500 - Server error
  */
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", async (req: Request, res: Response) => {
   const query = { _id: new ObjectId(req.params.id) };
   const updates =  {
     $set: {
@@ -79,7 +79,7 @@ router.patch("/:id", async (req, res) => {
     }
   };
 
-  let collection = db.collection("questions");
+  let collection = (await db).collection("questions");
   let result = await collection.updateOne(query, updates);
 
   res.send(result).status(200);
@@ -92,10 +92,10 @@ router.patch("/:id", async (req, res) => {
  * @returns {Object} The result of the deletion operation
  * @throws {Error} 500 - Server error
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req: Request, res: Response) => {
   const query = { _id: new ObjectId(req.params.id) };
 
-  const collection = db.collection("questions");
+  const collection = (await db).collection("questions");
   let result = await collection.deleteOne(query);
 
   res.send(result).status(200);
