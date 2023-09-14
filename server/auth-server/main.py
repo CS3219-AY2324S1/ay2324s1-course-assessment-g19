@@ -25,6 +25,7 @@ middleware = [
 app = FastAPI(middleware=middleware)
 models.Base.metadata.create_all(bind=engine)
 
+
 class UserBase(BaseModel):
     username: str
     password: str
