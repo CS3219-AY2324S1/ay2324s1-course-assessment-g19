@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import thunk from 'redux-thunk';
 
 import modalReducer from './features/modal/modalSlice';
 import questionsReducer from './features/questions/questionsSlice';
@@ -8,7 +9,8 @@ export const store = configureStore({
 		questions: questionsReducer,
 		modal: modalReducer,
 	},
-});
+	middleware: [thunk],
+}); 
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
