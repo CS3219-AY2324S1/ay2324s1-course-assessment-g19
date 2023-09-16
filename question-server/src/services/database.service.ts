@@ -8,11 +8,7 @@ export async function connectToDatabase() {
 
   const client: MongoClient = new MongoClient(process.env.MONGO_URI || '');
 
-  await client.connect().then(() => {
-    console.log(`Connected to database: ${db.databaseName}`);
-  });
-
-  const db: Db = client.db(process.env.MONGO_NAME);
+  const db: Db = await client.connect().then((connection) => connection.db("question-repository"));
 
   try {
     const questionsCollection: Collection = db.collection('questions');
