@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../store';
 import { Question } from '../../types';
+import { generateRandomId } from '../../utils/random';
 
 interface QuestionsState {
 	data: Array<Question>;
@@ -15,10 +16,20 @@ export const questionsSlice = createSlice({
 	initialState,
 	reducers: {
 		addQuestion: (state, action: PayloadAction<Question>) => {
-			state.data.push(action.payload);
+			// TODO: Remove random ID generation when integrate with backend
+			const question = {
+				...action.payload,
+				id: generateRandomId(),
+			};
+
+			if (state.data.map((e) => e.title).includes(question.title)) {
+				throw new Error('Question already exists!');
+			}
+
+			state.data.push(question);
 		},
 		removeQuestion: (state, action: PayloadAction<Question>) => {
-			state.data.filter((e) => e.id !== action.payload.id);
+			state.data = state.data.filter((e) => e.id !== action.payload.id);
 		},
 	},
 });

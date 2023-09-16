@@ -6,6 +6,7 @@ const QuestionHeader = () => {
 			<th className="py-2 px-3 border-b">Question Description</th>
 			<th className="py-2 px-3 border-b">Question Category</th>
 			<th className="py-2 px-3 border-b">Question Complexity</th>
+			<td className="w-[47.2px] border-b" />
 		</tr>
 	);
 };
