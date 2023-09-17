@@ -1,19 +1,37 @@
 import {useState} from "react";
 import * as React from "react";
 import api from './reactapi';
+import {useNavigate} from "react-router-dom";
+
 
 export const Login = (props) => {
     const [username, setUser] = useState('');
     const [password, setPass] = useState('');
 
     const fetchUser = async (username) => {
-        return await api.get('/users/' + username);
+        try {
+            return await api.get('/users/' + username);
+        } catch (error) {
+            console.log("no such user");
+        }
     }
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = fetchUser(username);
-        console.log(response);
+        const response = await fetchUser(username);
+        const jsonResponse = JSON.stringify(response)
+        const jsonObject = JSON.parse(jsonResponse);
+        console.log(jsonObject.data);
+        const user = jsonObject.data.username;
+        const pw = jsonObject.data.password;
+        if (username == user && password == pw) {
+            console.log("logged in")
+            navigate(`userDashboard/${username}`);
+        } else {
+            console.log("incorrect username or password");
+        }
     }
 
     return (
