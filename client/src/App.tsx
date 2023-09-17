@@ -3,6 +3,7 @@ import {Login} from "./pages/Login";
 import {Register} from "./pages/Register";
 import {useState} from "react";
 import * as React from "react";
+import { Outlet } from "react-router-dom";
 
 function App() {
 	const [currentForm, setCurrentForm] = useState('login');
@@ -19,7 +20,9 @@ function App() {
 			{
 				currentForm === 'login' ? <Login onFormSwitch={toggleForm}/> : <Register onFormSwitch={toggleForm}/>
 			}
+			<Outlet />
 		</main>
+
 	);
 }
 
