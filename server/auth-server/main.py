@@ -57,4 +57,21 @@ async def create_user(user: UserBase, db: db_dependency):
     db.refresh(db_user)
     return db_user
 
+@app.delete("/users/{username}")
+async def delete_user(username: str, db: db_dependency):
+    user = db.query(models.Users).filter(models.Users.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail='no such user')
+    db.delete(user)
+    db.commit()
+    return {"message": f"User {username} has been deleted"}
+
+@app.put("/change-user/{username}/{new_username}")
+async def update_user(username: str, new_username: str, db: db_dependency):
+    user = db.query(models.Users).filter(models.Users.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail='no such user')
+    user.username = new_username
+    db.commit()
+    return {"message": f"Username updated to {new_username}"}
 
