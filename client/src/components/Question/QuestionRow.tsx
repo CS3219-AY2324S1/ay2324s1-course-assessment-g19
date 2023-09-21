@@ -5,8 +5,9 @@ import {
 	openQuestionDetailsModal,
 	updateQuestionDetailsModal,
 } from '../../features/modal/modalSlice';
-import { removeQuestion } from '../../features/questions/questionsSlice';
 import { Question } from '../../types';
+import { store } from '../../store';
+import { deleteQuestion } from '../../features/questions/questionsSlice';
 
 interface QuestionRowProps {
 	index: number;
@@ -24,7 +25,7 @@ const QuestionRow: React.FC<QuestionRowProps> = ({ index, question }) => {
 	const onDelete = useCallback(
 		(e: React.MouseEvent<HTMLButtonElement>) => {
 			e.stopPropagation();
-			dispatch(removeQuestion(question));
+			store.dispatch(deleteQuestion(question as Question));
 		},
 		[dispatch, question]
 	);

@@ -10,3 +10,5 @@ export type Question = {
 	category: string;
 	complexity: string;
 };
+
+export type StatusType = 'DEFAULT' | 'LOADING' | 'SUCCESS' | 'ERROR';
