@@ -8,6 +8,7 @@ import {UserDashboard} from "./pages/UserDashboard";
 import './index.css';
 import { store } from './store.ts';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {AccountSettings} from "./pages/AccountSettings";
 
 const router = createBrowserRouter([
 	{
@@ -17,7 +18,11 @@ const router = createBrowserRouter([
 	{
 		path:"/userDashboard/:username",
 		element: <UserDashboard/>,
-	}
+	},
+	{
+		path:"/accountSettings/:username",
+		element:<AccountSettings/>,
+	},
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
