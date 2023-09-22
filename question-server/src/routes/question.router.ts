@@ -15,9 +15,20 @@ questionsRouter.use(express.json());
  */
 questionsRouter.get('/', async (_req: Request, res: Response) => {
   try {
-    const questions = await collections.questions?.find({}).toArray();
+    const results = await collections.questions?.find({}).toArray();
 
-    res.status(200).send(questions);
+    if (results) {
+      const questions = results.map((result) => {
+        return {
+          ...result,
+          id: result?._id
+        }
+      });
+
+      res.status(200).send(questions);
+    } else {
+      res.status(500).send('Server error');
+    }
   } catch (e: any) {
     res.status(400).send(e.message);
   }
@@ -36,13 +47,20 @@ questionsRouter.get('/:id', async (req: Request, res: Response) => {
 
   try {
     const query = { _id: new ObjectId(id) };
-    const question = await collections.questions?.findOne(query);
+    const result = await collections.questions?.findOne(query);
 
-    if (question) {
+    if (result) {
+      const question = {
+        ...result,
+        id: result?._id
+      };
+
       res.status(200).send(question);
+    } else {
+      res.status(404).send('Not found');
     }
-  } catch (e) {
-    res.status(404).send('Not found');
+  } catch (e: any) {
+    res.status(400).send(e.message);
   }
 });
 
@@ -62,9 +80,16 @@ questionsRouter.post('/', async (req: Request, res: Response) => {
     const newQuestion = req.body as Question;
     const result = await collections.questions?.insertOne(newQuestion);
 
-    result
-      ? res.status(201).send(result)
-      : res.status(500).send('Server error');
+    if (result) {
+      const insertedQuestion = {
+        ...newQuestion,
+        id: result?.insertedId
+      };
+
+      res.status(201).send(insertedQuestion);
+    } else {
+      res.status(500).send('Server error');
+    }
   } catch (e: any) {
     res.status(400).send(e.message);
   }
@@ -86,16 +111,23 @@ questionsRouter.put('/:id', async (req: Request, res: Response) => {
   const id = req?.params?.id;
 
   try {
-    const updatedQuestion = req.body as Question;
+    const question = req.body as Question;
     const query = { _id: new ObjectId(id) };
 
     const result = await collections.questions?.updateOne(query, {
-      $set: updatedQuestion
+      $set: question
     });
 
-    result
-      ? res.status(200).send(result)
-      : res.status(500).send('Server error');
+    if (result) {
+      const updatedQuestion = {
+        ...question,
+        id: result?.upsertedId
+      };
+
+      res.status(200).send(updatedQuestion)
+    } else {
+      res.status(500).send('Server error');
+    }
   } catch (e: any) {
     res.status(400).send(e.message);
   }
@@ -113,10 +145,17 @@ questionsRouter.delete('/:id', async (req: Request, res: Response) => {
 
   try {
     const query = { _id: new ObjectId(id) };
+    const questionToDelete = await collections.questions?.findOne(query);
+
     const result = await collections.questions?.deleteOne(query);
 
     if (result && result.deletedCount) {
-      res.status(202);
+      const deletedQuestion = {
+        ...questionToDelete,
+        id: id
+      };
+      
+      res.status(202).send(deletedQuestion);
     } else if (!result) {
       res.status(400);
     } else if (!result.deletedCount) {

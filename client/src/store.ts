@@ -8,7 +8,7 @@ export const store = configureStore({
 		questions: questionsReducer,
 		modal: modalReducer,
 	},
-});
+}); 
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
