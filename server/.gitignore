@@ -1,7 +1,7 @@
 node_modules
 
 # Environment Files
-.env
+*/.env
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
