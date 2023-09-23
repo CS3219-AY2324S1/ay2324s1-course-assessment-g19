@@ -4,13 +4,14 @@ import api from './reactapi';
 import bcrypt from 'bcryptjs';
 
 
-export const Register = (props) => {
+export const Register = (props: { onFormSwitch: (arg0: string) => void; }) => {
     const [username, setUser] = useState('');
     const [password, setPass] = useState('');
     const [confirmPass, setConfirmPass] = useState('');
 
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         if (password === confirmPass) {
 
             const saltRounds = 10; // Number of salt rounds
@@ -25,7 +26,6 @@ export const Register = (props) => {
             props.onFormSwitch('login');
 
         } else {
-            e.preventDefault();
             console.log("passwords do not match")
         }
 

@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 function App() {
 	const [currentForm, setCurrentForm] = useState('login');
 
-	const toggleForm = (formName) => {
+	const toggleForm = (formName: React.SetStateAction<string>) => {
 		setCurrentForm(formName);
 	}
 	return (
