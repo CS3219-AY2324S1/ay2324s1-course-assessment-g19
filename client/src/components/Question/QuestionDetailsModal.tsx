@@ -84,7 +84,14 @@ const QuestionDetailsModal = () => {
 
 	const editModeBodyContent = (
 		<div className="flex flex-col gap-4">
-			<Heading title={modal.data.title} />
+			<Input
+				id="title"
+				label="Title"
+				disabled={isLoading}
+				register={register}
+				errors={errors}
+				required
+			/>
 			<Input
 				id="category"
 				label="Category"
