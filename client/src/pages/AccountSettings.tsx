@@ -79,8 +79,6 @@ export const AccountSettings = () => {
         
     }
 
-
-
     const changePassword = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
@@ -188,4 +186,3 @@ export const AccountSettings = () => {
     );
 
 };
-

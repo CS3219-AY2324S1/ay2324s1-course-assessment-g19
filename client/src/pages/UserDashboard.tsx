@@ -2,7 +2,6 @@ import { useParams} from "react-router-dom";
 import { Link } from 'react-router-dom';
 import QuestionTable from '../components/Question/QuestionTable';
 
-
 export const UserDashboard = () => {
     const {username} = useParams();
 
@@ -31,4 +30,3 @@ export const UserDashboard = () => {
     );
 
 };
-
