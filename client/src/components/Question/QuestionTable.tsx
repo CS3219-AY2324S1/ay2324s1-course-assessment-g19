@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { openQuestionModal } from '../../features/modal/modalSlice';
 import { fetchQuestions, selectQuestions } from '../../features/questions/questionsSlice';
 import QuestionHeader from './QuestionHeader';
@@ -8,12 +8,11 @@ import QuestionRow from './QuestionRow';
 import { store } from '../../store';
 
 const QuestionTable = () => {
-	const dispatch = useDispatch();
 	const data = useSelector(selectQuestions);
 
 	const onOpen = useCallback(() => {
-		dispatch(openQuestionModal());
-	}, [dispatch]);
+		store.dispatch(openQuestionModal());
+	}, [store.dispatch]);
 
 	useEffect(() => {
 		store.dispatch(fetchQuestions());
