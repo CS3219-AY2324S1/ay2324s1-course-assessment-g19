@@ -60,7 +60,7 @@ export const AccountSettings = () => {
         }, 3000);
     };
 
-    const changeUsername = async (e) => {
+    const changeUsername = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault()
             await api.put(`/change-user/${currentUsername}/${new_username}`);
@@ -68,7 +68,7 @@ export const AccountSettings = () => {
             console.log("username updated from " + username + " to " + new_username);
             navigate(`/accountSettings/${new_username}`);
             showUserSuccess();
-        } catch (error) {
+        } catch (error: any) {
             if (error.response && error.response.status === 400) {
                 showUserFailure();
                 console.log("Username clash error:", error.response.data.error);
@@ -81,7 +81,7 @@ export const AccountSettings = () => {
 
 
 
-    const changePassword = async (e) => {
+    const changePassword = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
 
@@ -109,7 +109,7 @@ export const AccountSettings = () => {
                 showPassFailure();
                 console.log("Incorrect old password");
             }
-        } catch (error) {
+        } catch (error: any) {
             showPassFailure();
             console.error("An error occurred:", error.message);
         }
