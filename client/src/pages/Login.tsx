@@ -4,12 +4,16 @@ import api from './reactapi';
 import {useNavigate} from "react-router-dom";
 import bcrypt from 'bcryptjs';
 
-export const Login = (props) => {
+interface LoginProps {
+    onFormSwitch: (formName: string) => void;
+}
+
+export const Login = (props: LoginProps) => {
     const [username, setUser] = useState('');
     const [password, setPass] = useState('');
     const [showFailureMessage, setShowFailureMessage] = useState(false);
 
-    const fetchUser = async (username) => {
+    const fetchUser = async (username: string) => {
         try {
             return await api.get('/users/' + username);
         } catch (error) {
@@ -29,12 +33,12 @@ export const Login = (props) => {
         }, 3000);
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         let response;
         try {
             response = await fetchUser(username);
-        } catch (error) {
+        } catch (error: any) {
             if (error.response && error.response.status === 404) {
                 showFailure();
                 console.log(error.response.data.error);

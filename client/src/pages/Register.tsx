@@ -3,8 +3,11 @@ import * as React from "react";
 import api from './reactapi';
 import bcrypt from 'bcryptjs';
 
+interface RegisterProps {
+    onFormSwitch: (formName: string) => void;
+}
 
-export const Register = (props: { onFormSwitch: (arg0: string) => void; }) => {
+export const Register = (props: RegisterProps) => {
     const [username, setUser] = useState('');
     const [password, setPass] = useState('');
     const [confirmPass, setConfirmPass] = useState('');

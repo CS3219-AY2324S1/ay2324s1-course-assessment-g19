@@ -6,7 +6,6 @@ import QuestionTable from '../components/Question/QuestionTable';
 export const UserDashboard = () => {
     const {username} = useParams();
 
-
     return (
         <div className="flex flex-col justify-center items-center">
             <div className="flex justify-between w-full px-4 mt-4">
