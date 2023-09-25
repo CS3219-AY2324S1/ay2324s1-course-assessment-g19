@@ -1,7 +1,6 @@
-import {useState} from "react";
-import * as React from "react";
-import api from './reactapi';
+import { useState } from "react";
 import bcrypt from 'bcryptjs';
+import auth from "../features/account/auth";
 
 interface RegisterProps {
     onFormSwitch: (formName: string) => void;
@@ -25,7 +24,7 @@ export const Register = (props: RegisterProps) => {
                 password: hashedPassword,
             };
             console.log(formData);
-            await api.post('/users/', formData);
+            await auth.post('/users/', formData);
             props.onFormSwitch('login');
 
         } else {

@@ -1,6 +1,6 @@
-import { useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
-import api from "./reactapi";
+import { useState } from "react";
+import { Link, useNavigate, useParams}  from "react-router-dom";
+import auth from "../features/account/auth";
 
 export const AccountSettings = () => {
     const [new_username, setNewUser] = useState('');
@@ -17,7 +17,7 @@ export const AccountSettings = () => {
     const deleteAccount = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
         if (confirmDelete) {
-            await api.delete(`/users/${username}`);
+            await auth.delete(`/users/${username}`);
             console.log("deleted:", {username});
         }
     }
@@ -63,7 +63,7 @@ export const AccountSettings = () => {
     const changeUsername = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault()
-            await api.put(`/change-user/${currentUsername}/${new_username}`);
+            await auth.put(`/change-user/${currentUsername}/${new_username}`);
             setCurrentUsername(new_username);
             console.log("username updated from " + username + " to " + new_username);
             navigate(`/accountSettings/${new_username}`);
@@ -91,13 +91,13 @@ export const AccountSettings = () => {
             }
 
             // Verify the old password before changing
-            const response = await api.post(`/verify-password/${currentUsername}`, {
+            const response = await auth.post(`/verify-password/${currentUsername}`, {
                 password: old_password,
             });
 
             if (response.status === 200) {
                 // Old password is correct; proceed to change password
-                await api.put(`/change-password/${currentUsername}`, {
+                await auth.put(`/change-password/${currentUsername}`, {
                     password: new_password,
                 });
                 console.log("Password updated successfully");

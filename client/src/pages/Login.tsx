@@ -1,8 +1,7 @@
-import {useState} from "react";
-import * as React from "react";
-import api from './reactapi';
+import { useState } from "react";
 import {useNavigate} from "react-router-dom";
 import bcrypt from 'bcryptjs';
+import auth from "../features/account/auth";
 
 interface LoginProps {
     onFormSwitch: (formName: string) => void;
@@ -15,7 +14,7 @@ export const Login = (props: LoginProps) => {
 
     const fetchUser = async (username: string) => {
         try {
-            return await api.get('/users/' + username);
+            return await auth.get('/users/' + username);
         } catch (error) {
             console.log("no such user", error);
             throw error;
