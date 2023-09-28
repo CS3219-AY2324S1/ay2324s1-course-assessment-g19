@@ -1,4 +1,12 @@
 node_modules
+client/node_modules
+client/package-lock.json
+client/.env
+question-api/node_modules
+question-api/package-lock.json
+question-api/.env
+user-api/__pycache__
+package-lock.json
 .env
 .DS_Store
 build
