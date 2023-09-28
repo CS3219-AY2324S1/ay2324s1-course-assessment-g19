@@ -1,24 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { loadState, saveState } from './localStorage';
 
-import modalReducer from './features/modal/modalSlice';
-import questionsReducer from './features/questions/questionsSlice';
-
-const persistedState = loadState();
+import creatorReducer from './features/questions/creatorSlice';
+import questionReducer from './features/questions/questionsSlice';
+import authReducer from './features/user/authSlice';
 
 export const store = configureStore({
-	reducer: {
-		questions: questionsReducer,
-		modal: modalReducer,
-	},
-	preloadedState: persistedState,
-});
-
-store.subscribe(() => {
-	saveState({
-		questions: store.getState().questions,
-		modal: store.getState().modal,
-	});
+  reducer: {
+    authentication: authReducer,
+    questions: questionReducer,
+    creator: creatorReducer
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

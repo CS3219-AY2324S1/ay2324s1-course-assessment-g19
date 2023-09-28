@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  peerprep-client:
+    image: client:peerprep
+    container_name: peerprep-client
+    build:
+      context: ./client
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./client:/usr/src/app # Mount the client source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+
+  peerprep-user-api:
+    image: user-api:peerprep
+    container_name: peerprep-user-api
+    build:
+      context: ./user-api
+    ports:
+      - '5050:5050' # FastAPI running on 5050
+    volumes:
+      - ./user-api:/usr/src/app # Mount the FastAPI source code directory as a volume
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-postgres
+
+  peerprep-question-api:
+    image: question-api:peerprep
+    container_name: peerprep-question-api
+    build:
+      context: ./question-api
+    ports:
+      - '8000:8000'
+    logging:
+      driver: json-file
+    volumes:
+      - ./question-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-mongo
+
+  peerprep-postgres:
+    image: postgres:latest
+    container_name: peerprep-postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=peerprep
+      - POSTGRES_PASSWORD=peerprep
+      - POSTGRES_DB=database
+    networks:
+      - peerprep-network
+
+  peerprep-mongo:
+    image: mongo:latest
+    container_name: peerprep-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - peerprep-network
+
+  peerprep-nginx:
+    image: nginx:latest
+    container_name: peerprep-nginx
+    ports:
+      - '80:80' # Expose Nginx on port 80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf # Mount the Nginx configuration file
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-client # Wait until Client app container is up
+      - peerprep-question-api # Wait until Server app container is up
+
+networks:
+  peerprep-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+  postgres-data:
+    driver: local

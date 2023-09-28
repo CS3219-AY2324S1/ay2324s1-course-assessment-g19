@@ -1,41 +1,49 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { RootState } from '../../store';
-import { Question } from '../../types';
-import { generateRandomId } from '../../utils/random';
+import { Question, StatusType } from '../../types';
 
 interface QuestionsState {
-	data: Array<Question>;
+  questions: Question[];
+  status: StatusType;
 }
 
 const initialState: QuestionsState = {
-	data: [],
+  questions: [],
+  status: 'DEFAULT'
 };
 
+axios.defaults.withCredentials = true;
+
+export const fetchQuestions = createAsyncThunk(
+  '/questionsSlice/fetchQuestions',
+  async () => {
+    const response = await axios.get('/questions/questions');
+    return response.data;
+  }
+);
+
 export const questionsSlice = createSlice({
-	name: 'questions',
-	initialState,
-	reducers: {
-		addQuestion: (state, action: PayloadAction<Question>) => {
-			// TODO: Remove random ID generation when integrate with backend
-			const question = {
-				...action.payload,
-				id: generateRandomId(),
-			};
-
-			if (state.data.map((e) => e.title).includes(question.title)) {
-				throw new Error('Question already exists!');
-			}
-
-			state.data.push(question);
-		},
-		removeQuestion: (state, action: PayloadAction<Question>) => {
-			state.data = state.data.filter((e) => e.id !== action.payload.id);
-		},
-	},
+  name: 'questions',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchQuestions.pending, (state) => {
+      state.status = 'LOADING';
+    });
+    builder.addCase(fetchQuestions.fulfilled, (state, action) => {
+      state.status = 'SUCCESS';
+      state.questions = action.payload;
+    });
+    builder.addCase(fetchQuestions.rejected, (state) => {
+      state.status = 'ERROR';
+    });
+  }
 });
 
-export const { addQuestion, removeQuestion } = questionsSlice.actions;
-
-export const selectQuestions = (state: RootState) => state.questions.data;
+export const selectQuestions = (state: RootState) => state.questions.questions;
+export const selectQuestionByTitle = (title?: string) => (state: RootState) =>
+  state.questions.questions.find((question) => question.title === title);
+export const selectStatus = (state: RootState) => state.questions.status;
 
 export default questionsSlice.reducer;
