@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     element: <Register />
   },
   {
-    path: '/question/:title',
+    path: '/questions/:title',
     element: (
       <PageWrapper>
         <Question />
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: '/question/create',
+    path: '/questions/create',
     element: (
       <PageWrapper>
         <QuestionCreator />

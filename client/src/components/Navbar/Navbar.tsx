@@ -13,7 +13,7 @@ export default function Navbar() {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard' },
-    { name: 'Questions', href: '/question' },
+    { name: 'Questions', href: '/questions/create' },
     { name: 'Friends', href: '/friends' }
   ];
 

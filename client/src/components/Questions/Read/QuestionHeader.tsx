@@ -1,6 +1,7 @@
 import { LifebuoyIcon, StarIcon } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { QuestionDifficulty } from '../../../types';
+import { toCamelCase } from '../../../utils/string';
 
 interface QuestionHeaderProps {
   title?: string;
@@ -25,7 +26,9 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
 
       <div className="flex flex-row justify-between">
         <div className="flex gap-8">
-          <a className="font-semibold text-yellow-500">{difficulty}</a>
+          <a className="font-semibold text-yellow-500">
+            {toCamelCase(difficulty)}
+          </a>
           <div className="flex flex-row items-center gap-2">
             <StarIcon className="w-4 h-4" />
             <StarIcon className="w-4 h-4" />

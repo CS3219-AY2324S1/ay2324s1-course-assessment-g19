@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { selectQuestions } from '../../features/questions/questionsSlice';
 import { Question } from '../../types';
+import { toCamelCase } from '../../utils/string';
 
 const QuestionTable = () => {
   const questions = useSelector(selectQuestions);
@@ -19,7 +20,7 @@ const QuestionTable = () => {
         {questions.map((question: Question, index: number) => (
           <a
             key={question.title}
-            href={`/question/${question.title}`}
+            href={`/questions/${question.title}`}
             className={`flex flex-row px-2 transition cursor-pointer hover:shadow-inner ${
               index !== 0 && 'border-t'
             }
@@ -32,7 +33,7 @@ const QuestionTable = () => {
             </div>
             <div className="p-4 w-28">TODO</div>
             <div className="p-4 w-32">TODO</div>
-            <div className="p-4 w-28">{question.difficulty}</div>
+            <div className="p-4 w-28">{toCamelCase(question.difficulty)}</div>
             <div className="p-4 w-28">TODO</div>
           </a>
         ))}

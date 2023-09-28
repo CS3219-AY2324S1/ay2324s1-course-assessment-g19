@@ -22,7 +22,13 @@ const initialState: CreatorState = {
     difficulty: 'EASY',
     tags: [],
     description: '',
-    examples: [],
+    examples: [
+      {
+        in: '',
+        out: '',
+        explanation: ''
+      }
+    ],
     constraints: []
   },
   status: 'DEFAULT'
