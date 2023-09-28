@@ -34,7 +34,7 @@ export const createQuestion = createAsyncThunk(
   '/creatorSlice/createQuestion',
   async (question: Question) => {
     console.log(question);
-    const response = await axios.post('/questions/questions', question);
+    const response = await axios.post('/question-api/questions', question);
     return response.data;
   }
 );
