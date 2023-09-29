@@ -34,6 +34,14 @@ export const fetchQuestions = createAsyncThunk(
 	}
 );
 
+export const updateQuestion = createAsyncThunk(
+	'questions/updateQuestion',
+	async (question: Question) => {
+		const response = await axios.put(`http://localhost:5050/questions/${question.id}`, question);
+		return response.data as Question;
+	}
+);
+
 export const deleteQuestion = createAsyncThunk(
 	'questions/deleteQuestion',
 	async (question: Question) => {
@@ -79,6 +87,22 @@ export const questionsSlice = createSlice({
 				state.status = 'SUCCESS';
 			})
 			.addCase(deleteQuestion.rejected, (state, action) => {
+				state.error = action.error.message;
+				state.status = 'ERROR';
+			})
+			.addCase(updateQuestion.pending, (state) => {
+				state.status = 'LOADING';
+			})
+			.addCase(updateQuestion.fulfilled, (state, action) => {
+				state.data = state.data.map((e) => {
+					if (e.id === action.payload.id) {
+						return action.payload;
+					}
+					return e;
+				});
+				state.status = 'SUCCESS';
+			})
+			.addCase(updateQuestion.rejected, (state, action) => {
 				state.error = action.error.message;
 				state.status = 'ERROR';
 			});

@@ -38,7 +38,9 @@ const QuestionRow: React.FC<QuestionRowProps> = ({ index, question }) => {
 		>
 			<td className="py-2 px-3 border-b text-center">{index}</td>
 			<td className="py-2 px-3 border-b text-center">{question.title}</td>
-			<td className="py-2 px-3 border-b text-center">{question.description}</td>
+			<td className="py-2 px-3 border-b text-center text-ellipsis overflow-hidden">
+				{question.description}
+			</td>
 			<td className="py-2 px-3 border-b text-center">{question.category}</td>
 			<td className="py-2 px-3 border-b text-center">{question.complexity}</td>
 			<td className="py-2 border-b z-10">

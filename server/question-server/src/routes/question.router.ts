@@ -108,20 +108,24 @@ questionsRouter.post('/', async (req: Request, res: Response) => {
  * @throws {Error} 500 - Server error
  */
 questionsRouter.put('/:id', async (req: Request, res: Response) => {
-  const id = req?.params?.id;
-
   try {
+    const id = req.params.id;
     const question = req.body as Question;
     const query = { _id: new ObjectId(id) };
 
     const result = await collections.questions?.updateOne(query, {
-      $set: question
+      $set: {
+        title: question.title,
+        description: question.description,
+        category: question.category,
+        complexity: question.complexity
+      }
     });
 
     if (result) {
       const updatedQuestion = {
         ...question,
-        id: result?.upsertedId
+        id: id
       };
 
       res.status(200).send(updatedQuestion)
