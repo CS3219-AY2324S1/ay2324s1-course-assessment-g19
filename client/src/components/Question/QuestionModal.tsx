@@ -38,8 +38,8 @@ const QuestionModal = () => {
 			store.dispatch(postQuestion(data as Question));
 			store.dispatch(closeQuestionModal());
 			reset();
-		} catch (error) {
-			console.log(error);
+		} catch (error: any) {
+			toast.error(error.message);
 		} finally {
 			setIsLoading(false);
 		}
