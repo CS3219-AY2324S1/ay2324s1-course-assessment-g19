@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams}  from "react-router-dom";
 import auth from "../features/account/auth";
 
 export const AccountSettings = () => {
+    const navigate = useNavigate();
+
     const [new_username, setNewUser] = useState('');
     const [old_password, setOldPass] = useState('');
     const [new_password, setNewPass] = useState('');
@@ -17,12 +19,16 @@ export const AccountSettings = () => {
     const deleteAccount = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
         if (confirmDelete) {
-            await auth.delete(`/users/${username}`);
-            console.log("deleted:", {username});
+            await auth.delete(`/users/${username}`)
+                .then(() => {
+                    console.log("Account deleted successfully");
+                    navigate("/");
+                })
+                .catch((error) => {
+                    console.error("An error occurred:", error.message);
+                });
         }
     }
-
-    const navigate = useNavigate();
 
     const showUserSuccess = () => {
         setShowUserSuccessMessage(true);
