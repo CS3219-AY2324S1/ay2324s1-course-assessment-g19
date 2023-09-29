@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
 	closeQuestionModal,
 	selectQuestionModal,
 } from '../../features/modal/modalSlice';
-import { addQuestion } from '../../features/questions/questionsSlice';
+import { store } from '../../store';
+import { postQuestion } from '../../features/questions/questionsSlice';
 import { Question } from '../../types';
 import Heading from '../Heading';
 import Input from '../Input';
@@ -14,7 +14,6 @@ import Modal from '../Modal';
 import TextArea from '../TextArea';
 
 const QuestionModal = () => {
-	const dispatch = useDispatch();
 	const modal = useSelector(selectQuestionModal);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -36,8 +35,8 @@ const QuestionModal = () => {
 		setIsLoading(true);
 
 		try {
-			dispatch(addQuestion(data as Question));
-			dispatch(closeQuestionModal());
+			store.dispatch(postQuestion(data as Question));
+			store.dispatch(closeQuestionModal());
 			reset();
 		} catch (error: any) {
 			toast.error(error.message);
@@ -45,6 +44,10 @@ const QuestionModal = () => {
 			setIsLoading(false);
 		}
 	};
+
+	const onClose = () => {
+		store.dispatch(closeQuestionModal());
+	}
 
 	const bodyContent = (
 		<div className="flex flex-col gap-4">
@@ -93,10 +96,6 @@ const QuestionModal = () => {
 			body={bodyContent}
 		/>
 	);
-
-	function onClose() {
-		dispatch(closeQuestionModal());
-	}
 };
 
 export default QuestionModal;
