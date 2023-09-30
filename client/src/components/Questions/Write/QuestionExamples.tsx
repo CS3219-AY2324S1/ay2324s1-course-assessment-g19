@@ -32,7 +32,7 @@ const QuestionExamples = () => {
           <QuestionExample index={index} example={example} />
           <button
             onClick={() => onDelete(example)}
-            className="absolute -top-2 -right-2 p-1 rounded-full shadow-md bg-gray-100"
+            className="absolute -top-2 -right-2 p-1 rounded-full shadow-md bg-gray-700"
           >
             <MinusIcon className="w-4 h-4 text-rose-500" />
           </button>
@@ -41,9 +41,9 @@ const QuestionExamples = () => {
 
       <button
         onClick={onAdd}
-        className="flex justify-center bg-gray-100 p-4 my-4 mx-16 rounded-full shadow-lg transition hover:bg-gray-200 hover:opacity-75"
+        className="ml-4 w-10 bg-gray-800 rounded-full p-2 shadow-xl transition hover:scale-105"
       >
-        <PlusIcon className="w-6 h-6 text-sky-500" />
+        <PlusIcon className="w-6 h-6 text-gray-100" />
       </button>
     </>
   );

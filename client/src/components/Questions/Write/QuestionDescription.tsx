@@ -25,7 +25,7 @@ const QuestionDescription = () => {
 
   return (
     <>
-      <div className="flex flex-col bg-gray-200 gap-4 p-8 rounded-2xl shadow-lg">
+      <div className="flex flex-col bg-gray-800 gap-4 p-8 rounded-2xl shadow-lg">
         <SectionHeader title="Description" />
 
         <textarea
@@ -33,7 +33,7 @@ const QuestionDescription = () => {
           rows={1}
           value={description}
           onChange={(e) => handleChange(e)}
-          className="resize-none min-h-[80px] p-2 border rounded-xl overflow-hidden bg-gray-100 shadow-inner"
+          className="text-gray-100 outline-none resize-none min-h-[80px] p-2 border rounded-xl overflow-hidden bg-gray-800 shadow-inner"
         />
       </div>
     </>

@@ -48,17 +48,17 @@ const QuestionExample: React.FC<QuestionExampleProps> = ({
   );
 
   return (
-    <div className="flex flex-col bg-gray-200 p-8 rounded-2xl shadow-lg">
+    <div className="flex flex-col bg-gray-800 p-8 rounded-2xl shadow-lg">
       <SectionHeader title={`Example`} />
 
-      <div className="flex flex-col pt-4 px-4 gap-2">
+      <div className="flex flex-col pt-4 px-4 gap-2 text-gray-100">
         <div className="flex flex-row gap-4">
           <a className="min-w-[100px] w-[100px]">In: </a>
           <input
             type="text"
             value={example.in}
             onChange={(e) => handleChangeInput(e)}
-            className="rounded-lg shadow-inner bg-gray-100 w-full"
+            className="rounded-md border px-2 shadow-inner bg-gray-800 w-full outline-none"
           />
         </div>
 
@@ -68,7 +68,7 @@ const QuestionExample: React.FC<QuestionExampleProps> = ({
             type="text"
             value={example.out}
             onChange={(e) => handleChangeOutput(e)}
-            className="rounded-lg shadow-inner bg-gray-100 w-full"
+            className="rounded-md border px-2 shadow-inner bg-gray-800 w-full outline-none"
           />
         </div>
 
@@ -79,7 +79,7 @@ const QuestionExample: React.FC<QuestionExampleProps> = ({
             rows={1}
             value={example.explanation}
             onChange={(e) => handleChangeExplanation(e)}
-            className="resize-none min-h-[60px] p-2 border rounded-xl overflow-hidden bg-gray-100 shadow-inner w-full"
+            className="resize-none min-h-[60px] p-2 border rounded-md overflow-hidden bg-gray-800 shadow-inner w-full outline-none"
           />
         </div>
       </div>

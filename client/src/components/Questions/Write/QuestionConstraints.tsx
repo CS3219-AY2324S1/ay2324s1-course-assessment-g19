@@ -34,20 +34,20 @@ const QuestionConstraints = () => {
   );
 
   return (
-    <div className="flex flex-col bg-gray-200 p-8 rounded-2xl shadow-lg gap-4">
+    <div className="flex flex-col bg-gray-800 p-8 rounded-2xl shadow-lg gap-4">
       <SectionHeader title="Constraints" />
 
       {constraints.map((constraint, index) => (
-        <div key={index} className="flex gap-4 items-center px-4">
+        <div key={index} className="flex gap-4 items-center px-4 text-gray-100">
           <ArrowRightIcon className="w-4 h-4" />
           <input
             type="text"
             value={constraint}
             onChange={(e) => handleChange(e, index)}
-            className="rounded-lg shadow-inner bg-gray-100 w-full"
+            className="rounded-md outline-none px-2 border shadow-inner bg-gray-800 w-full"
           />
           <button onClick={() => onRemove(constraint)} className="pl-3 flex">
-            <div className="p-1 bg-gray-100 rounded-full shadow-lg hover:scale-105">
+            <div className="p-1 bg-gray-700 rounded-full shadow-lg hover:scale-105">
               <MinusIcon className="w-4 h-4 text-rose-500" />
             </div>
           </button>
@@ -55,8 +55,8 @@ const QuestionConstraints = () => {
       ))}
 
       <button onClick={onAdd} className="pl-3 flex">
-        <div className="p-1 bg-gray-100 rounded-full shadow-lg hover:scale-105">
-          <PlusIcon className="w-4 h-4 text-sky-500" />
+        <div className="p-1 bg-gray-700 rounded-full shadow-lg hover:scale-105">
+          <PlusIcon className="w-4 h-4 text-gray-100" />
         </div>
       </button>
     </div>

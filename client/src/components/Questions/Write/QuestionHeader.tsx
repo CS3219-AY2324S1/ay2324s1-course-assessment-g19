@@ -30,10 +30,10 @@ const QuestionHeader = () => {
   );
 
   return (
-    <div className="flex flex-col gap-4 bg-gray-200 p-8 rounded-2xl shadow-lg">
+    <div className="flex flex-col gap-4 bg-gray-800 p-8 rounded-2xl shadow-lg">
       <h1 className="flex flex-row justify-between items-center text-2xl text-neutral-800 font-semibold">
         <input
-          className="w-full mr-4 p-2 rounded-xl bg-transparent shadow-inner"
+          className="w-full mr-4 p-2 rounded-xl bg-transparent shadow-inner outline-none text-gray-100 border"
           type="text"
           placeholder="Title"
           value={title}
@@ -48,7 +48,7 @@ const QuestionHeader = () => {
       <div className="flex flex-row justify-between">
         <div className="flex gap-8">
           <select
-            className="rounded-2xl p-2 bg-gray-200 shadow-inner"
+            className="rounded-2xl p-2 bg-gray-800 shadow-inner text-gray-100"
             value={difficulty}
             onChange={handleSelect}
           >

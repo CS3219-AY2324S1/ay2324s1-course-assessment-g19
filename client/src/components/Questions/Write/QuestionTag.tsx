@@ -7,7 +7,7 @@ interface QuestionTagProps {
 
 const QuestionTag: React.FC<QuestionTagProps> = ({ tag, onDelete }) => {
   return (
-    <div className="relative text-sm font-semibold text-rose-500 min-h-[36px] rounded-xl px-4 py-2 bg-gray-100 shadow-md">
+    <div className="relative text-sm font-semibold text-rose-500 min-h-[36px] rounded-xl px-4 py-2 bg-gray-800 shadow-md">
       {tag}
       <button
         onClick={() => onDelete(tag)}

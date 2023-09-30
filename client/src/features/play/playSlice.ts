@@ -3,6 +3,7 @@ import { RootState } from '../../store';
 import { Question, QuestionDifficulty, StatusType } from '../../types';
 
 interface PlayState {
+  isActive: boolean;
   currentQuestion?: Question;
   language?: string;
   difficulty?: QuestionDifficulty;
@@ -10,6 +11,7 @@ interface PlayState {
 }
 
 const initialState: PlayState = {
+  isActive: false,
   currentQuestion: undefined,
   language: undefined,
   difficulty: undefined,
@@ -20,6 +22,9 @@ export const playSlice = createSlice({
   name: 'play',
   initialState,
   reducers: {
+    setIsActive: (state, action) => {
+      state.isActive = action.payload;
+    },
     setCurrentQuestion: (state, action) => {
       state.currentQuestion = action.payload;
     },
@@ -32,9 +37,10 @@ export const playSlice = createSlice({
   }
 });
 
-export const { setCurrentQuestion, setLanguage, setDifficulty } =
+export const { setIsActive, setCurrentQuestion, setLanguage, setDifficulty } =
   playSlice.actions;
 
+export const selectIsActive = (state: RootState) => state.play.isActive;
 export const selectCurrentQuestion = (state: RootState) =>
   state.play.currentQuestion;
 export const selectLanguage = (state: RootState) => state.play.language;

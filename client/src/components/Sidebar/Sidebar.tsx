@@ -1,5 +1,6 @@
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 import { useSelector } from 'react-redux';
+import avatar from '../../assets/avatar.png';
 import logo from '../../assets/logo.png';
 import { logoutUser, selectCurrentUser } from '../../features/user/authSlice';
 import { store } from '../../store';
@@ -55,7 +56,7 @@ const Sidebar = () => {
             <img
               onClick={() => alert('to implement')}
               className="h-12 w-12 rounded-full border-2 border-gray-500 cursor-pointer"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              src={currentUser.imgSrc || avatar}
               alt="Your avatar"
             />
             <span

@@ -37,29 +37,29 @@ const QuestionTags = () => {
       {isAdding ? (
         <button
           onClick={onAdd}
-          className="rounded-full p-2 shadow-xl transition hover:scale-105"
+          className="bg-gray-800 rounded-full p-2 shadow-xl transition hover:scale-105"
         >
-          <CheckIcon className="w-6 h-6  text-green-500" />
+          <CheckIcon className="w-6 h-6  text-green-300" />
         </button>
       ) : (
         <button
           onClick={onToggle}
-          className="rounded-full p-2 shadow-xl transition hover:scale-105"
+          className="bg-gray-800 rounded-full p-2 shadow-xl transition hover:scale-105"
         >
-          <PlusIcon className="w-6 h-6 text-sky-500" />
+          <PlusIcon className="w-6 h-6 text-gray-100" />
         </button>
       )}
 
       {isAdding && (
-        <div className="relative text-sm font-semibold text-rose-500 min-h-[36px] rounded-xl px-4 py-2 bg-gray-100 shadow-md">
+        <div className="relative text-sm font-semibold text-rose-500 min-h-[36px] rounded-xl px-4 py-2 bg-gray-800 shadow-md">
           <input
             value={tag}
             onChange={(e) => setTag(e.target.value)}
-            className="rounded-xl bg-transparent shadow-inner"
+            className="bg-transparent shadow-inner outline-none border rounded-md px-2"
           />
           <button
             onClick={onToggle}
-            className="absolute -top-2 -right-2 p-1 rounded-full shadow-md"
+            className="bg-gray-700 absolute -top-2 -right-2 p-1 rounded-full shadow-md"
           >
             <MinusIcon className="w-3 h-3 text-rose-500" />
           </button>

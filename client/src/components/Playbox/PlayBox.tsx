@@ -12,9 +12,12 @@ import { useSelector } from 'react-redux';
 import {
   selectDifficulty,
   selectLanguage,
+  setCurrentQuestion,
   setDifficulty,
+  setIsActive,
   setLanguage
 } from '../../features/play/playSlice';
+import { selectQuestionByTitle } from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
@@ -57,6 +60,14 @@ const PlayBox = () => {
     [store]
   );
 
+  // TODO: Get question from question server
+  const dummyQuestion = useSelector(selectQuestionByTitle('Two Sum'));
+
+  const onFindMatch = useCallback(() => {
+    store.dispatch(setCurrentQuestion(dummyQuestion));
+    store.dispatch(setIsActive(true));
+  }, [store]);
+
   let render;
 
   if (tab === 'GAME') {
@@ -77,12 +88,13 @@ const PlayBox = () => {
           icon={<VariableIcon className="h-4 w-4" />}
         />
         <button
-          onClick={() => alert('Play!')}
+          onClick={onFindMatch}
           className="font-semibold text-gray-800 w-64 py-4 bg-gray-100 rounded-lg transition hover:scale-95 hover:shadow-inner"
         >
           Find a Match
         </button>
         <QuestionSelect />
+        <a className="flex flex-grow" />
         <button
           onClick={() => alert('Play!')}
           className="flex justify-center items-center gap-2 font-semibold text-gray-100 w-64 py-4 bg-gray-900 rounded-lg transition hover:scale-95 hover:shadow-inner"
@@ -126,8 +138,7 @@ const PlayBox = () => {
           />
         ))}
       </div>
-
-      <div className="flex flex-col gap-4 items-center p-8 bg-gray-800 rounded-b-lg h-full opacity-80 w-96">
+      <div className="flex flex-col gap-4 items-center p-8 bg-gray-800 rounded-b-lg h-full opacity-80 w-[448px]">
         {render}
       </div>
     </div>

@@ -10,15 +10,17 @@ const QuestionConstraints: React.FC<QuestionConstraintsProps> = ({
   constraints
 }) => {
   return (
-    <div className="flex flex-col bg-gray-200 p-8 rounded-2xl shadow-lg gap-4">
+    <div className="flex flex-col w-full gap-2">
       <SectionHeader title="Constraints" />
 
-      {constraints?.map((constraint, index) => (
-        <div key={index} className="flex gap-4 items-center px-4">
-          <ArrowRightIcon className="w-4 h-4" />
-          {constraint}
-        </div>
-      ))}
+      <div className="flex flex-col gap-1 text-gray-100 text-sm">
+        {constraints?.map((constraint, index) => (
+          <div key={index} className="flex gap-4 items-center">
+            <ArrowRightIcon className="w-4 h-4" />
+            {constraint}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

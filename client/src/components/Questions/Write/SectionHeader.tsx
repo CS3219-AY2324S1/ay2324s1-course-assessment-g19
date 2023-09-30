@@ -4,7 +4,7 @@ interface SectionHeaderProps {
 
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => {
   return (
-    <h3 className="flex flex-row justify-between items-center text-md text-neutral-500 font-semibold">
+    <h3 className="flex flex-row justify-between items-center text-md text-gray-400 font-semibold">
       {title}
     </h3>
   );

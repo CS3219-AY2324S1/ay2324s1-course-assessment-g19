@@ -4,7 +4,7 @@ interface QuestionTagProps {
 
 const QuestionTag: React.FC<QuestionTagProps> = ({ tag }) => {
   return (
-    <div className="text-sm font-semibold text-rose-500 rounded-xl px-4 py-2 bg-gray-100 shadow-md">
+    <div className="text-xs font-semibold text-rose-500 rounded-md px-2 py-1 bg-gray-100 shadow-md">
       {tag}
     </div>
   );

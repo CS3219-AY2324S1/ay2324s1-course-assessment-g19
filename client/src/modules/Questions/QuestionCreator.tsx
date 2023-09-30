@@ -20,15 +20,12 @@ const QuestionCreator = () => {
 
   return (
     <div className="flex flex-row justify-center w-full h-screen overflow-hidden">
-      <div className="flex flex-col w-full min-w-[512px] max-w-[712px] p-4 gap-4 overflow-auto">
+      <div className="flex flex-col w-full p-4 gap-4 overflow-auto">
         <QuestionHeader />
         <QuestionTags />
         <QuestionDescription />
         <QuestionExamples />
         <QuestionConstraints />
-      </div>
-      <div className="flex flex-col w-full p-4 gap-4 overflow-auto">
-        Text Editor
       </div>
       <button
         onClick={handleSubmit}

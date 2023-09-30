@@ -13,32 +13,31 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   difficulty
 }) => {
   return (
-    <div className="flex flex-col gap-4 bg-gray-200 p-8 rounded-2xl shadow-lg">
-      <h1 className="flex flex-row justify-between items-center text-2xl text-neutral-800 font-semibold">
+    <div className="flex flex-col gap-4 w-full">
+      <h1 className="flex flex-row justify-between items-center text-2xl text-neutral-100 font-semibold">
         <div className="flex gap-2">
-          <a>#.</a>
           <a>{title}</a>
         </div>
         <button className="flex ">
-          <LifebuoyIcon className="w-6 h-6" />
+          <LifebuoyIcon className="w-5 h-5" />
         </button>
       </h1>
 
       <div className="flex flex-row justify-between">
-        <div className="flex gap-8">
-          <a className="font-semibold text-yellow-500">
+        <div className="flex gap-4 items-center">
+          <a className="font-semibold text-sm text-yellow-500">
             {toCamelCase(difficulty)}
           </a>
-          <div className="flex flex-row items-center gap-2">
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4" />
-            <StarIcon className="w-4 h-4" />
+          <div className="flex flex-row items-center gap-2 text-gray-100">
+            <StarIcon className="w-3 h-3" />
+            <StarIcon className="w-3 h-3" />
+            <StarIcon className="w-3 h-3" />
+            <StarIcon className="w-3 h-3" />
+            <StarIcon className="w-3 h-3" />
           </div>
         </div>
         <button>
-          <HeartIcon className="w-6 h-6 text-rose-600" />
+          <HeartIcon className="w-5 h-5 text-rose-600" />
         </button>
       </div>
     </div>
