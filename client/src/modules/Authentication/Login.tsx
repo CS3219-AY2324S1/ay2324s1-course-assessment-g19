@@ -1,4 +1,3 @@
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-dark.png';
@@ -21,13 +20,6 @@ const Login = () => {
 
   return (
     <>
-      <button onClick={() => navigate('/')} className="absolute top-8 left-8">
-        <div className="flex flex-row gap-2 border-[2px] hover:border-indigo-500 hover:scale-105 transition rounded-lg px-4 py-2">
-          <ArrowUturnLeftIcon className="w-5 h-5" />
-          <a className="text-sm">To Dashboard</a>
-        </div>
-      </button>
-
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img className="mx-auto h-10 w-auto" src={logo} alt="PeerPrep" />

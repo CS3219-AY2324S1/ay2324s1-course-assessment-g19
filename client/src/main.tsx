@@ -12,22 +12,23 @@ import PageWrapper from './layouts/PageWrapper';
 import Login from './modules/Authentication/Login';
 import Register from './modules/Authentication/Register';
 import Dashboard from './modules/Dashboard/Dashboard';
-import Question from './modules/Questions/Question';
+import Play from './modules/Play/Play';
 import QuestionCreator from './modules/Questions/QuestionCreator';
+import QuestionList from './modules/Questions/QuestionList';
 import { store } from './store';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate replace to="/dashboard" />
+    element: <Navigate replace to="/play" />
+  },
+  {
+    path: '/play',
+    element: <Play />
   },
   {
     path: '/dashboard',
-    element: (
-      <PageWrapper>
-        <Dashboard />
-      </PageWrapper>
-    )
+    element: <Dashboard />
   },
   {
     path: '/login',
@@ -38,20 +39,12 @@ const router = createBrowserRouter([
     element: <Register />
   },
   {
-    path: '/questions/:title',
-    element: (
-      <PageWrapper>
-        <Question />
-      </PageWrapper>
-    )
+    path: '/questions',
+    element: <QuestionList />
   },
   {
     path: '/questions/create',
-    element: (
-      <PageWrapper>
-        <QuestionCreator />
-      </PageWrapper>
-    )
+    element: <QuestionCreator />
   }
 ]);
 
@@ -59,7 +52,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <Preloader />
-      <RouterProvider router={router} />
+      <PageWrapper>
+        <RouterProvider router={router} />
+      </PageWrapper>
     </Provider>
   </React.StrictMode>
 );
