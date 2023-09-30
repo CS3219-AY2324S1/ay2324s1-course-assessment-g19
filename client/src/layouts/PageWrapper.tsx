@@ -6,9 +6,9 @@ interface PageWrapperProps {
 
 const PageWrapper: React.FC<PageWrapperProps> = ({ children }) => {
   return (
-    <div className="h-screen flex flex-row">
+    <div className="h-screen flex flex-row bg-gray-700">
       <Sidebar />
-      <main className="flex flex-col gap-4 w-full overflow-hidden flex-grow bg-gray-100">
+      <main className="flex flex-col gap-4 w-full overflow-hidden flex-grow">
         {children}
       </main>
     </div>

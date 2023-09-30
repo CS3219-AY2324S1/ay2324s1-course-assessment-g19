@@ -1,21 +1,15 @@
-import { useSelector } from 'react-redux';
-import PlayBox from '../../components/Dashboard/PlayBox';
-import QuestionTable from '../../components/Dashboard/QuestionTable';
-import Editor from '../../components/Editor/Editor';
-import Question from '../../components/Questions/Question';
-import { selectCurrentQuestion } from '../../features/play/playSlice';
+import PlayBox from '../../components/Playbox/PlayBox';
 
 const Play = () => {
-  const currentQuestion = useSelector(selectCurrentQuestion);
-
   return (
-    <div className="flex flex-row h-screen">
-      <Question question={currentQuestion} />
-      <div className="flex flex-col p-4 gap-4">
-        <PlayBox />
-        <Editor />
-        <QuestionTable />
+    <div className="flex flex-row w-full justify-between h-screen">
+      {/* CODE EDITOR */}
+      <div className="border-4 border-dashed border-gray-800 flex flex-grow m-8 rounded-lg">
+        Editor
       </div>
+
+      {/* PLAYBOX */}
+      <PlayBox />
     </div>
   );
 };

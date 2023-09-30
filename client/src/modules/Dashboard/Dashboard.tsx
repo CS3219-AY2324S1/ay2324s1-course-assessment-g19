@@ -1,5 +1,5 @@
-import PlayBox from '../../components/Dashboard/PlayBox';
 import QuestionTable from '../../components/Dashboard/QuestionTable';
+import PlayBox from '../../components/Playbox/PlayBox';
 
 const Dashboard = () => {
   return (
