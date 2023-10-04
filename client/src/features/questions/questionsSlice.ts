@@ -45,5 +45,16 @@ export const selectQuestions = (state: RootState) => state.questions.questions;
 export const selectQuestionByTitle = (title?: string) => (state: RootState) =>
   state.questions.questions.find((question) => question.title === title);
 export const selectStatus = (state: RootState) => state.questions.status;
+export const selectQuestionByDifficulty = (difficulty: string) => (state: RootState) => {
+  const filteredQuestions = state.questions.questions.filter(question => question.difficulty === difficulty);
+  
+  if (filteredQuestions.length === 0) {
+    return null; // No questions with the specified difficulty found
+  }
+
+  // Randomly select one question from the filtered array
+  const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
+  return filteredQuestions[randomIndex];
+};
 
 export default questionsSlice.reducer;

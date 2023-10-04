@@ -8,7 +8,7 @@ import {
   VariableIcon
 } from '@heroicons/react/24/outline';
 import { useCallback, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   selectDifficulty,
   selectLanguage,
@@ -17,12 +17,13 @@ import {
   setIsActive,
   setLanguage
 } from '../../features/play/playSlice';
-import { selectQuestionByTitle } from '../../features/questions/questionsSlice';
+import { selectQuestionByDifficulty, selectQuestionByTitle } from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
 import PlayTab from './PlayTab';
 import QuestionSelect from './QuestionSelect';
+import axios from 'axios'; // Import axios for making API requests
 
 const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
@@ -31,6 +32,7 @@ const PlayBox = () => {
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
   const [tab, setTab] = useState('GAME');
+  const dispatch = useDispatch(); // Get the dispatch function from Redux
   const tabs = [
     {
       label: 'GAME',
@@ -61,12 +63,12 @@ const PlayBox = () => {
   );
 
   // TODO: Get question from question server
-  const dummyQuestion = useSelector(selectQuestionByTitle('Two Sum'));
+  const selectedQuestion = useSelector(selectQuestionByDifficulty(difficulty|| 'EASY'));
 
   const onFindMatch = useCallback(() => {
-    store.dispatch(setCurrentQuestion(dummyQuestion));
+    store.dispatch(setCurrentQuestion(selectedQuestion));
     store.dispatch(setIsActive(true));
-  }, [store]);
+  }, [selectedQuestion]);  
 
   let render;
 

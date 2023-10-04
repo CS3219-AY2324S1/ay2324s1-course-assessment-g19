@@ -48,7 +48,7 @@ cd ../question-api
 npm install
 cd ../user-api
 conda create --name user-api python=3.9
-conda activate
+conda activate user-api
 pip install -r requirements.txt
 ```
 
