@@ -71,7 +71,12 @@ const PlayBox = () => {
 
       try {
           // Make an HTTP POST request to your FastAPI endpoint
-          const response = await axios.post('/collaboration/send-message', 'Hello, RabbitMQ!');
+          const response = await axios.post(
+              '/collaboration/send-message',
+              "hello, rabbitMQ",
+              {headers: {
+              "Accept": "*/*, application/json, text/plain"},
+          });
           console.log('Message sent:', response.data.message);
       } catch (error) {
           console.error('Error sending message:', error);

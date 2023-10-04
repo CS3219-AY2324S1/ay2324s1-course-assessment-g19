@@ -10,6 +10,7 @@ connection_params = pika.ConnectionParameters(
     credentials=pika.PlainCredentials('guest', 'guest'),  # RabbitMQ username and password
     connection_attempts=3,        # Number of connection attempts
     retry_delay=5,               # Delay between connection retries (in seconds)
+    heartbeat=600,
 )
 
 # Set up RabbitMQ connection
