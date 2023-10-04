@@ -27,6 +27,7 @@ services:
       - peerprep-network
     depends_on:
       - peerprep-postgres
+      - peerprep-rabbitmq
 
   peerprep-question-api:
     image: question-api:peerprep
@@ -81,6 +82,20 @@ services:
     depends_on:
       - peerprep-client # Wait until Client app container is up
       - peerprep-question-api # Wait until Server app container is up
+
+  peerprep-rabbitmq:
+    hostname: 'gareth-rabbit'
+    image: rabbitmq:3-management
+    container_name: peerprep-rabbitmq
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - peerprep-network
+
 
 networks:
   peerprep-network:

@@ -65,9 +65,17 @@ const PlayBox = () => {
   // TODO: Get question from question server
   const selectedQuestion = useSelector(selectQuestionByDifficulty(difficulty|| 'EASY'));
 
-  const onFindMatch = useCallback(() => {
-    store.dispatch(setCurrentQuestion(selectedQuestion));
-    store.dispatch(setIsActive(true));
+  const onFindMatch = useCallback(async() => {
+    // store.dispatch(setCurrentQuestion(selectedQuestion));
+    // store.dispatch(setIsActive(true));
+
+      try {
+          // Make an HTTP POST request to your FastAPI endpoint
+          const response = await axios.post('/collaboration/send-message', 'Hello, RabbitMQ!');
+          console.log('Message sent:', response.data.message);
+      } catch (error) {
+          console.error('Error sending message:', error);
+      }
   }, [selectedQuestion]);  
 
   let render;
