@@ -10,7 +10,6 @@ class User(UserBase):
     id: int
     name: Union[str, None] = None
     disabled: Union[bool, None] = None
-
     class Config:
         from_attributes = True
 
@@ -26,3 +25,4 @@ class LoginRequest(BaseModel):
 
 class RegisterRequest(LoginRequest):
     name: str
+    role: str

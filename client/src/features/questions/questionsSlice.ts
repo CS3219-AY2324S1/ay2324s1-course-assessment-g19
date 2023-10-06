@@ -19,6 +19,7 @@ export const fetchQuestions = createAsyncThunk(
   '/questionsSlice/fetchQuestions',
   async () => {
     const response = await axios.get('/question-api/questions');
+    console.log("Returning questions in db: ", response.data)
     return response.data;
   }
 );

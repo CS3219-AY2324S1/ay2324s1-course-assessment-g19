@@ -24,6 +24,7 @@ def create_access_token(response: Response, email: str, hashed_password: str):
                         value=encoded_jwt,
                         httponly=True,
                         max_age=exp.total_seconds())
+    print("CREATED ACCESS TOKENNNN!!!!! ", encoded_jwt)
     return encoded_jwt
 
 

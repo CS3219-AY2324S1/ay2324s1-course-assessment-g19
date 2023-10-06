@@ -9,5 +9,7 @@ class UserModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     name = Column(String)
+    role = Column(String)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    role= Column(String)

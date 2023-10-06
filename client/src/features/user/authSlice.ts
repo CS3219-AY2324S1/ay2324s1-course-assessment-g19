@@ -19,14 +19,17 @@ export const checkAuthStatus = createAsyncThunk(
   '/authSlice/checkAuthStatus',
   async () => {
     const response = await axios.get('/user-api/auth/token');
+    console.log("returning auth token: ", response);
     return response.data;
   }
 );
 
 export const registerUser = createAsyncThunk(
   '/authSlice/registerUser',
-  async (credentials: { name: string; email: string; password: string }) => {
+  async (credentials: { name: string; email: string; password: string, role: string }) => {
+    console.log("registering??????: ", credentials);
     const response = await axios.post('/user-api/auth/register', credentials);
+    console.log("registering: ", response);
     return response.data;
   }
 );
@@ -35,6 +38,7 @@ export const loginUser = createAsyncThunk(
   '/authSlice/loginUser',
   async (credentials: { email: string; password: string }) => {
     const response = await axios.post('/user-api/auth/login', credentials);
+    console.log("logging in: ", response);
     return response.data;
   }
 );
@@ -43,6 +47,7 @@ export const logoutUser = createAsyncThunk(
   '/authSlice/logoutUser',
   async () => {
     const response = await axios.post('/user-api/auth/logout');
+    console.log("logging out: ", response)
     return response.data;
   }
 );

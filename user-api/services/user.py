@@ -25,14 +25,14 @@ class UserService:
                 status_code=401, detail="Invalid password")
         return user
 
-    def add_user(self, email: str, password: str, name: str):
+    def add_user(self, email: str, password: str, name: str, role: str):
         existing_user = self.get_user(email=email)
         if existing_user:
             raise HTTPException(
                 status_code=401, detail="Email already registered")
         hashed_password = pwd_context.hash(password)
         user = UserModel(
-            email=email, hashed_password=hashed_password, name=name)
+            email=email, hashed_password=hashed_password, name=name, role=role)
         self.db.add(user)
         self.db.commit()
         self.db.refresh(user)
