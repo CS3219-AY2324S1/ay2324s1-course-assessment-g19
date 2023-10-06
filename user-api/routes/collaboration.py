@@ -1,5 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 import pika
+import time
 
 router = APIRouter()
 
@@ -13,19 +15,81 @@ connection_params = pika.ConnectionParameters(
     heartbeat=600,
 )
 
-# Set up RabbitMQ connection
 connection = pika.BlockingConnection(connection_params)
-channel = connection.channel()
-channel.queue_declare(queue='my_queue')
+read_channel = connection.channel()
+write_channel = connection.channel()
+wait_channel = connection.channel()
 
 
-@router.post("/send-message")
-async def send_message(message: str):
+class CollaborationMessage(BaseModel):
+    user: str
+    message: str
+    difficulty: str
+    language: str
+
+
+class ConnectionMessage(BaseModel):
+    partner: str
+    user: str
+
+
+@router.post("/join-queue")
+async def send_message(request_data: CollaborationMessage):
+
+    queue_name = f"{request_data.language}-{request_data.difficulty}"
+    write_channel.queue_declare(queue=queue_name)
+    message = request_data.model_dump_json()
     # Publish a message to RabbitMQ
-    channel.basic_publish(exchange='', routing_key='my_queue', body=message)
-    return {"message": "Message sent to RabbitMQ"}
+    write_channel.basic_publish(exchange='', routing_key=queue_name, body=message)
+    return {"message": request_data.user}
 
 
-@router.get("/receive-message")
-async def receive_message():
-    channel.queue_declare(queue='my_queue')
+@router.get("/check-queue/{queue_name}")
+async def receive_message(queue_name: str):
+
+    read_channel.queue_declare(queue=queue_name)
+
+    method_frame, header_frame, body = read_channel.basic_get(queue=queue_name, auto_ack=True)
+
+    if method_frame:
+        message = CollaborationMessage.model_validate_json(body.decode("utf-8"))
+        return {"message": message}
+    else:
+        return {"message": "empty"}
+
+
+@router.post("/notify-partner")
+async def send_notification(request_data: ConnectionMessage):
+
+    queue_name = f"{request_data.partner}"
+    write_channel.queue_declare(queue=queue_name)
+    message = request_data.model_dump_json()
+    # Publish a message to RabbitMQ
+    write_channel.basic_publish(exchange='', routing_key=queue_name, body=message)
+    return {"message": request_data.user}
+
+
+@router.get("/wait-partner/{queue_name}")
+async def wait_partner(queue_name: str):
+
+    wait_channel.queue_declare(queue=queue_name)
+    start_time = time.time()  # Record the start time
+
+    # Start consuming messages from the queue
+    while True:
+        method_frame, properties, body = wait_channel.basic_get(queue=queue_name, auto_ack=True)
+
+        if method_frame:
+            # A message is received
+            message = ConnectionMessage.model_validate_json(body.decode("utf-8"))
+            return {"message": message}
+
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+
+        if elapsed_time >= 30:
+            # 30 seconds have passed, break out of the loop
+            return {"message": "empty"}
+
+        # Sleep briefly to avoid busy-waiting
+        time.sleep(1)
