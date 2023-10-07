@@ -23,8 +23,8 @@ import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
 import PlayTab from './PlayTab';
 import QuestionSelect from './QuestionSelect';
-import axios from 'axios';
-import {selectCurrentUser} from "../../features/user/authSlice"; // Import axios for making API requests
+import {selectCurrentUser} from "../../features/user/authSlice";
+import {findMatch} from "../../features/collaboration/collaborationSlice"; // Import axios for making API requests
 
 
 
@@ -34,7 +34,6 @@ const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 const PlayBox = () => {
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
-  const currentUser = useSelector(selectCurrentUser);
   const [tab, setTab] = useState('GAME');
   const dispatch = useDispatch(); // Get the dispatch function from Redux
   const tabs = [
@@ -72,41 +71,7 @@ const PlayBox = () => {
   const onFindMatch = useCallback(async() => {
     store.dispatch(setCurrentQuestion(selectedQuestion));
     store.dispatch(setIsActive(true));
-      try {
-          // Check if there are any messages in the queue
-          const queue_name = `${language}-${difficulty}`;
-          const response = await axios.get(`/user-api/collaboration/check-queue/${queue_name}`);
-
-          console.log("looking in queue: ", queue_name);
-
-          if (response.data.message != "empty") {
-              // If there's a message in the queue, consume it
-              const partnerUser = response.data.message.user
-              console.log('found a partner :', partnerUser);
-          } else {
-              // If the queue is empty, join the queue with your message
-              const postData = {
-                  user: currentUser.name,
-                  message: 'CONNECT ME',
-                  difficulty: difficulty,
-                  language: language,
-              };
-
-              const postResponse = await axios.post(
-                  '/user-api/collaboration/join-queue',
-                  postData,
-                  {
-                      headers: {
-                          'Content-Type': 'application/json',
-                      },
-                  }
-              );
-
-              console.log('no partner found, queued:', postResponse.data.message);
-          }
-      } catch (error) {
-          console.error('Error:', error);
-      }
+    await findMatch(store.getState());
   }, [selectedQuestion]);
 
   let render;

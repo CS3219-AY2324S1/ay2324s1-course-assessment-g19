@@ -1,7 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 import pika
-import time
 
 router = APIRouter()
 
@@ -37,7 +36,7 @@ class ConnectionMessage(BaseModel):
 async def send_message(request_data: CollaborationMessage):
 
     queue_name = f"{request_data.language}-{request_data.difficulty}"
-    write_channel.queue_declare(queue=queue_name)
+    write_channel.queue_declare(queue=queue_name, arguments={"x-message-ttl": 30000})
     message = request_data.model_dump_json()
     # Publish a message to RabbitMQ
     write_channel.basic_publish(exchange='', routing_key=queue_name, body=message)
@@ -47,7 +46,7 @@ async def send_message(request_data: CollaborationMessage):
 @router.get("/check-queue/{queue_name}")
 async def receive_message(queue_name: str):
 
-    read_channel.queue_declare(queue=queue_name)
+    read_channel.queue_declare(queue=queue_name, arguments={"x-message-ttl": 30000})
 
     method_frame, header_frame, body = read_channel.basic_get(queue=queue_name, auto_ack=True)
 
@@ -70,26 +69,14 @@ async def send_notification(request_data: ConnectionMessage):
 
 
 @router.get("/wait-partner/{queue_name}")
-async def wait_partner(queue_name: str):
+async def receive_message(queue_name: str):
 
-    wait_channel.queue_declare(queue=queue_name)
-    start_time = time.time()  # Record the start time
+    read_channel.queue_declare(queue=queue_name)
 
-    # Start consuming messages from the queue
-    while True:
-        method_frame, properties, body = wait_channel.basic_get(queue=queue_name, auto_ack=True)
+    method_frame, header_frame, body = read_channel.basic_get(queue=queue_name, auto_ack=True)
 
-        if method_frame:
-            # A message is received
-            message = ConnectionMessage.model_validate_json(body.decode("utf-8"))
-            return {"message": message}
-
-        current_time = time.time()
-        elapsed_time = current_time - start_time
-
-        if elapsed_time >= 30:
-            # 30 seconds have passed, break out of the loop
-            return {"message": "empty"}
-
-        # Sleep briefly to avoid busy-waiting
-        time.sleep(1)
+    if method_frame:
+        message = ConnectionMessage.model_validate_json(body.decode("utf-8"))
+        return {"message": message}
+    else:
+        return {"message": "empty"}
