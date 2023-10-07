@@ -6,10 +6,12 @@ import { store } from '../../store';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { QuestionDifficulty } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 const QuestionEditor = () => {
   let { id } = useParams();
   const question = id && useSelector(selectQuestionById(id));
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -22,7 +24,6 @@ const QuestionEditor = () => {
   });
 
   useEffect(() => {
-    console.log('i am updating again');
     if (question) {
       setFormData({
         title: question.title || '',
@@ -40,7 +41,6 @@ const QuestionEditor = () => {
     (e: any) => {
       e.preventDefault();
       if (question) {
-        console.log('I AM EDITIGN', formData);
 
         const updatedQuestion = {
           _id: id,
@@ -65,7 +65,8 @@ const QuestionEditor = () => {
           id: id || '',
           question: updatedQuestion
         };
-        store.dispatch(editQuestion(_data));
+        store.dispatch(editQuestion(_data))
+        //navigate('/questions');
       }
     },
     [store, question]
@@ -74,7 +75,6 @@ const QuestionEditor = () => {
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    console.log('CHANGING TO', formData);
   };
 
   return (
@@ -202,7 +202,7 @@ const QuestionEditor = () => {
             Save changes
           </button>
           <button
-            type="submit"
+            onClick={() => navigate('/questions')}
             className="bg-blue-500 text-white mx-4 px-4 py-2 rounded"
           >
             Cancel

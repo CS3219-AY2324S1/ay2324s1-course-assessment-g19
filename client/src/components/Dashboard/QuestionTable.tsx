@@ -13,7 +13,6 @@ const QuestionTable = () => {
   const questions = useSelector(selectQuestions);
   const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
   const navigate = useNavigate();
-  console.log('QNS', questions);
 
   const handleClick = useCallback(
     (question: Question) => {
