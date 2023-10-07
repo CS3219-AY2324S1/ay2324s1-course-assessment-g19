@@ -16,6 +16,7 @@ import Play from './modules/Play/Play';
 import QuestionCreator from './modules/Questions/QuestionCreator';
 import QuestionList from './modules/Questions/QuestionList';
 import { store } from './store';
+import QuestionEditor from './modules/Questions/QuestionEditor';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path: '/questions/create',
     element: <QuestionCreator />
+  },
+  {
+    path: '/questions/edit/:id',
+    element: <QuestionEditor />
   }
 ]);
 

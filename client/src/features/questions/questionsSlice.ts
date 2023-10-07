@@ -43,6 +43,8 @@ export const questionsSlice = createSlice({
 });
 
 export const selectQuestions = (state: RootState) => state.questions.questions;
+export const selectQuestionById = (id: string) => (state: RootState) =>
+  state.questions.questions.find((question) => question._id === id);
 export const selectQuestionByTitle = (title?: string) => (state: RootState) =>
   state.questions.questions.find((question) => question.title === title);
 export const selectStatus = (state: RootState) => state.questions.status;

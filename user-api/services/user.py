@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
+import logging
 
 from models import UserModel
 from database import get_db

@@ -32,6 +32,35 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// New route to edit question by id
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      req.params.id, // id of the question to be updated
+      {
+        $set: {
+          title: req.body.title,
+          difficulty: req.body.difficulty,
+          tags: req.body.tags,
+          description: req.body.description,
+          examples: req.body.examples,
+          constraints: req.body.constraints
+        }
+      },
+      { new: true } // Return the updated question after the update
+    );
+
+    if (!updatedQuestion) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+
+    res.json(updatedQuestion);
+  } catch (err) {
+    res.status(400).json({ message: err });
+  }
+});
+
+
 // New route to search for questions based on difficulty and language
 router.get('/search', async (req: Request, res: Response) => {
   try {

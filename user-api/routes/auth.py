@@ -15,10 +15,8 @@ async def authorize_user(current_user: User = Depends(validate_access_token)):
 
 @router.post("/register", response_model=User)
 async def register_user(request: RegisterRequest, response: Response, svc: UserService = Depends()):
-    print("AUTH REG:: ", request, response, svc)
     current_user = svc.add_user(
         name=request.name, email=request.email, password=request.password, role=request.role)
-    print("CREATED USER!!!!! ", current_user)
     create_access_token(response=response,
                         email=current_user.email,
                         hashed_password=current_user.hashed_password)

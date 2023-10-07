@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-dark.png';
 import { registerUser } from '../../features/user/authSlice';
 import { store } from '../../store';
+// import dotenv from 'dotenv';
 
 const Register = () => {
 
@@ -13,16 +14,15 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('User');
   const [adminToken, setAdminToken] = useState('');
+  const [tokenError, setTokenError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     //const verify_token = process.env.ADMIN_TOKEN;
-    if(false) {
-      // err
-      //console.log("CANNOT REG! WRONG TOKEN");
+    if(role == "Admin" && adminToken != "032190") { // to shift to .env
+      setTokenError(true);
     } else {
-      console.log("REgistering now,,. sending req");
       const credentials = { name, email, password, role };
       store.dispatch(registerUser(credentials)).then(() => {
         navigate('/');
@@ -118,7 +118,7 @@ const Register = () => {
                 >
                   Admin token
                 </label>
-                <div className="">
+                <div className="mt-2">
                   <input
                     id="adminToken"
                     value={adminToken}
@@ -128,6 +128,14 @@ const Register = () => {
                     className="block w-full rounded-md border-0 py-1.5 px-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
+                {tokenError && (
+                <label
+                  htmlFor="errorMessage"
+                  className="block text-sm font-medium leading-6 text-red-900 mt-2"
+                >
+                  Wrong token!
+                </label>
+                )}
               </div>
             )}
 

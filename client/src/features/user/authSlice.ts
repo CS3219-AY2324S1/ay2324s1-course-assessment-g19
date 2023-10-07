@@ -27,7 +27,6 @@ export const checkAuthStatus = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   '/authSlice/registerUser',
   async (credentials: { name: string; email: string; password: string, role: string }) => {
-    console.log("registering??????: ", credentials);
     const response = await axios.post('/user-api/auth/register', credentials);
     console.log("registering: ", response);
     return response.data;
