@@ -17,6 +17,7 @@ import QuestionCreator from './modules/Questions/QuestionCreator';
 import QuestionList from './modules/Questions/QuestionList';
 import { store } from './store';
 import QuestionEditor from './modules/Questions/QuestionEditor';
+import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    <ToastContainer />
     <Provider store={store}>
       <Preloader />
       <PageWrapper>

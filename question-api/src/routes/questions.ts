@@ -32,6 +32,19 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// Delete a question by id
+router.delete('/:id', async (req, res) => {
+  try {
+    const removedQuestion = await Question.findByIdAndRemove(req.params.id);
+    if (!removedQuestion) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+    res.json({ message: 'Question deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
+
 // New route to edit question by id
 router.put('/:id', async (req, res) => {
   try {

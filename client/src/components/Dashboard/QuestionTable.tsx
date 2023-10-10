@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { setCurrentQuestion } from '../../features/play/playSlice';
 import { selectQuestions } from '../../features/questions/questionsSlice';
@@ -7,6 +7,8 @@ import { Question } from '../../types';
 import { toCamelCase } from '../../utils/string';
 import { selectCurrentUser } from '../../features/user/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { deleteQuestion } from '../../features/questions/creatorSlice';
+import { toast } from 'react-toastify';
 
 const QuestionTable = () => {
   const currentUser = useSelector(selectCurrentUser);
@@ -26,10 +28,45 @@ const QuestionTable = () => {
     navigate(to_url);
   };
   
-  const handleDelete = () => {
-    console.log('Deleting question:');
-    // Show delete modal or perform delete action
+  const handleDelete = (_id: any) => {
+    console.log("trying to delete is popup appearing")
+    showToast(_id);
   };
+
+
+  const CustomToast = ({ onYesClick, onCloseClick }) => {
+    return (
+      <div className="custom-toast">
+        <h2 className="font-black mb-2">Are you sure you want to delete this question?</h2>
+        <div className='absolute bottom-0 right-0 p-2'>
+        <button onClick={onYesClick} className="bg-blue-500 text-white px-2 py-1 rounded mr-2">
+          Yes
+        </button>
+        <button onClick={onCloseClick} className="bg-gray-500 text-white px-2 py-1 rounded">
+          Close
+        </button>
+        </div>
+      </div>
+    );
+  };
+
+  const showToast = (_id: any) => {
+    toast(<CustomToast
+      onYesClick={() => {
+        console.log("Yes button clicked");
+        // Close the toast
+        toast.dismiss();
+      }}
+      onCloseClick={() => {
+        console.log("Close button clicked");
+        toast.dismiss();
+      }}
+    />, {
+      autoClose: false,
+      closeButton: false, // Disable the default close button
+    });
+  };
+
   
 
   return (
@@ -75,7 +112,7 @@ const QuestionTable = () => {
               {isAdmin && (
                 <div>
                   <button onClick={() => handleEdit(question._id)} className="p-4 w-10 font-bold">edit</button>
-                  <button onClick={handleDelete} className="p-4 mx-2 w-10 font-bold">del</button>
+                  <button onClick={() => handleDelete(question._id)} className="p-4 mx-2 w-10 font-bold">del</button>
                 </div>
               )}
 

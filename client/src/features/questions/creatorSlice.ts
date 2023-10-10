@@ -53,6 +53,14 @@ export const editQuestion = createAsyncThunk(
   }
 );
 
+export const deleteQuestion = createAsyncThunk(
+  '/creatorSlice/deleteQuestion',
+  async ({ id }: { id: string }) => {
+    const response = await axios.delete(`/question-api/questions/${id}`);
+    return response.data;
+  }
+);
+
 export const creatorSlice = createSlice({
   name: 'creator',
   initialState,
