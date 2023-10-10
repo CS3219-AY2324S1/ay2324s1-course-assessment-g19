@@ -25,57 +25,63 @@ const QuestionEditor = () => {
 
   useEffect(() => {
     if (question) {
-      setFormData({
-        title: question.title || '',
-        description: question.description || '',
-        in: question.examples[0].in || '',
-        out: question.examples[0].out || '',
-        explanation: question.examples[0].explanation || '',
-        constraints: question.constraints || [''],
-        difficulty: question.difficulty || 'EASY'
-      });
+      setFormData(prevData => ({
+        ...prevData,
+        title: question.title || prevData.title,
+        description: question.description || prevData.description,
+        in: question.examples[0].in || prevData.in,
+        out: question.examples[0].out || prevData.out,
+        explanation: question.examples[0].explanation || prevData.explanation,
+        constraints: question.constraints || prevData.constraints,
+        difficulty: question.difficulty || prevData.difficulty
+      }));
     }
-  }, [question]);
+  }, []);
 
   const handleSubmit = useCallback(
     (e: any) => {
       e.preventDefault();
-      if (question) {
 
-        const updatedQuestion = {
-          _id: id,
-          title: formData.title,
-          description: formData.description,
-          constraints: formData.constraints,
-          difficulty: formData.difficulty,
-          createdAt: question.createdAt,
-          updatedAt: new Date(),
-          examples: [
-            {
-              in: formData.in,
-              out: formData.out,
-              explanation: formData.explanation
-            }
-          ],
-          tags: [], // Assuming tags is an empty array for now
-          __v: 0 // Assuming __v is always 0 for a question
-        };
+      const updatedQuestion = {
+        _id: id,
+        title: formData.title,
+        description: formData.description,
+        constraints: formData.constraints,
+        difficulty: formData.difficulty,
+        examples: [
+          {
+            in: formData.in,
+            out: formData.out,
+            explanation: formData.explanation
+          }
+        ],
+        tags: []
+      };
 
-        const _data = {
-          id: id || '',
-          question: updatedQuestion
-        };
-        store.dispatch(editQuestion(_data))
-        //navigate('/questions');
-      }
+      const _data = {
+        id: id || '',
+        question: updatedQuestion
+      };
+      store.dispatch(editQuestion(_data));
+      navigate('/questions');
+      window.location.reload();
+
     },
-    [store, question]
+    [formData]
   );
 
-  const handleChange = (e: { target: { name: any; value: any } }) => {
+  const handleChange = useCallback((e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    setFormData(prevData => {
+      const updatedData = {
+        ...prevData,
+        [name]: value
+      };
+      console.log("ok updated changes: ", updatedData); // Log the updated value
+      return updatedData;
+    });
+  }, []);
+  
 
   return (
     <div className="flex justify-center items-center h-screen">

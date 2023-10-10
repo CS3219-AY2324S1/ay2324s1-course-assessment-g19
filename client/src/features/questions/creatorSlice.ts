@@ -48,9 +48,7 @@ export const createQuestion = createAsyncThunk(
 export const editQuestion = createAsyncThunk(
   '/creatorSlice/editQuestion',
   async ({ id, question }: { id: string; question: Question }) => {
-    console.log(question);
     const response = await axios.put(`/question-api/questions/${id}`, question);
-    console.log("EDITED QN!!", response)
     return response.data;
   }
 );
