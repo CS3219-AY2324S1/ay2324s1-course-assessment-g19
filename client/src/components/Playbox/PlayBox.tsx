@@ -24,7 +24,7 @@ import ConfigSelect from './ConfigSelect';
 import PlayTab from './PlayTab';
 import QuestionSelect from './QuestionSelect';
 import {selectCurrentUser} from "../../features/user/authSlice";
-import {findMatch} from "../../features/collaboration/collaborationSlice"; // Import axios for making API requests
+import {findMatch, leaveQueue} from "../../features/collaboration/collaborationSlice"; // Import axios for making API requests
 import CountUpTimerPopup from "./CountUpTimer";
 
 
@@ -119,6 +119,9 @@ const PlayBox = () => {
 
   }, [selectedQuestion]);
 
+  const onLeave = async() => {
+    await leaveQueue(store.getState());
+  }
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;

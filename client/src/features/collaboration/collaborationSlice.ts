@@ -9,6 +9,30 @@ interface FindMatchProps {
     onPartnerNotFound: () => void; // Callback function when no partner is found
   }
 
+const consumeMessage = async (language:string, difficulty:string) => {
+    const queue_name = `${language}-${difficulty}`;
+    console.log("looking in queue: ", queue_name);
+    return await axios.get(`/user-api/collaboration/check-queue/${queue_name}`);
+}
+
+const joinQueue = async (user:string, difficulty:string, language:string) => {
+    const postData = {
+        user: user,
+        difficulty: difficulty,
+        language: language,
+    };
+
+    return await axios.post(
+        '/user-api/collaboration/join-queue',
+        postData,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+    );
+}
+
 export const findMatch = async (state: RootState,  callbacks: FindMatchProps) => {
     const language = state.play.language;
     const difficulty = state.play.difficulty;
@@ -16,11 +40,8 @@ export const findMatch = async (state: RootState,  callbacks: FindMatchProps) =>
 
     try {
         // Check if there are any messages in the queue
-        const queue_name = `${language}-${difficulty}`;
-        const response = await axios.get(`/user-api/collaboration/check-queue/${queue_name}`);
-
+        const response = await consumeMessage(language, difficulty);
         callbacks.onFindingPartner();
-        console.log("looking in queue: ", queue_name);
 
         if (response.data.message != "empty") {
             // If there's a message in the queue, consume it
@@ -54,24 +75,9 @@ export const findMatch = async (state: RootState,  callbacks: FindMatchProps) =>
 
         } else {
             // If the queue is empty, join the queue with your message
-            const postData = {
-                user: currentUser.name,
-                message: 'CONNECT ME',
-                difficulty: difficulty,
-                language: language,
-            };
-
-            const postResponse = await axios.post(
-                '/user-api/collaboration/join-queue',
-                postData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
+            const postResponse = await joinQueue(currentUser.name, difficulty, language);
             console.log('no partner found, queued:', postResponse.data.message);
+
             function delayAsync(ms: number) {
                 return new Promise(resolve => setTimeout(resolve, ms));
             }
@@ -92,5 +98,27 @@ export const findMatch = async (state: RootState,  callbacks: FindMatchProps) =>
         }
     } catch (error) {
         console.error('Error:', error);
+    }
+}
+
+export const leaveQueue = async (state:RootState) => {
+    const language = state.play.language;
+    const difficulty = state.play.difficulty;
+    const currentUser = state.authentication.currentUser;
+
+    const response = await consumeMessage(language, difficulty);
+
+    // someone has matched before you leave the queue
+    if (response.data.message == "empty") {
+        console.log("you are already matched");
+    }
+    // you have already been matched and another user has joined the queue
+    else if (response.data.message.user != currentUser.name) {
+        console.log("you are already matched, re adding wrongly removed user");
+        // add the wrongly removed user back to the queue
+        await joinQueue(response.data.message.user, difficulty, language);
+    }
+    else {
+        console.log("left queue");
     }
 }
