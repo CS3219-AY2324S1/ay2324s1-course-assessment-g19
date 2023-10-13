@@ -1,9 +1,15 @@
 import axios from "axios";
 import {RootState} from "../../store";
+// import { toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 
+interface FindMatchProps {
+    onPartnerFound: (partnerUser: string) => void; // Callback function when a partner is found
+    onFindingPartner: () => void; // Callback function when searching for a partner
+    onPartnerNotFound: () => void; // Callback function when no partner is found
+  }
 
-
-export const findMatch = async (state: RootState) => {
+export const findMatch = async (state: RootState,  callbacks: FindMatchProps) => {
     const language = state.play.language;
     const difficulty = state.play.difficulty;
     const currentUser = state.authentication.currentUser;
@@ -13,10 +19,12 @@ export const findMatch = async (state: RootState) => {
         const queue_name = `${language}-${difficulty}`;
         const response = await axios.get(`/user-api/collaboration/check-queue/${queue_name}`);
 
+        callbacks.onFindingPartner();
         console.log("looking in queue: ", queue_name);
 
         if (response.data.message != "empty") {
             // If there's a message in the queue, consume it
+        
             const partnerUser = response.data.message.user
             console.log('found a partner :', partnerUser);
 
@@ -35,6 +43,15 @@ export const findMatch = async (state: RootState) => {
                 }
             )
             console.log('notification sent to ', partnerUser)
+
+            // toast.success(`Partner found: ${response.data.message.user}`, {
+            //     position: "top-right", // Adjust the position as needed
+            //     autoClose: 5000, // Popup will close automatically after 5 seconds (adjust as needed)
+            //     hideProgressBar: false, // Show a progress bar
+            //     closeOnClick: true, // Popup will close if user clicks on it
+            // });
+            callbacks.onPartnerFound(partnerUser);
+
         } else {
             // If the queue is empty, join the queue with your message
             const postData = {
@@ -70,6 +87,8 @@ export const findMatch = async (state: RootState) => {
                 }
                 await delayAsync(5000);
             }
+            callbacks.onPartnerNotFound();
+
         }
     } catch (error) {
         console.error('Error:', error);

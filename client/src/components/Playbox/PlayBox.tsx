@@ -7,7 +7,7 @@ import {
   UserPlusIcon,
   VariableIcon
 } from '@heroicons/react/24/outline';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectDifficulty,
@@ -25,6 +25,7 @@ import PlayTab from './PlayTab';
 import QuestionSelect from './QuestionSelect';
 import {selectCurrentUser} from "../../features/user/authSlice";
 import {findMatch} from "../../features/collaboration/collaborationSlice"; // Import axios for making API requests
+import CountUpTimerPopup from "./CountUpTimer";
 
 
 
@@ -36,6 +37,42 @@ const PlayBox = () => {
   const difficulty = useSelector(selectDifficulty);
   const [tab, setTab] = useState('GAME');
   const dispatch = useDispatch(); // Get the dispatch function from Redux
+  const [partnerFound, setPartnerFound] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [showFailed, setShowFailed] = useState(false);
+  const [partnerUsername, setPartnerUsername] = useState(""); // Store partner's username
+  const [timer, setTimer] = useState(0); // Store the timer
+
+
+  const handlePartnerFound = (partnerUser: string) => {
+    setPartnerFound(true);
+    setPartnerUsername(partnerUser);
+    console.log("handlePartnerFound");
+  };
+  
+
+  const handlePartnerNotFound = () => {
+    setShowPopup(false);
+    setShowFailed(true);
+    console.log("handlePartnerNotFound");
+    // Trigger actions when no partner is found
+    // For example, show a message or take other actions
+  };
+
+  const handleFindingPartner = () => {
+    setShowFailed(false);
+    setShowPopup(true);
+    console.log("handleFindingPartner");
+    // Trigger actions when no partner is found
+    // For example, show a message or take other actions
+  };
+
+  const findMatchCallbackProps = {
+    onPartnerFound: handlePartnerFound,
+    onPartnerNotFound: handlePartnerNotFound,
+    onFindingPartner: handleFindingPartner,
+  };
+
   const tabs = [
     {
       label: 'GAME',
@@ -69,10 +106,49 @@ const PlayBox = () => {
   const selectedQuestion = useSelector(selectQuestionByDifficulty(difficulty|| 'EASY'));
 
   const onFindMatch = useCallback(async() => {
+    setTimer(0);
+    setShowFailed(false);
     store.dispatch(setCurrentQuestion(selectedQuestion));
-    store.dispatch(setIsActive(true));
-    await findMatch(store.getState());
+    //store.dispatch(setIsActive(true));
+
+    try {
+      await findMatch(store.getState(), findMatchCallbackProps);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
   }, [selectedQuestion]);
+
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+  
+    if (showPopup && !partnerUsername) {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer + 1); // Use functional update
+      }, 1000);
+    }
+  
+    if (timer >= 30) {
+      // After 30 seconds with no partner, close the popup
+      setPartnerUsername(""); // Clear partner's username
+      console.log("timer >=30");
+      if (interval) {
+        clearInterval(interval);
+      }
+    }
+  
+    return () => {
+      // Clear the interval when the component unmounts
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [showPopup, partnerUsername, timer]);
+  
+  
+  
+
 
   let render;
 
@@ -98,6 +174,20 @@ const PlayBox = () => {
           className="font-semibold text-gray-800 w-64 py-4 bg-gray-100 rounded-lg transition hover:scale-95 hover:shadow-inner"
         >
           Find a Match
+
+          {showPopup && (
+            <CountUpTimerPopup
+              timer={timer}
+              partnerUsername={partnerUsername}
+            />
+          )}
+          {showFailed && (
+              <div>
+              <h2>Failed to find a match</h2>
+              <p style={{ marginTop: '10px' }}>Click to try again</p>
+            </div>
+          )}
+
         </button>
         <QuestionSelect />
         <a className="flex flex-grow" />
@@ -132,6 +222,7 @@ const PlayBox = () => {
   }
 
   return (
+    
     <div className="flex flex-col p-8">
       <div className="flex flex-row justify-between bg-gray-700 w-full text-gray-100 text-sm">
         {tabs.map((item, index) => (

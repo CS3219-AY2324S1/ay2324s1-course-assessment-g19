@@ -46,16 +46,26 @@ async def send_message(request_data: CollaborationMessage):
 @router.get("/check-queue/{queue_name}")
 async def receive_message(queue_name: str):
 
-    read_channel.queue_declare(queue=queue_name, arguments={"x-message-ttl": 30000})
+    # read_channel.queue_declare(queue=queue_name, arguments={"x-message-ttl": 30000})
 
-    method_frame, header_frame, body = read_channel.basic_get(queue=queue_name, auto_ack=True)
+    # method_frame, header_frame, body = read_channel.basic_get(queue=queue_name, auto_ack=True)
 
-    if method_frame:
-        message = CollaborationMessage.model_validate_json(body.decode("utf-8"))
-        return {"message": message}
+    # if method_frame:
+    #     message = CollaborationMessage.model_validate_json(body.decode("utf-8"))
+    #     return {"message": message}
+    # else:
+    #     return {"message": "empty"}
+
+    if read_channel.is_open:
+            read_channel.queue_declare(queue=queue_name, arguments={"x-message-ttl": 30000})
+            method_frame, header_frame, body = read_channel.basic_get(queue=queue_name, auto_ack=True)
+            if method_frame:
+                message = CollaborationMessage.model_validate_json(body.decode("utf-8"))
+                return {"message": message}
+            else:
+                return {"message": "empty"}
     else:
-        return {"message": "empty"}
-
+        return {"message": "Channel is closed"}
 
 @router.post("/notify-partner")
 async def send_notification(request_data: ConnectionMessage):
