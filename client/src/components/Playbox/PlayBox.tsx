@@ -26,6 +26,9 @@ import QuestionSelect from './QuestionSelect';
 import {selectCurrentUser} from "../../features/user/authSlice";
 import {findMatch, leaveQueue} from "../../features/collaboration/collaborationSlice"; // Import axios for making API requests
 import CountUpTimerPopup from "./CountUpTimer";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { on } from 'events';
 
 
 
@@ -42,18 +45,28 @@ const PlayBox = () => {
   const [showFailed, setShowFailed] = useState(false);
   const [partnerUsername, setPartnerUsername] = useState(""); // Store partner's username
   const [timer, setTimer] = useState(0); // Store the timer
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  // const [isDifficultySelected, setIsDifficultySelected] = useState(false);
+  // const [isLanguageSelected, setIsLanguageSelected] = useState(false);
 
+  const isLanguageSelected = !!language; // Check if a language is selected
+  const isDifficultySelected = !!difficulty; // Check if a difficulty is selected
+  const isUserLoggedIn = !!store.getState().authentication.currentUser;;
 
   const handlePartnerFound = (partnerUser: string) => {
     setPartnerFound(true);
     setPartnerUsername(partnerUser);
     console.log("handlePartnerFound");
+    setTimeout(() => {
+      store.dispatch(setIsActive(true));
+    }, 2000);
   };
   
 
   const handlePartnerNotFound = () => {
     setShowPopup(false);
     setShowFailed(true);
+    setIsButtonDisabled(false); // Enable the button
     console.log("handlePartnerNotFound");
     // Trigger actions when no partner is found
     // For example, show a message or take other actions
@@ -62,6 +75,7 @@ const PlayBox = () => {
   const handleFindingPartner = () => {
     setShowFailed(false);
     setShowPopup(true);
+    setIsButtonDisabled(true); // Disable the button
     console.log("handleFindingPartner");
     // Trigger actions when no partner is found
     // For example, show a message or take other actions
@@ -91,6 +105,7 @@ const PlayBox = () => {
   const onSetLanaguage = useCallback(
     (l: string) => {
       store.dispatch(setLanguage(l));
+      //setIsLanguageSelected(true);
     },
     [store]
   );
@@ -98,6 +113,7 @@ const PlayBox = () => {
   const onSetDifficulty = useCallback(
     (d: QuestionDifficulty) => {
       store.dispatch(setDifficulty(d));
+      //setIsDifficultySelected(true);
     },
     [store]
   );
@@ -105,22 +121,32 @@ const PlayBox = () => {
   // TODO: Get question from question server
   const selectedQuestion = useSelector(selectQuestionByDifficulty(difficulty|| 'EASY'));
 
-  const onFindMatch = useCallback(async() => {
+  const onFindMatch = useCallback(async () => {
     setTimer(0);
     setShowFailed(false);
     store.dispatch(setCurrentQuestion(selectedQuestion));
-    //store.dispatch(setIsActive(true));
 
-    try {
-      await findMatch(store.getState(), findMatchCallbackProps);
-    } catch (error) {
-      console.error("Error:", error);
+    if (isUserLoggedIn) {
+
+      try {
+        await findMatch(store.getState(), findMatchCallbackProps);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    } else {
+      console.log("Please log in to find a match.");
+      toast.error("Please log in to find a match.", {
+        autoClose: 3000, // Adjust this as needed
+        position: "top-center", // Adjust the position as needed
+      });
     }
-
-  }, [selectedQuestion]);
+  }, [selectedQuestion, isUserLoggedIn]);
 
   const onLeave = async() => {
     await leaveQueue(store.getState());
+    setShowPopup(false);
+    setShowFailed(true);
+    setIsButtonDisabled(false); 
   }
 
   useEffect(() => {
@@ -172,9 +198,21 @@ const PlayBox = () => {
           options={difficulties}
           icon={<VariableIcon className="h-4 w-4" />}
         />
+        {(!isLanguageSelected || !isDifficultySelected) && !isButtonDisabled && (
+          <div className="text-red-500 text-sm mt-2">
+            Please select a language and difficulty before finding a match.
+          </div>
+        )}
         <button
-          onClick={onFindMatch}
-          className="font-semibold text-gray-800 w-64 py-4 bg-gray-100 rounded-lg transition hover:scale-95 hover:shadow-inner"
+          onClick={() => {
+            onFindMatch();
+            }}
+            disabled={isButtonDisabled || !isLanguageSelected || !isDifficultySelected}
+            className={`font-semibold w-64 py-4 rounded-lg transition hover:scale-95 hover:shadow-inner ${
+            isButtonDisabled
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-800'
+          }`}
         >
           Find a Match
 
@@ -192,6 +230,17 @@ const PlayBox = () => {
           )}
 
         </button>
+
+        {showPopup && !partnerUsername && (
+          <button
+            onClick={() => {
+              onLeave();
+            }}
+            className="font-semibold w-64 py-4 bg-red-500 text-white rounded-lg transition hover:scale-95 hover:shadow-inner"
+          >
+            Leave Queue
+          </button>
+        )}
         <QuestionSelect />
         <a className="flex flex-grow" />
         <button
@@ -244,5 +293,6 @@ const PlayBox = () => {
     </div>
   );
 };
+
 
 export default PlayBox;

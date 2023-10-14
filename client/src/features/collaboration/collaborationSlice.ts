@@ -1,7 +1,6 @@
 import axios from "axios";
 import {RootState} from "../../store";
-// import { toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
+
 
 interface FindMatchProps {
     onPartnerFound: (partnerUser: string) => void; // Callback function when a partner is found
@@ -65,12 +64,6 @@ export const findMatch = async (state: RootState,  callbacks: FindMatchProps) =>
             )
             console.log('notification sent to ', partnerUser)
 
-            // toast.success(`Partner found: ${response.data.message.user}`, {
-            //     position: "top-right", // Adjust the position as needed
-            //     autoClose: 5000, // Popup will close automatically after 5 seconds (adjust as needed)
-            //     hideProgressBar: false, // Show a progress bar
-            //     closeOnClick: true, // Popup will close if user clicks on it
-            // });
             callbacks.onPartnerFound(partnerUser);
 
         } else {
@@ -87,13 +80,15 @@ export const findMatch = async (state: RootState,  callbacks: FindMatchProps) =>
                 const response =  await axios.get(`/user-api/collaboration/wait-partner/${currentUser.name}`);
                 if (response.data.message != "empty") {
                     console.log('partner found! your partner is: ', response.data.message.user)
+                    callbacks.onPartnerFound(response.data.message.user);
                     break;
                 } else if (i == 5) {
                     console.log('timeout 30 seconds no partner found')
+                    callbacks.onPartnerNotFound();
                 }
                 await delayAsync(5000);
             }
-            callbacks.onPartnerNotFound();
+            
 
         }
     } catch (error) {

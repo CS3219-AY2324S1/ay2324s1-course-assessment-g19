@@ -11,13 +11,16 @@ const CountUpTimerPopup: React.FC<CountUpTimerPopupProps> = ({
 }) => {
   return (
     <div className="count-up-timer-popup">
-      <h2>Matching in progress...</h2>
-      <p>Timer: {timer} seconds</p>
-
-      {partnerUsername && (
-        <div>
+      {partnerUsername ? (
+        <>
+          <h2>Matched!</h2>
           <p>Partner: {partnerUsername}</p>
-        </div>
+        </>
+      ) : (
+        <>
+          <h2>Matching in progress...</h2>
+          <p>Timer: {timer} seconds</p>
+        </>
       )}
     </div>
   );
