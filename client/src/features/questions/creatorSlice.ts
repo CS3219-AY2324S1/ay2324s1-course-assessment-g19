@@ -57,6 +57,9 @@ export const deleteQuestion = createAsyncThunk(
   '/creatorSlice/deleteQuestion',
   async ({ id }: { id: string }) => {
     const response = await axios.delete(`/question-api/questions/${id}`);
+    if (response.data == 200) {
+      window.location.reload();
+    }
     return response.data;
   }
 );

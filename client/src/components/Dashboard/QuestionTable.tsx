@@ -8,12 +8,12 @@ import { toCamelCase } from '../../utils/string';
 import { selectCurrentUser } from '../../features/user/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { deleteQuestion } from '../../features/questions/creatorSlice';
-import { toast } from 'react-toastify';
 
 const QuestionTable = () => {
   const currentUser = useSelector(selectCurrentUser);
   const questions = useSelector(selectQuestions);
   const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
+  const [isToastVisible, setToastVisible] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = useCallback(
@@ -27,47 +27,52 @@ const QuestionTable = () => {
     const to_url = `/questions/edit/${_id}`;
     navigate(to_url);
   };
-  
-  const handleDelete = (_id: any) => {
-    console.log("trying to delete is popup appearing")
-    showToast(_id);
+
+  const handleDelete = () => {
+    console.log('trying to delete is popup appearing');
+    showToast();
   };
 
+  const showToast = () => {
+    setToastVisible(true);
+  };
 
-  const CustomToast = ({ onYesClick, onCloseClick }) => {
-    return (
+  const hideToast = () => {
+    setToastVisible(false);
+  };
+
+  const CustomToast = (_id: any) => {
+    return isToastVisible ? (
       <div className="custom-toast">
-        <h2 className="font-black mb-2">Are you sure you want to delete this question?</h2>
-        <div className='absolute bottom-0 right-0 p-2'>
-        <button onClick={onYesClick} className="bg-blue-500 text-white px-2 py-1 rounded mr-2">
-          Yes
-        </button>
-        <button onClick={onCloseClick} className="bg-gray-500 text-white px-2 py-1 rounded">
-          Close
-        </button>
+        <h2 className="font-black mb-2">
+          Are you sure you want to delete this question?
+        </h2>
+        <div className="absolute bottom-0 right-0 p-2">
+          <button
+            onClick={() => onYesClick(_id)}
+            className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+          >
+            Yes
+          </button>
+          <button
+            onClick={onCloseClick}
+            className="bg-gray-500 text-white px-2 py-1 rounded"
+          >
+            Close
+          </button>
         </div>
       </div>
-    );
+    ) : null;
   };
 
-  const showToast = (_id: any) => {
-    toast(<CustomToast
-      onYesClick={() => {
-        console.log("Yes button clicked");
-        // Close the toast
-        toast.dismiss();
-      }}
-      onCloseClick={() => {
-        console.log("Close button clicked");
-        toast.dismiss();
-      }}
-    />, {
-      autoClose: false,
-      closeButton: false, // Disable the default close button
-    });
+  const onYesClick = (_id: any) => {
+    store.dispatch(deleteQuestion({id : _id._id}));
+    hideToast();
   };
 
-  
+  const onCloseClick = () => {
+    hideToast();
+  };
 
   return (
     <div className="flex flex-col flex-grow gap-4">
@@ -87,7 +92,9 @@ const QuestionTable = () => {
       </div>
 
       {!currentUser ? (
-        <div className='flex justify-center items-center'>Please log in to view questions</div>
+        <div className="flex justify-center items-center">
+          Please log in to view questions
+        </div>
       ) : (
         <div className="border rounded-2xl">
           {questions.map((question: Question, index: number) => (
@@ -111,12 +118,22 @@ const QuestionTable = () => {
 
               {isAdmin && (
                 <div>
-                  <button onClick={() => handleEdit(question._id)} className="p-4 w-10 font-bold">edit</button>
-                  <button onClick={() => handleDelete(question._id)} className="p-4 mx-2 w-10 font-bold">del</button>
+                  <CustomToast _id={question._id} />
+                  <button
+                    onClick={() => handleEdit(question._id)}
+                    className="p-4 w-10 font-bold"
+                  >
+                    edit
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="p-4 mx-2 w-10 font-bold"
+                  >
+                    del
+                  </button>
                 </div>
               )}
-
-            </div> 
+            </div>
           ))}
         </div>
       )}
