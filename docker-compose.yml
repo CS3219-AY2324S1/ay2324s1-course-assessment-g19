@@ -82,6 +82,8 @@ services:
     depends_on:
       - peerprep-client # Wait until Client app container is up
       - peerprep-question-api # Wait until Server app container is up
+      - peerprep-user-api
+      - peerprep-rabbitmq
 
   peerprep-rabbitmq:
     hostname: 'gareth-rabbit'
