@@ -18,13 +18,14 @@ const Question = () => {
           difficulty={question?.difficulty}
         />
         <QuestionTags tags={question?.tags} />
-        <hr className="w-5/6 my-2" />
+        <hr className="w-full my-2" />
         <QuestionDescription description={question?.description} />
-        <hr className="w-5/6 my-2" />
+        <hr className="w-full my-2" />
         <QuestionExamples examples={question?.examples} />
-        <hr className="w-5/6 my-2" />
+        <hr className="w-full my-2" />
         <QuestionConstraints constraints={question?.constraints} />
-        <hr className="w-5/6 my-2" />
+        <hr className="w-full my-2" />
+        <a className="flex flex-grow" />
         <QuestionFooter />
       </div>
     </div>

@@ -10,7 +10,7 @@ const QuestionDescription: React.FC<QuestionDescriptionProps> = ({
 }) => {
   return (
     <>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col w-full gap-2">
         <SectionHeader title="Description" />
 
         <p className="text-sm text-gray-100">{description}</p>
