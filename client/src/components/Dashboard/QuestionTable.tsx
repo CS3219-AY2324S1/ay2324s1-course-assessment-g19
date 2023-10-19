@@ -83,8 +83,8 @@ const QuestionTable = () => {
   const viewQuestion = () => {
     return toView && viewPopup ? (
       <div className="custom-popup">
-        <h2 className="text-2xl font-bold">{viewPopup.title}</h2>
-        <div>
+        <h2 className="text-2xl font-bold overflow-hidden whitespace-no-wrap">{viewPopup.title}</h2>
+        <div className='py-2'>
           <h3 className="text-lg font-semibold">Difficulty:</h3>
           <p className="text-gray-700">{viewPopup.difficulty}</p>
         </div>
@@ -97,6 +97,14 @@ const QuestionTable = () => {
         <h3 className="text-lg font-semibold">Examples:</h3>
         <p className="text-gray-700">{viewPopup.examples}</p>
       </div> */}
+      <div className='py-2'>
+          <h3 className="text-lg font-semibold">In:</h3>
+          <p className="text-gray-700 pb-2">{viewPopup.examples[0].in}</p>
+          <h3 className="text-lg font-semibold">Out:</h3>
+          <p className="text-gray-700 pb-2">{viewPopup.examples[0].out}</p>
+          <h3 className="text-lg font-semibold">Explanation:</h3>
+          <p className="text-gray-700">{viewPopup.examples[0].explanation}</p>
+      </div>
         <div>
           <h3 className="text-lg font-semibold">Constraints:</h3>
           <ul className="list-disc list-inside text-gray-700">
@@ -135,7 +143,7 @@ const QuestionTable = () => {
     <div className="flex flex-col flex-grow gap-4">
       <div className="flex flex-row text-neutral-500 bg-gray-200 rounded-2xl px-4 shadow-lg">
         <div className="p-4 w-28">Status</div>
-        <div className="flex flex-grow p-4">Title</div>
+        <div className="w-80 p-4 overflow-hidden whitespace-nowrap">Title</div>
         <div className="p-4 w-28">Solution</div>
         <div className="p-4 w-32">Acceptance</div>
         <div className="p-4 w-28">Difficulty</div>
@@ -166,7 +174,7 @@ const QuestionTable = () => {
             ${index === questions.length - 1 && 'rounded-b-2xl'}`}
             >
               <div className="p-4 w-28">TODO</div>
-              <div className="flex flex-grow p-4 whitespace-nowrap">
+              <div className="w-80 p-4 overflow-hidden whitespace-nowrap">
                 {index + 1}. {question.title}
               </div>
               <div className="p-4 w-28">TODO</div>
