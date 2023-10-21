@@ -14,16 +14,17 @@ const QuestionTable = () => {
   const questions = useSelector(selectQuestions);
   const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
   const [isToastVisible, setToastVisible] = useState(false);
+  const [toDel, setToDel] = useState("");
   const [viewPopup, setViewPopup] = useState<Question | null>(null);
   const [toView, setToView] = useState(false);
   const navigate = useNavigate();
 
-  const handleClick = useCallback(
-    (question: Question) => {
-      store.dispatch(setCurrentQuestion(question));
-    },
-    [store]
-  );
+  // const handleClick = useCallback(
+  //   (question: Question) => {
+  //     store.dispatch(setCurrentQuestion(question));
+  //   },
+  //   [store]
+  // );
 
   const handleEdit = (_id: any) => {
     const to_url = `/questions/edit/${_id}`;
@@ -35,11 +36,12 @@ const QuestionTable = () => {
     setToView(true);
   };
 
-  const handleDelete = () => {
-    showToast();
+  const handleDelete = (_id: any) => {
+    showToast(_id);
   };
 
-  const showToast = () => {
+  const showToast = (_id: any) => {
+    setToDel(_id);
     setToastVisible(true);
   };
 
@@ -47,7 +49,7 @@ const QuestionTable = () => {
     setToastVisible(false);
   };
 
-  const CustomToast = (_id: any) => {
+  const CustomToast = () => {
     return isToastVisible ? (
       <div className="custom-toast">
         <h2 className="font-black mb-2">
@@ -55,7 +57,7 @@ const QuestionTable = () => {
         </h2>
         <div className="absolute bottom-0 right-0 p-2">
           <button
-            onClick={() => onYesClick(_id)}
+            onClick={() => onYesClick(toDel)}
             className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
           >
             Yes
@@ -72,7 +74,7 @@ const QuestionTable = () => {
   };
 
   const onYesClick = (_id: any) => {
-    store.dispatch(deleteQuestion({ id: _id._id }));
+    store.dispatch(deleteQuestion({ id: _id }));
     hideToast();
   };
 
@@ -166,7 +168,7 @@ const QuestionTable = () => {
           {questions.map((question: Question, index: number) => (
             <div
               key={question.title}
-              onClick={() => handleClick(question)}
+              //onClick={() => handleClick(question)}
               className={`flex flex-row p-2 transition cursor-pointer hover:shadow-inner ${
                 index !== 0 && 'border-t'
               }
@@ -190,10 +192,10 @@ const QuestionTable = () => {
               </div>
 
               {viewQuestion()}
+              {CustomToast()}
 
               {isAdmin && (
-                <div>
-                  <CustomToast _id={question._id} />
+                <div key={question.title} >
                   <button
                     onClick={() => handleEdit(question._id)}
                     className="p-4 w-10 font-bold"
@@ -201,7 +203,7 @@ const QuestionTable = () => {
                     edit
                   </button>
                   <button
-                    onClick={handleDelete}
+                    onClick={() => handleDelete(question._id)}
                     className="p-4 mx-2 w-10 font-bold"
                   >
                     del

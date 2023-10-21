@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-dark.png';
 import { registerUser } from '../../features/user/authSlice';
 import { store } from '../../store';
-// import dotenv from 'dotenv';
 
 const Register = () => {
 
@@ -19,8 +18,7 @@ const Register = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    //const verify_token = process.env.ADMIN_TOKEN;
-    if(role == "Admin" && adminToken != "032190") { // to shift to .env
+    if(role == "Admin" && adminToken != "032190") { 
       setTokenError(true);
     } else {
       const credentials = { name, email, password, role };
