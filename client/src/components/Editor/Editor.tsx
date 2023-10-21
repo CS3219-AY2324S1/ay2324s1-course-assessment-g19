@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import PlayerCard from './PlayerCard';
-import io from 'socket.io-client';
-
-const socket = io({ path: '/collaboration-api/' });
+import { socket } from '../../socket';
+import { store } from '../../store';
+import { selectGameData, setGameData } from '../../features/play/gameSlice';
+import { useSelector } from 'react-redux';
 
 const Editor = () => {
-  const [data, setData] = useState('No data yet');
+  const data = useSelector(selectGameData);
   const [message, setMessage] = useState('');
 
   const onClick = () => {
@@ -14,11 +15,9 @@ const Editor = () => {
 
   useEffect(() => {
     socket.on('message_recv', (msg: string) => {
-      setData(msg);
+      store.dispatch(setGameData(msg));
     });
   }, [socket]);
-
-  console.log(data);
 
   return (
     <div className="flex flex-col py-8 pl-8 w-full h-full">
