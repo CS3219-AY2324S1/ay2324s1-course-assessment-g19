@@ -23,8 +23,14 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`User ${socket.id} connected`);
 
-  socket.on('message_send', (message) => {
-    socket.broadcast.emit('message_recv', message);
+  socket.on('join_game', (gameId) => {
+    console.log(`User ${socket.id} joined game ${gameId}`);
+    socket.join(gameId);
+    socket.emit('confirm_game', gameId);
+  });
+
+  socket.on('message_send', (data) => {
+    socket.to(data.gameId).emit('message_recv', data.message);
   });
 
   socket.on('disconnect', () => {

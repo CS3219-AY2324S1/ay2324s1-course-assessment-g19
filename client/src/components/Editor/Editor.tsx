@@ -2,18 +2,30 @@ import { useEffect, useState } from 'react';
 import PlayerCard from './PlayerCard';
 import { socket } from '../../socket';
 import { store } from '../../store';
-import { selectGameData, setGameData } from '../../features/play/gameSlice';
+import {
+  selectGameData,
+  selectGameId,
+  setGameData,
+  setGameId
+} from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
 
 const Editor = () => {
+  const gameId = useSelector(selectGameId);
   const data = useSelector(selectGameData);
+
   const [message, setMessage] = useState('');
 
   const onClick = () => {
-    socket.emit('message_send', message);
+    socket.emit('message_send', { message, gameId });
   };
 
   useEffect(() => {
+    socket.on('confirm_game', (id: string) => {
+      console.log('CONFIRMEDGAME');
+      store.dispatch(setGameId(id));
+    });
+
     socket.on('message_recv', (msg: string) => {
       store.dispatch(setGameData(msg));
     });
@@ -24,20 +36,24 @@ const Editor = () => {
       <PlayerCard player={undefined} />
 
       <div className="border-4 border-dashed border-gray-800 flex flex-col flex-grow justify-center items-center rounded-lg my-4 gap-4">
-        <a>{data}</a>
-        <div className="flex flex-row gap-4">
-          <input
-            placeholder="Message"
-            onChange={(e) => setMessage(e.target.value)}
-            className="px-2"
-          />
-          <button
-            onClick={onClick}
-            className="py-2 px-4 rounded-md bg-gray-800 text-white"
-          >
-            Send
-          </button>
-        </div>
+        {gameId && (
+          <>
+            <a>{data}</a>
+            <div className="flex flex-row gap-4">
+              <input
+                placeholder="Message"
+                onChange={(e) => setMessage(e.target.value)}
+                className="px-2"
+              />
+              <button
+                onClick={onClick}
+                className="py-2 px-4 rounded-md bg-gray-800 text-white"
+              >
+                Send
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <PlayerCard self />

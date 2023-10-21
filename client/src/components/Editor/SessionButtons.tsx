@@ -2,6 +2,7 @@ import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
 import { useCallback } from 'react';
 import { setIsActive } from '../../features/play/playSlice';
 import { store } from '../../store';
+import { resetGame } from '../../features/play/gameSlice';
 
 const SessionButtons = () => {
   const onNext = useCallback(() => {
@@ -10,7 +11,8 @@ const SessionButtons = () => {
 
   const onLeave = useCallback(() => {
     store.dispatch(setIsActive(false));
-  }, []);
+    store.dispatch(resetGame());
+  }, [store]);
 
   return (
     <div className="flex flex-row gap-4">
