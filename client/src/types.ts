@@ -1,4 +1,5 @@
 export type User = {
+  role: any;
   id: string;
   name: string;
   email: string;
@@ -6,6 +7,7 @@ export type User = {
 };
 
 export type Question = {
+  _id: any;
   id?: string;
   title: string;
   difficulty: QuestionDifficulty;
