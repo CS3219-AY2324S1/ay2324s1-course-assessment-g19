@@ -17,20 +17,22 @@ import {
   setIsActive,
   setLanguage
 } from '../../features/play/playSlice';
-import { selectQuestionByDifficulty, selectQuestionByTitle } from '../../features/questions/questionsSlice';
+import {
+  selectQuestionByDifficulty,
+  selectQuestionByTitle
+} from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
 import PlayTab from './PlayTab';
 import QuestionSelect from './QuestionSelect';
-import {selectCurrentUser} from "../../features/user/authSlice";
-import {findMatch, leaveQueue} from "../../features/collaboration/collaborationSlice"; // Import axios for making API requests
-import CountUpTimerPopup from "./CountUpTimer";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { on } from 'events';
-
-
+import {
+  findMatch,
+  leaveQueue
+} from '../../features/collaboration/collaborationSlice'; // Import axios for making API requests
+import CountUpTimerPopup from './CountUpTimer';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
@@ -39,11 +41,10 @@ const PlayBox = () => {
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
   const [tab, setTab] = useState('GAME');
-  const dispatch = useDispatch(); // Get the dispatch function from Redux
   const [partnerFound, setPartnerFound] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
-  const [partnerUsername, setPartnerUsername] = useState(""); // Store partner's username
+  const [partnerUsername, setPartnerUsername] = useState(''); // Store partner's username
   const [timer, setTimer] = useState(0); // Store the timer
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   // const [isDifficultySelected, setIsDifficultySelected] = useState(false);
@@ -51,23 +52,22 @@ const PlayBox = () => {
 
   const isLanguageSelected = !!language; // Check if a language is selected
   const isDifficultySelected = !!difficulty; // Check if a difficulty is selected
-  const isUserLoggedIn = !!store.getState().authentication.currentUser;;
+  const isUserLoggedIn = !!store.getState().authentication.currentUser;
 
   const handlePartnerFound = (partnerUser: string) => {
     setPartnerFound(true);
     setPartnerUsername(partnerUser);
-    console.log("handlePartnerFound");
+    console.log('handlePartnerFound');
     setTimeout(() => {
       store.dispatch(setIsActive(true));
     }, 2000);
   };
-  
 
   const handlePartnerNotFound = () => {
     setShowPopup(false);
     setShowFailed(true);
     setIsButtonDisabled(false); // Enable the button
-    console.log("handlePartnerNotFound");
+    console.log('handlePartnerNotFound');
     // Trigger actions when no partner is found
     // For example, show a message or take other actions
   };
@@ -76,7 +76,7 @@ const PlayBox = () => {
     setShowFailed(false);
     setShowPopup(true);
     setIsButtonDisabled(true); // Disable the button
-    console.log("handleFindingPartner");
+    console.log('handleFindingPartner');
     // Trigger actions when no partner is found
     // For example, show a message or take other actions
   };
@@ -84,7 +84,7 @@ const PlayBox = () => {
   const findMatchCallbackProps = {
     onPartnerFound: handlePartnerFound,
     onPartnerNotFound: handlePartnerNotFound,
-    onFindingPartner: handleFindingPartner,
+    onFindingPartner: handleFindingPartner
   };
 
   const tabs = [
@@ -119,7 +119,9 @@ const PlayBox = () => {
   );
 
   // TODO: Get question from question server
-  const selectedQuestion = useSelector(selectQuestionByDifficulty(difficulty|| 'EASY'));
+  const selectedQuestion = useSelector(
+    selectQuestionByDifficulty(difficulty || 'EASY')
+  );
 
   const onFindMatch = useCallback(async () => {
     setTimer(0);
@@ -127,46 +129,45 @@ const PlayBox = () => {
     store.dispatch(setCurrentQuestion(selectedQuestion));
 
     if (isUserLoggedIn) {
-
       try {
         await findMatch(store.getState(), findMatchCallbackProps);
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
-      console.log("Please log in to find a match.");
-      toast.error("Please log in to find a match.", {
+      console.log('Please log in to find a match.');
+      toast.error('Please log in to find a match.', {
         autoClose: 3000, // Adjust this as needed
-        position: "top-center", // Adjust the position as needed
+        position: 'top-center' // Adjust the position as needed
       });
     }
   }, [selectedQuestion, isUserLoggedIn]);
 
-  const onLeave = async() => {
+  const onLeave = async () => {
     await leaveQueue(store.getState());
     setShowPopup(false);
     setShowFailed(true);
-    setIsButtonDisabled(false); 
-  }
+    setIsButtonDisabled(false);
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-  
+
     if (showPopup && !partnerUsername) {
       interval = setInterval(() => {
         setTimer((prevTimer) => prevTimer + 1); // Use functional update
       }, 1000);
     }
-  
+
     if (timer >= 30) {
       // After 30 seconds with no partner, close the popup
-      setPartnerUsername(""); // Clear partner's username
-      console.log("timer >=30");
+      setPartnerUsername(''); // Clear partner's username
+      console.log('timer >=30');
       if (interval) {
         clearInterval(interval);
       }
     }
-  
+
     return () => {
       // Clear the interval when the component unmounts
       if (interval) {
@@ -174,10 +175,6 @@ const PlayBox = () => {
       }
     };
   }, [showPopup, partnerUsername, timer]);
-  
-  
-  
-
 
   let render;
 
@@ -198,24 +195,26 @@ const PlayBox = () => {
           options={difficulties}
           icon={<VariableIcon className="h-4 w-4" />}
         />
-        {(!isLanguageSelected || !isDifficultySelected) && !isButtonDisabled && (
-          <div className="text-red-500 text-sm mt-2">
-            Please select a language and difficulty before finding a match.
-          </div>
-        )}
+        {(!isLanguageSelected || !isDifficultySelected) &&
+          !isButtonDisabled && (
+            <div className="text-red-500 text-sm mt-2">
+              Please select a language and difficulty before finding a match.
+            </div>
+          )}
         <button
           onClick={() => {
             onFindMatch();
-            }}
-            disabled={isButtonDisabled || !isLanguageSelected || !isDifficultySelected}
-            className={`font-semibold w-64 py-4 rounded-lg transition hover:scale-95 hover:shadow-inner ${
+          }}
+          disabled={
+            isButtonDisabled || !isLanguageSelected || !isDifficultySelected
+          }
+          className={`font-semibold w-64 py-4 rounded-lg transition hover:scale-95 hover:shadow-inner ${
             isButtonDisabled
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-gray-100 text-gray-800'
           }`}
         >
           Find a Match
-
           {showPopup && (
             <CountUpTimerPopup
               timer={timer}
@@ -223,12 +222,11 @@ const PlayBox = () => {
             />
           )}
           {showFailed && (
-              <div>
+            <div>
               <h2>Failed to find a match</h2>
               <p style={{ marginTop: '10px' }}>Click to try again</p>
             </div>
           )}
-
         </button>
 
         {showPopup && !partnerUsername && (
@@ -274,7 +272,6 @@ const PlayBox = () => {
   }
 
   return (
-    
     <div className="flex flex-col p-8">
       <div className="flex flex-row justify-between bg-gray-700 w-full text-gray-100 text-sm">
         {tabs.map((item, index) => (
@@ -293,6 +290,5 @@ const PlayBox = () => {
     </div>
   );
 };
-
 
 export default PlayBox;
