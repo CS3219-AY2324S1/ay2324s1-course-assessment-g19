@@ -44,6 +44,25 @@ export const createQuestion = createAsyncThunk(
   }
 );
 
+export const editQuestion = createAsyncThunk(
+  '/creatorSlice/editQuestion',
+  async ({ id, question }: { id: string; question: Question }) => {
+    const response = await axios.put(`/question-api/questions/${id}`, question);
+    return response.data;
+  }
+);
+
+export const deleteQuestion = createAsyncThunk(
+  '/creatorSlice/deleteQuestion',
+  async ({ id }: { id: string }) => {
+    const response = await axios.delete(`/question-api/questions/${id}`);
+    if (response.data.message == "Question deleted") {
+      window.location.reload();
+    }
+    return response.data;
+  }
+);
+
 export const creatorSlice = createSlice({
   name: 'creator',
   initialState,

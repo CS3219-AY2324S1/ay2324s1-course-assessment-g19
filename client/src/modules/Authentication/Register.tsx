@@ -1,24 +1,33 @@
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-dark.png';
 import { registerUser } from '../../features/user/authSlice';
 import { store } from '../../store';
 
 const Register = () => {
+
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('User');
+  const [adminToken, setAdminToken] = useState('');
+  const [tokenError, setTokenError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const credentials = { name, email, password };
-    store.dispatch(registerUser(credentials)).then(() => {
-      navigate('/');
-    });
+    
+    if(role == "Admin" && adminToken != "032190") { 
+      setTokenError(true);
+    } else {
+      const credentials = { name, email, password, role };
+      store.dispatch(registerUser(credentials)).then(() => {
+        navigate('/');
+      });
+    }
   };
+
   return (
     <>
       <button onClick={() => navigate('/')} className="absolute top-8 left-8">
@@ -79,6 +88,54 @@ const Register = () => {
                 />
               </div>
             </div>
+
+            <div>
+              <label
+                htmlFor="role"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Role
+              </label>
+              <div className="mt-2">
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="User">User</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+            </div>
+
+            {role === 'Admin' && (
+              <div>
+                <label
+                  htmlFor="adminToken"
+                  className="block text-sm font-medium leading-6 text-gray-900 mt-2"
+                >
+                  Admin token
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="adminToken"
+                    value={adminToken}
+                    onChange={(e) => setAdminToken(e.target.value)}
+                    placeholder="Enter your 6 digit token here"
+                    required
+                    className="block w-full rounded-md border-0 py-1.5 px-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+                {tokenError && (
+                <label
+                  htmlFor="errorMessage"
+                  className="block text-sm font-medium leading-6 text-red-900 mt-2"
+                >
+                  Wrong token!
+                </label>
+                )}
+              </div>
+            )}
 
             <div>
               <div className="flex items-center justify-between">

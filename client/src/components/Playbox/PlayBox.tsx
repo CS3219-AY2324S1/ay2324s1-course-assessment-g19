@@ -44,7 +44,6 @@ const PlayBox = () => {
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
   const [tab, setTab] = useState('GAME');
-  const dispatch = useDispatch(); // Get the dispatch function from Redux
   const [partnerFound, setPartnerFound] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
