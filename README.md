@@ -35,6 +35,9 @@ Ensure that Docker daemon is running
 make dev
 ```
 
+Give the development version awhile (approximately 10-15 seconds depending on
+your machine) before testing
+
 ## Debugging
 
 Take note that installing new dependencies require a rebuilding of the Docker
