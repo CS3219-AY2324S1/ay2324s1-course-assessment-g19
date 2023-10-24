@@ -6,9 +6,10 @@ import QuestionExamples from './Read/QuestionExamples';
 import QuestionFooter from './Read/QuestionFooter';
 import QuestionHeader from './Read/QuestionHeader';
 import QuestionTags from './Read/QuestionTags';
+import { selectGameQuestion } from '../../features/play/gameSlice';
 
 const Question = () => {
-  const question = useSelector(selectCurrentQuestion);
+  const question = useSelector(selectGameQuestion);
 
   return (
     <div className="flex flex-col p-8">

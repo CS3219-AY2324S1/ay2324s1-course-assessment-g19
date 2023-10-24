@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { RootState } from '../../store';
+import { QuestionDifficulty } from '../../types';
 
 interface FindMatchProps {
-  onJoinGame: (gameId: string) => void; // Callback function when joining a game
+  onJoinGame: (gameId: string, difficulty: QuestionDifficulty) => void; // Callback function when joining a game
   onPartnerFound: (partnerUser: string) => void; // Callback function when a partner is found
   onFindingPartner: () => void; // Callback function when searching for a partner
   onPartnerNotFound: () => void; // Callback function when no partner is found
@@ -69,7 +70,7 @@ export const findMatch = async (
       console.log('notification sent to ', partnerUser);
 
       callbacks.onPartnerFound(partnerUser);
-      callbacks.onJoinGame(`${currentUser.name}-${partnerUser}`);
+      callbacks.onJoinGame(`${currentUser.name}-${partnerUser}`, difficulty);
     } else {
       // If the queue is empty, join the queue with your message
       const postResponse = await joinQueue(
@@ -92,7 +93,10 @@ export const findMatch = async (
           const partnerUser = response.data.message.user;
           console.log('partner found! your partner is: ', partnerUser);
           callbacks.onPartnerFound(response.data.message.user);
-          callbacks.onJoinGame(`${partnerUser}-${currentUser.name}`);
+          callbacks.onJoinGame(
+            `${partnerUser}-${currentUser.name}`,
+            difficulty
+          );
           break;
         } else if (i == 5) {
           console.log('timeout 30 seconds no partner found');

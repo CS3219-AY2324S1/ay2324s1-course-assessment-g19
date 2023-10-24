@@ -6,9 +6,11 @@ import {
   selectGameData,
   selectGameId,
   setGameData,
-  setGameId
+  setGameId,
+  setGameQuestion
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
+import { QuestionDifficulty } from '../../types';
 
 const Editor = () => {
   const gameId = useSelector(selectGameId);
@@ -21,15 +23,16 @@ const Editor = () => {
   };
 
   useEffect(() => {
-    socket.on('confirm_game', (id: string) => {
+    socket.on('confirm_game', (id: string, question: QuestionDifficulty) => {
       console.log('CONFIRMEDGAME');
       store.dispatch(setGameId(id));
+      store.dispatch(setGameQuestion(question));
     });
 
     socket.on('message_recv', (msg: string) => {
       store.dispatch(setGameData(msg));
     });
-  }, [socket]);
+  }, [socket, store]);
 
   return (
     <div className="flex flex-col py-8 pl-8 w-full h-full">

@@ -8,33 +8,26 @@ import {
   VariableIcon
 } from '@heroicons/react/24/outline';
 import { useCallback, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   selectDifficulty,
   selectLanguage,
-  setCurrentQuestion,
   setDifficulty,
   setIsActive,
   setLanguage
 } from '../../features/play/playSlice';
-import {
-  selectQuestionByDifficulty,
-  selectQuestionByTitle
-} from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
 import PlayTab from './PlayTab';
 import QuestionSelect from './QuestionSelect';
-import { selectCurrentUser } from '../../features/user/authSlice';
 import {
   findMatch,
   leaveQueue
 } from '../../features/collaboration/collaborationSlice'; // Import axios for making API requests
 import CountUpTimerPopup from './CountUpTimer';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { on } from 'events';
 import { socket } from '../../socket';
 
 const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
@@ -57,10 +50,10 @@ const PlayBox = () => {
   const isDifficultySelected = !!difficulty; // Check if a difficulty is selected
   const isUserLoggedIn = !!store.getState().authentication.currentUser;
 
-  const handleJoinGame = (gameId: string) => {
+  const handleJoinGame = (gameId: string, difficulty: QuestionDifficulty) => {
     console.log('handleJoinGame');
     setTimeout(() => {
-      socket.emit('join_game', gameId);
+      socket.emit('join_game', gameId, difficulty);
     }, 2000);
   };
 
@@ -129,15 +122,14 @@ const PlayBox = () => {
     [store]
   );
 
-  // TODO: Get question from question server
-  const selectedQuestion = useSelector(
-    selectQuestionByDifficulty(difficulty || 'EASY')
-  );
+  // // TODO: Get question from question server
+  // const selectedQuestion = useSelector(
+  //   selectQuestionByDifficulty(difficulty || 'EASY')
+  // );
 
   const onFindMatch = useCallback(async () => {
     setTimer(0);
     setShowFailed(false);
-    store.dispatch(setCurrentQuestion(selectedQuestion));
 
     if (isUserLoggedIn) {
       try {
@@ -152,7 +144,7 @@ const PlayBox = () => {
         position: 'top-center' // Adjust the position as needed
       });
     }
-  }, [selectedQuestion, isUserLoggedIn]);
+  }, [isUserLoggedIn]);
 
   const onLeave = async () => {
     await leaveQueue(store.getState());
