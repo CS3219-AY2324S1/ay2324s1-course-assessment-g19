@@ -5,16 +5,20 @@ import { store } from '../../store';
 import {
   selectGameData,
   selectGameId,
+  selectGameOpponent,
   setGameData,
   setGameId,
+  setGamePlayers,
   setGameQuestion
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
-import { QuestionDifficulty } from '../../types';
+import { QuestionDifficulty, User } from '../../types';
+import { setIsActive } from '../../features/play/playSlice';
 
 const Editor = () => {
   const gameId = useSelector(selectGameId);
   const data = useSelector(selectGameData);
+  const opponentPlayer = useSelector(selectGameOpponent);
 
   const [message, setMessage] = useState('');
 
@@ -23,11 +27,20 @@ const Editor = () => {
   };
 
   useEffect(() => {
-    socket.on('confirm_game', (id: string, question: QuestionDifficulty) => {
-      console.log('CONFIRMEDGAME');
-      store.dispatch(setGameId(id));
-      store.dispatch(setGameQuestion(question));
-    });
+    socket.on(
+      'confirm_game',
+      (
+        id: string,
+        question: QuestionDifficulty,
+        playerOne: User,
+        playerTwo: User
+      ) => {
+        store.dispatch(setIsActive(true));
+        store.dispatch(setGameId(id));
+        store.dispatch(setGameQuestion(question));
+        store.dispatch(setGamePlayers([playerOne, playerTwo]));
+      }
+    );
 
     socket.on('message_recv', (msg: string) => {
       store.dispatch(setGameData(msg));
@@ -36,7 +49,7 @@ const Editor = () => {
 
   return (
     <div className="flex flex-col py-8 pl-8 w-full h-full">
-      <PlayerCard player={undefined} />
+      <PlayerCard player={opponentPlayer} />
 
       <div className="border-4 border-dashed border-gray-800 flex flex-col flex-grow justify-center items-center rounded-lg my-4 gap-4">
         {gameId && (

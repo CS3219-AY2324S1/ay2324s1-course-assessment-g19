@@ -3,7 +3,12 @@ import { RootState } from '../../store';
 import { QuestionDifficulty } from '../../types';
 
 interface FindMatchProps {
-  onJoinGame: (gameId: string, difficulty: QuestionDifficulty) => void; // Callback function when joining a game
+  onJoinGame: (
+    gameId: string,
+    difficulty: QuestionDifficulty,
+    playerOneEmail: string,
+    playerTwoEmail: string
+  ) => void; // Callback function when joining a game
   onPartnerFound: (partnerUser: string) => void; // Callback function when a partner is found
   onFindingPartner: () => void; // Callback function when searching for a partner
   onPartnerNotFound: () => void; // Callback function when no partner is found
@@ -59,7 +64,7 @@ export const findMatch = async (
 
       const notification = {
         partner: partnerUser,
-        user: currentUser.name
+        user: currentUser.email
       };
       // tell the partner your own username
       await axios.post('/user-api/collaboration/notify-partner', notification, {
@@ -70,11 +75,16 @@ export const findMatch = async (
       console.log('notification sent to ', partnerUser);
 
       callbacks.onPartnerFound(partnerUser);
-      callbacks.onJoinGame(`${currentUser.name}-${partnerUser}`, difficulty);
+      callbacks.onJoinGame(
+        `${currentUser.email}-${partnerUser}`,
+        difficulty,
+        currentUser.email,
+        partnerUser
+      );
     } else {
       // If the queue is empty, join the queue with your message
       const postResponse = await joinQueue(
-        currentUser.name,
+        currentUser.email,
         difficulty,
         language
       );
@@ -87,15 +97,17 @@ export const findMatch = async (
       await delayAsync(5000);
       for (let i = 0; i < 6; i++) {
         const response = await axios.get(
-          `/user-api/collaboration/wait-partner/${currentUser.name}`
+          `/user-api/collaboration/wait-partner/${currentUser.email}`
         );
         if (response.data.message != 'empty') {
           const partnerUser = response.data.message.user;
           console.log('partner found! your partner is: ', partnerUser);
           callbacks.onPartnerFound(response.data.message.user);
           callbacks.onJoinGame(
-            `${partnerUser}-${currentUser.name}`,
-            difficulty
+            `${partnerUser}-${currentUser.email}`,
+            difficulty,
+            currentUser.email,
+            partnerUser
           );
           break;
         } else if (i == 5) {
@@ -127,7 +139,7 @@ export const leaveQueue = async (state: RootState) => {
     console.log('you are already matched');
   }
   // you have already been matched and another user has joined the queue
-  else if (response.data.message.user != currentUser.name) {
+  else if (response.data.message.user != currentUser.email) {
     console.log('you are already matched, re adding wrongly removed user');
     // add the wrongly removed user back to the queue
     await joinQueue(response.data.message.user, difficulty, language);

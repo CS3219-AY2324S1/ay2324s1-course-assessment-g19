@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { setCurrentQuestion } from '../../features/play/playSlice';
 import { selectQuestions } from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { Question } from '../../types';
@@ -14,7 +13,7 @@ const QuestionTable = () => {
   const questions = useSelector(selectQuestions);
   const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
   const [isToastVisible, setToastVisible] = useState(false);
-  const [toDel, setToDel] = useState("");
+  const [toDel, setToDel] = useState('');
   const [viewPopup, setViewPopup] = useState<Question | null>(null);
   const [toView, setToView] = useState(false);
   const navigate = useNavigate();
@@ -85,8 +84,10 @@ const QuestionTable = () => {
   const viewQuestion = () => {
     return toView && viewPopup ? (
       <div className="custom-popup">
-        <h2 className="text-2xl font-bold overflow-hidden whitespace-no-wrap">{viewPopup.title}</h2>
-        <div className='py-2'>
+        <h2 className="text-2xl font-bold overflow-hidden whitespace-no-wrap">
+          {viewPopup.title}
+        </h2>
+        <div className="py-2">
           <h3 className="text-lg font-semibold">Difficulty:</h3>
           <p className="text-gray-700">{viewPopup.difficulty}</p>
         </div>
@@ -99,14 +100,14 @@ const QuestionTable = () => {
         <h3 className="text-lg font-semibold">Examples:</h3>
         <p className="text-gray-700">{viewPopup.examples}</p>
       </div> */}
-      <div className='py-2'>
+        <div className="py-2">
           <h3 className="text-lg font-semibold">In:</h3>
           <p className="text-gray-700 pb-2">{viewPopup.examples[0].in}</p>
           <h3 className="text-lg font-semibold">Out:</h3>
           <p className="text-gray-700 pb-2">{viewPopup.examples[0].out}</p>
           <h3 className="text-lg font-semibold">Explanation:</h3>
           <p className="text-gray-700">{viewPopup.examples[0].explanation}</p>
-      </div>
+        </div>
         <div>
           <h3 className="text-lg font-semibold">Constraints:</h3>
           <ul className="list-disc list-inside text-gray-700">
@@ -140,7 +141,7 @@ const QuestionTable = () => {
       </div>
     ) : null;
   };
-  
+
   return (
     <div className="flex flex-col flex-grow gap-4">
       <div className="flex flex-row text-neutral-500 bg-gray-200 rounded-2xl px-4 shadow-lg">
@@ -184,18 +185,14 @@ const QuestionTable = () => {
               <div className="p-4 w-28">{toCamelCase(question.difficulty)}</div>
               <div className="p-4 w-28">TODO</div>
               <div className="p-4 w-28">
-                <button
-                  onClick={() => handleView(question)}
-                >
-                  view
-                </button>
+                <button onClick={() => handleView(question)}>view</button>
               </div>
 
               {viewQuestion()}
               {CustomToast()}
 
               {isAdmin && (
-                <div key={question.title} >
+                <div key={question.title}>
                   <button
                     onClick={() => handleEdit(question._id)}
                     className="p-4 w-10 font-bold"

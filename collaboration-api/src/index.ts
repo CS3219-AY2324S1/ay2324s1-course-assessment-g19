@@ -24,54 +24,51 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`User ${socket.id} connected`);
 
-  socket.on('join_game', async (gameId, difficulty) => {
-    console.log(`User ${socket.id} joined game ${gameId}`);
+  socket.on(
+    'join_game',
+    async (gameId, difficulty, playerOneEmail, playerTwoEmail) => {
+      console.log(`User ${socket.id} joined game ${gameId}`);
 
-    let question = null;
+      let question = null;
 
-    try {
-      const response = await axios.get(
-        `http://peerprep-question-api:8000/questions/where?difficulty=${difficulty}`
-      );
+      try {
+        const questionResponse = await axios.get(
+          `http://peerprep-question-api:8000/questions/where?difficulty=${difficulty}`
+        );
 
-      question = response.data;
-      console.log(`Caching question: ${question.title}`);
-    } catch (error) {
-      console.error(error);
+        question = questionResponse.data;
+        console.log(`Caching question: ${question.title}`);
+      } catch (error) {
+        console.error(error);
+      }
+
+      let playerOne = null;
+      let playerTwo = null;
+
+      try {
+        const playerOneResponse = await axios.get(
+          `http://peerprep-user-api:5050/user/?email=${playerOneEmail}`
+        );
+        const playerTwoResponse = await axios.get(
+          `http://peerprep-user-api:5050/user/?email=${playerTwoEmail}`
+        );
+
+        playerOne = playerOneResponse.data;
+        playerTwo = playerTwoResponse.data;
+        console.log(`Caching players: ${playerOne.name} and ${playerTwo.name}`);
+      } catch (error) {
+        console.error(error);
+      }
+
+      socket.join(gameId);
+      socket.emit('confirm_game', gameId, question, playerOne, playerTwo);
     }
-    // const question = {
-    //   _id: '6536970330d1b3efef4b63de',
-    //   title: 'The First Easy Question',
-    //   difficulty: 'EASY',
-    //   tags: ['Easy'],
-    //   description:
-    //     "This is such an easy question. Honestly I couldn't think of an easier question. Like seriously... how much easier can it get?",
-    //   examples: [
-    //     {
-    //       in: '1 2 3 4 5',
-    //       out: '5 4 3 2 1',
-    //       explanation: 'This is the explanation for the first example',
-    //       _id: '6536970330d1b3efef4b63df'
-    //     },
-    //     {
-    //       in: '5 4 3 2 1',
-    //       out: '1 2 3 4 5',
-    //       explanation: 'This is the explanation for the second example',
-    //       _id: '6536970330d1b3efef4b63df'
-    //     }
-    //   ],
-    //   constraints: ['Easy constraint 1'],
-    //   createdAt: Date.now(),
-    //   updatedAt: Date.now()
-    // };
-
-    socket.join(gameId);
-    socket.emit('confirm_game', gameId, question);
-  });
+  );
 
   socket.on('leave_game', (gameId) => {
     console.log(`User ${socket.id} left game ${gameId}`);
     socket.leave(gameId);
+    socket.emit('confirm_leave_game');
   });
 
   socket.on('message_send', (data) => {
@@ -79,6 +76,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    const rooms = Object.keys(socket.rooms);
+
+    // Leave each room
+    rooms.forEach((room) => {
+      if (room !== socket.id) {
+        socket.leave(room);
+        console.log(`User ${socket.id} left room ${room}`);
+      }
+    });
+
     console.log(`User ${socket.id} disconnected`);
   });
 });

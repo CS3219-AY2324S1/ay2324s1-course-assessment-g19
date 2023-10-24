@@ -1,11 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../store';
 import { socket } from '../../socket';
-import { Question, StatusType } from '../../types';
+import { Question, StatusType, User } from '../../types';
 
 interface GameState {
   gameId: string;
   data: String;
+  players: User[];
   question?: Question;
   status: StatusType;
 }
@@ -13,6 +14,7 @@ interface GameState {
 const initialState: GameState = {
   gameId: '',
   data: '',
+  players: [],
   question: undefined,
   status: 'DEFAULT'
 };
@@ -27,6 +29,9 @@ export const gameSlice = createSlice({
     setGameData: (state, action) => {
       state.data = action.payload;
     },
+    setGamePlayers: (state, action) => {
+      state.players = action.payload;
+    },
     setGameQuestion: (state, action) => {
       state.question = action.payload;
     },
@@ -37,11 +42,19 @@ export const gameSlice = createSlice({
   }
 });
 
-export const { setGameId, setGameData, setGameQuestion, resetGame } =
-  gameSlice.actions;
+export const {
+  setGameId,
+  setGameData,
+  setGamePlayers,
+  setGameQuestion,
+  resetGame
+} = gameSlice.actions;
 
 export const selectGameQuestion = (state: RootState) => state.game.question;
 export const selectGameData = (state: RootState) => state.game.data;
+export const selectGamePlayers = (state: RootState) => state.game.players;
 export const selectGameId = (state: RootState) => state.game.gameId;
+export const selectGameOpponent = (state: RootState) =>
+  state.game.players.find((e) => e.id !== state.authentication.currentUser?.id);
 
 export default gameSlice.reducer;

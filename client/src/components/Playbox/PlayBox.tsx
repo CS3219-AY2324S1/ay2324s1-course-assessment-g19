@@ -50,10 +50,21 @@ const PlayBox = () => {
   const isDifficultySelected = !!difficulty; // Check if a difficulty is selected
   const isUserLoggedIn = !!store.getState().authentication.currentUser;
 
-  const handleJoinGame = (gameId: string, difficulty: QuestionDifficulty) => {
+  const handleJoinGame = (
+    gameId: string,
+    difficulty: QuestionDifficulty,
+    playerOneEmail: string,
+    playerTwoEmail: string
+  ) => {
     console.log('handleJoinGame');
     setTimeout(() => {
-      socket.emit('join_game', gameId, difficulty);
+      socket.emit(
+        'join_game',
+        gameId,
+        difficulty,
+        playerOneEmail,
+        playerTwoEmail
+      );
     }, 2000);
   };
 
@@ -61,9 +72,9 @@ const PlayBox = () => {
     setPartnerFound(true);
     setPartnerUsername(partnerUser);
     console.log('handlePartnerFound');
-    setTimeout(() => {
-      store.dispatch(setIsActive(true));
-    }, 2000);
+    // setTimeout(() => {
+    //   store.dispatch(setIsActive(true));
+    // }, 2000);
   };
 
   const handlePartnerNotFound = () => {
@@ -121,11 +132,6 @@ const PlayBox = () => {
     },
     [store]
   );
-
-  // // TODO: Get question from question server
-  // const selectedQuestion = useSelector(
-  //   selectQuestionByDifficulty(difficulty || 'EASY')
-  // );
 
   const onFindMatch = useCallback(async () => {
     setTimer(0);
@@ -217,18 +223,18 @@ const PlayBox = () => {
               : 'bg-gray-100 text-gray-800'
           }`}
         >
-          Find a Match
-          {showPopup && (
+          {showPopup ? (
             <CountUpTimerPopup
               timer={timer}
               partnerUsername={partnerUsername}
             />
-          )}
-          {showFailed && (
+          ) : showFailed ? (
             <div>
               <h2>Failed to find a match</h2>
               <p style={{ marginTop: '10px' }}>Click to try again</p>
             </div>
+          ) : (
+            <a>Find a Match</a>
           )}
         </button>
 
