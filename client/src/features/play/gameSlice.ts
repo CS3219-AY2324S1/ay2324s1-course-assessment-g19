@@ -5,7 +5,7 @@ import { Question, StatusType, User } from '../../types';
 
 interface GameState {
   gameId: string;
-  data: String;
+  data: string;
   players: User[];
   question?: Question;
   status: StatusType;
@@ -38,6 +38,8 @@ export const gameSlice = createSlice({
     resetGame: (state) => {
       state.gameId = '';
       state.data = '';
+      state.players = [];
+      state.question = undefined;
     }
   }
 });

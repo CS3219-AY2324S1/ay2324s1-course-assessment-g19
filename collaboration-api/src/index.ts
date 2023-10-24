@@ -72,7 +72,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('message_send', (data) => {
-    socket.to(data.gameId).emit('message_recv', data.message);
+    io.to(data.gameId).emit('message_recv', data.message);
   });
 
   socket.on('disconnect', () => {

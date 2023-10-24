@@ -72,9 +72,6 @@ const PlayBox = () => {
     setPartnerFound(true);
     setPartnerUsername(partnerUser);
     console.log('handlePartnerFound');
-    // setTimeout(() => {
-    //   store.dispatch(setIsActive(true));
-    // }, 2000);
   };
 
   const handlePartnerNotFound = () => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PlayerCard from './PlayerCard';
 import { socket } from '../../socket';
 import { store } from '../../store';
@@ -20,11 +20,14 @@ const Editor = () => {
   const data = useSelector(selectGameData);
   const opponentPlayer = useSelector(selectGameOpponent);
 
-  const [message, setMessage] = useState('');
+  const onChange = useCallback(
+    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const message = event.target.value;
 
-  const onClick = () => {
-    socket.emit('message_send', { message, gameId });
-  };
+      socket.emit('message_send', { message, gameId });
+    },
+    [socket, gameId]
+  );
 
   useEffect(() => {
     socket.on(
@@ -54,19 +57,13 @@ const Editor = () => {
       <div className="border-4 border-dashed border-gray-800 flex flex-col flex-grow justify-center items-center rounded-lg my-4 gap-4">
         {gameId && (
           <>
-            <a>{data}</a>
-            <div className="flex flex-row gap-4">
-              <input
+            <div className="flex flex-row bg-gray-800 w-full h-full gap-4">
+              <textarea
                 placeholder="Message"
-                onChange={(e) => setMessage(e.target.value)}
-                className="px-2"
+                className="flex m-4 rounded-lg bg-transparent text-white text-sm px-4 py-2 w-full flex-grow overflow-auto resize-none"
+                onChange={onChange}
+                value={data}
               />
-              <button
-                onClick={onClick}
-                className="py-2 px-4 rounded-md bg-gray-800 text-white"
-              >
-                Send
-              </button>
             </div>
           </>
         )}
