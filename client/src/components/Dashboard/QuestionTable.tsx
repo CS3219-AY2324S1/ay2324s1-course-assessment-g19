@@ -1,220 +1,214 @@
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { setCurrentQuestion } from '../../features/play/playSlice';
-import { selectQuestions } from '../../features/questions/questionsSlice';
+import {
+  fetchQuestions,
+  selectQuestions
+} from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { Question } from '../../types';
 import { toCamelCase } from '../../utils/string';
 import { selectCurrentUser } from '../../features/user/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { deleteQuestion } from '../../features/questions/creatorSlice';
+import {
+  createQuestion,
+  deleteQuestion,
+  editQuestion,
+  reset,
+  selectCreatorQuestion,
+  setQuestionInCreator
+} from '../../features/questions/creatorSlice';
+import {
+  EyeIcon,
+  PencilSquareIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
+import QuestionDetailsPopup from './QuestionDetailsPopup';
 
-const QuestionTable = () => {
-  const currentUser = useSelector(selectCurrentUser);
-  const questions = useSelector(selectQuestions);
-  const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
-  const [isToastVisible, setToastVisible] = useState(false);
-  const [toDel, setToDel] = useState("");
-  const [viewPopup, setViewPopup] = useState<Question | null>(null);
-  const [toView, setToView] = useState(false);
-  const navigate = useNavigate();
-
-  // const handleClick = useCallback(
-  //   (question: Question) => {
-  //     store.dispatch(setCurrentQuestion(question));
-  //   },
-  //   [store]
-  // );
-
-  const handleEdit = (_id: any) => {
-    const to_url = `/questions/edit/${_id}`;
-    navigate(to_url);
+const DeleteToast = (question: Question, onCloseDelete: Function) => {
+  const onConfirmDelete = (question: Question) => {
+    store.dispatch(deleteQuestion({ id: question._id }));
+    onCloseDelete();
   };
 
-  const handleView = (question: Question) => {
-    setViewPopup(question);
-    setToView(true);
-  };
-
-  const handleDelete = (_id: any) => {
-    showToast(_id);
-  };
-
-  const showToast = (_id: any) => {
-    setToDel(_id);
-    setToastVisible(true);
-  };
-
-  const hideToast = () => {
-    setToastVisible(false);
-  };
-
-  const CustomToast = () => {
-    return isToastVisible ? (
-      <div className="custom-toast">
-        <h2 className="font-black mb-2">
+  return (
+    <div className="flex justify-center items-start pt-10 z-50 bg-black bg-opacity-30 w-[calc(100vw-136px)] h-screen absolute rounded-l-xl">
+      <div
+        className="flex flex-col gap-4 bg-slate-50 px-12 py-8 z-50 shadow-2xl rounded-2xl"
+        onClick={() => onCloseDelete()}
+      >
+        <h1 className="font-semibold">
           Are you sure you want to delete this question?
-        </h2>
-        <div className="absolute bottom-0 right-0 p-2">
+        </h1>
+        <div className="flex flex-row gap-2 justify-center items-center">
           <button
-            onClick={() => onYesClick(toDel)}
-            className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+            onClick={() => onConfirmDelete(question!)}
+            className="bg-slate-500 text-white px-4 py-2 rounded-xl hover:bg-slate-600"
           >
             Yes
           </button>
           <button
-            onClick={onCloseClick}
-            className="bg-gray-500 text-white px-2 py-1 rounded"
+            onClick={() => onCloseDelete()}
+            className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
           >
             Close
           </button>
         </div>
       </div>
-    ) : null;
-  };
-
-  const onYesClick = (_id: any) => {
-    store.dispatch(deleteQuestion({ id: _id }));
-    hideToast();
-  };
-
-  const onCloseClick = () => {
-    hideToast();
-  };
-
-  const viewQuestion = () => {
-    return toView && viewPopup ? (
-      <div className="custom-popup">
-        <h2 className="text-2xl font-bold overflow-hidden whitespace-no-wrap">{viewPopup.title}</h2>
-        <div className='py-2'>
-          <h3 className="text-lg font-semibold">Difficulty:</h3>
-          <p className="text-gray-700">{viewPopup.difficulty}</p>
-        </div>
-        {/* <p className="text-gray-600">Tags: {viewPopup.tags.join(', ')}</p> */}
-        <div>
-          <h3 className="text-lg font-semibold">Description:</h3>
-          <p className="text-gray-700">{viewPopup.description}</p>
-        </div>
-        {/* <div>
-        <h3 className="text-lg font-semibold">Examples:</h3>
-        <p className="text-gray-700">{viewPopup.examples}</p>
-      </div> */}
-      <div className='py-2'>
-          <h3 className="text-lg font-semibold">In:</h3>
-          <p className="text-gray-700 pb-2">{viewPopup.examples[0].in}</p>
-          <h3 className="text-lg font-semibold">Out:</h3>
-          <p className="text-gray-700 pb-2">{viewPopup.examples[0].out}</p>
-          <h3 className="text-lg font-semibold">Explanation:</h3>
-          <p className="text-gray-700">{viewPopup.examples[0].explanation}</p>
-      </div>
-        <div>
-          <h3 className="text-lg font-semibold">Constraints:</h3>
-          <ul className="list-disc list-inside text-gray-700">
-            {viewPopup.constraints.map((constraint, index) => (
-              <li key={index}>{constraint}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="text-gray-600">
-          <p>
-            Created At:{' '}
-            {viewPopup.createdAt
-              ? new Date(viewPopup.createdAt).toLocaleString()
-              : 'N/A'}
-          </p>
-          <p>
-            Updated At:{' '}
-            {viewPopup.updatedAt
-              ? new Date(viewPopup.updatedAt).toLocaleString()
-              : 'N/A'}
-          </p>
-        </div>
-        <div className="fixed bottom-0 right-0 p-2">
-          <button
-            onClick={() => setToView(false)}
-            className="bg-gray-500 text-white px-2 py-1 rounded"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    ) : null;
-  };
-  
-  return (
-    <div className="flex flex-col flex-grow gap-4">
-      <div className="flex flex-row text-neutral-500 bg-gray-200 rounded-2xl px-4 shadow-lg">
-        <div className="p-4 w-28">Status</div>
-        <div className="w-80 p-4 overflow-hidden whitespace-nowrap">Title</div>
-        <div className="p-4 w-28">Solution</div>
-        <div className="p-4 w-32">Acceptance</div>
-        <div className="p-4 w-28">Difficulty</div>
-        <div className="p-4 w-28">Frequency</div>
-        <div className="p-4 w-28"></div>
-        {isAdmin && (
-          <>
-            <div className="p-4 w-10"></div>
-            <div className="p-4 w-10 mx-2"></div>
-          </>
-        )}
-      </div>
-
-      {!currentUser ? (
-        <div className="flex justify-center items-center">
-          Please log in to view questions
-        </div>
-      ) : (
-        <div className="border rounded-2xl">
-          {questions.map((question: Question, index: number) => (
-            <div
-              key={question.title}
-              //onClick={() => handleClick(question)}
-              className={`flex flex-row p-2 transition cursor-pointer hover:shadow-inner ${
-                index !== 0 && 'border-t'
-              }
-            ${index === 0 && 'rounded-t-2xl'}
-            ${index === questions.length - 1 && 'rounded-b-2xl'}`}
-            >
-              <div className="p-4 w-28">TODO</div>
-              <div className="w-80 p-4 overflow-hidden whitespace-nowrap">
-                {index + 1}. {question.title}
-              </div>
-              <div className="p-4 w-28">TODO</div>
-              <div className="p-4 w-32">TODO</div>
-              <div className="p-4 w-28">{toCamelCase(question.difficulty)}</div>
-              <div className="p-4 w-28">TODO</div>
-              <div className="p-4 w-28">
-                <button
-                  onClick={() => handleView(question)}
-                >
-                  view
-                </button>
-              </div>
-
-              {viewQuestion()}
-              {CustomToast()}
-
-              {isAdmin && (
-                <div key={question.title} >
-                  <button
-                    onClick={() => handleEdit(question._id)}
-                    className="p-4 w-10 font-bold"
-                  >
-                    edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(question._id)}
-                    className="p-4 mx-2 w-10 font-bold"
-                  >
-                    del
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
+  );
+};
+
+const QuestionTable = () => {
+  const navigate = useNavigate();
+  const currentUser = useSelector(selectCurrentUser);
+  const questions = useSelector(selectQuestions);
+  const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
+  const [questionToDelete, setQuestionToDelete] = useState<Question | null>(
+    null
+  );
+  const [showDeleteToast, setShowDeleteToast] = useState<boolean>(false);
+
+  const questionInCreator = useSelector(selectCreatorQuestion);
+  const [questionDeepCopy, setQuestionDeepCopy] = useState<Question | null>(
+    null
+  );
+  const [showQuestionDeatilsPopup, setShowQuestionDetailsPopup] =
+    useState<boolean>(false);
+  const [mode, setMode] = useState<'CREATE' | 'EDIT' | 'VIEW'>('CREATE');
+
+  const onOpenEdit = (question: Question) => {
+    setQuestionDeepCopy({
+      ...question,
+      examples: [...question.examples],
+      constraints: [...question.constraints]
+    });
+    setMode('EDIT');
+    store.dispatch(setQuestionInCreator(question));
+    setShowQuestionDetailsPopup(true);
+  };
+
+  const onOpenCreate = () => {
+    store.dispatch(reset());
+    setMode('CREATE');
+    setShowQuestionDetailsPopup(true);
+  };
+
+  const onCancelEdit = () => {
+    questionDeepCopy && store.dispatch(setQuestionInCreator(questionDeepCopy));
+    setMode('VIEW');
+  };
+
+  const onOpenView = (question: Question) => {
+    setMode('VIEW');
+    store.dispatch(setQuestionInCreator(question));
+    setShowQuestionDetailsPopup(true);
+  };
+
+  const onCloseView = () => {
+    setShowQuestionDetailsPopup(false);
+  };
+
+  const handleDelete = (question: Question) => {
+    setQuestionToDelete(question);
+    setShowDeleteToast(true);
+  };
+
+  const onCloseDelete = () => {
+    setShowDeleteToast(false);
+  };
+
+  return (
+    <>
+      {showQuestionDeatilsPopup &&
+        QuestionDetailsPopup(
+          questionInCreator!,
+          onCloseView,
+          onCancelEdit,
+          onOpenEdit,
+          isAdmin,
+          mode
+        )}
+      {showDeleteToast && DeleteToast(questionToDelete!, onCloseDelete)}
+      <div className="flex justify-center w-full">
+        <div className="flex flex-col flex-grow gap-4 w-full p-4">
+          <div className="flex flex-row justify-center items-center text-neutral-500 bg-slate-50 rounded-2xl p-4 shadow-lg sticky">
+            <div className="w-1/12 flex justify-center">Index</div>
+            <div className="w-3/12 flex justify-center">Title</div>
+            <div className="w-4/12 flex justify-center">Description</div>
+            <div className="w-2/12 flex justify-center">Difficulty</div>
+            <div className="w-2/12 flex justify-center">Actions</div>
+          </div>
+          {!currentUser ? (
+            <div className="flex justify-center items-center">
+              Please log in to view questions
+            </div>
+          ) : questions.length > 0 ? (
+            <div className="flex flex-col">
+              {questions.map((question: Question, index: number) => (
+                <div
+                  key={index}
+                  className={`flex flex-row gap-4 justify-center bg-slate-50 transition ease-in-out duration-200 cursor-pointer p-4 hover:bg-neutral-300 hover:shadow-lg
+              ${index !== 0 && 'border-t'} 
+              ${index === 0 && 'rounded-t-2xl'} 
+              ${index === questions.length - 1 && 'rounded-b-2xl'}
+              `}
+                >
+                  <div className="w-1/12 flex justify-center items-center">
+                    {index + 1}.
+                  </div>
+                  <div className="w-3/12 flex flex-wrap justify-center items-center">
+                    <p className="line-clamp-1 whitespace-pre-wrap ">
+                      {question.title}
+                    </p>
+                  </div>
+                  <div className="w-4/12 flex flex-wrap justify-start items-center">
+                    <p className="line-clamp-1 whitespace-pre-wrap ">
+                      {question.description}
+                    </p>
+                  </div>
+                  <div className="w-2/12 flex justify-center items-center">
+                    {toCamelCase(question.difficulty)}
+                  </div>
+                  <div className="w-2/12 flex justify-center items-center">
+                    <div className="flex flex-row gap-4 justify-center">
+                      <EyeIcon
+                        className="h-5 w-5 inline-block"
+                        onClick={() => onOpenView(question)}
+                      />
+                      {isAdmin && (
+                        <>
+                          <PencilSquareIcon
+                            className="h-5 w-5 inline-block"
+                            onClick={() => onOpenEdit(question)}
+                          />
+                          <TrashIcon
+                            className="h-5 w-5 inline-block"
+                            onClick={() => handleDelete(question)}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex justify-center">No questions found</div>
+          )}
+          {isAdmin && (
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => onOpenCreate()}
+                className="bg-blue-500 text-white px-4 py-2 rounded-xl"
+              >
+                Create Question
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 
