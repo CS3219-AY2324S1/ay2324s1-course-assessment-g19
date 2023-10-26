@@ -1,51 +1,143 @@
-import { MinusIcon, PlusIcon } from '@heroicons/react/24/solid';
-import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import {
   addExample,
   deleteExample,
-  selectExamples
+  selectExamples,
+  updateExample
 } from '../../../features/questions/creatorSlice';
 import { store } from '../../../store';
-
-import { QuestionExample as QuestionExampleType } from '../../../types';
-import QuestionExample from './QuestionExample';
+import { PlusIcon, XCircleIcon } from '@heroicons/react/24/solid';
 
 const QuestionExamples = () => {
   const examples = useSelector(selectExamples);
 
-  const onAdd = useCallback(() => {
-    store.dispatch(addExample({ in: '', out: '', explanation: '' }));
-  }, [store, examples]);
+  const handleDelete = (
+    e: React.MouseEvent<SVGSVGElement, MouseEvent>,
+    index: number
+  ) => {
+    e.preventDefault();
+    store.dispatch(deleteExample({ example: examples[index], index: index }));
+  };
 
-  const onDelete = useCallback(
-    (example: QuestionExampleType) => {
-      store.dispatch(deleteExample(example));
-    },
-    [store, examples]
-  );
+  const handleChangeIn = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault();
+    store.dispatch(
+      updateExample({
+        example: {
+          ...examples[index],
+          in: e.target.value
+        },
+        index: index
+      })
+    );
+  };
+
+  const handleChangeOut = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault();
+    store.dispatch(
+      updateExample({
+        example: {
+          ...examples[index],
+          out: e.target.value
+        },
+        index: index
+      })
+    );
+  };
+
+  const handleChangeExplanation = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    e.preventDefault();
+    store.dispatch(
+      updateExample({
+        example: {
+          ...examples[index],
+          explanation: e.target.value
+        },
+        index: index
+      })
+    );
+  };
+
+  const handleAddExample = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    store.dispatch(
+      addExample({
+        in: '',
+        out: '',
+        explanation: ''
+      })
+    );
+  };
 
   return (
-    <>
-      {examples.map((example, index) => (
-        <div key={index} className="relative">
-          <QuestionExample index={index} example={example} />
-          <button
-            onClick={() => onDelete(example)}
-            className="absolute -top-2 -right-2 p-1 rounded-full shadow-md bg-gray-700"
+    <div className="flex flex-col gap-2">
+      <h3 className="font-semibold">Examples</h3>
+      <div className="flex flex-col gap-4">
+        {examples.map((example, index) => (
+          <div
+            key={index}
+            className="relative border border-[0.5] bg-white p-4 rounded-xl"
           >
-            <MinusIcon className="w-4 h-4 text-rose-500" />
-          </button>
-        </div>
-      ))}
+            <XCircleIcon
+              className="absolute top-2 right-2 w-5 h-5 text-red-500 hover:cursor-pointer"
+              onClick={(e) => handleDelete(e, index)}
+            />
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <div className="flex flex-col w-1/2 gap-2">
+                  <h4 className="font-semibold">In</h4>
+                  <input
+                    type="text"
+                    className="border border-gray-300 rounded-md p-2"
+                    placeholder="In"
+                    value={example.in}
+                    onChange={(e) => handleChangeIn(e, index)}
+                  />
+                </div>
+                <div className="flex flex-col w-1/2 gap-2">
+                  <h4 className="font-semibold">Out</h4>
+                  <input
+                    type="text"
+                    className="border border-gray-300 rounded-md p-2"
+                    placeholder="Out"
+                    value={example.out}
+                    onChange={(e) => handleChangeOut(e, index)}
+                  />
+                </div>
+              </div>
 
-      <button
-        onClick={onAdd}
-        className="ml-4 w-10 bg-gray-800 rounded-full p-2 shadow-xl transition hover:scale-105"
-      >
-        <PlusIcon className="w-6 h-6 text-gray-100" />
-      </button>
-    </>
+              <div className="flex flex-col gap-2">
+                <h4 className="font-semibold">Explanation</h4>
+                <input
+                  type="text"
+                  className="border border-gray-300 rounded-md p-2"
+                  placeholder="Explanation"
+                  value={example.explanation}
+                  onChange={(e) => handleChangeExplanation(e, index)}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+        <button
+          onClick={(e) => handleAddExample(e)}
+          className="bg-blue-500 text-white px-4 py-2 rounded-xl"
+        >
+          <PlusIcon className="h-5 w-5 inline-block" />
+        </button>
+      </div>
+    </div>
   );
 };
 

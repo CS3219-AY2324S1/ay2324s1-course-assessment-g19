@@ -71,13 +71,15 @@ const Sidebar = () => {
         {footers.map((footer, index) => (
           <Footertab key={index} label={footer.label} href={footer.href} />
         ))}
-        <button
-          onClick={() => store.dispatch(logoutUser())}
-          className="text-white text-sm rounded-lg p-2 m-4 bg-gray-700 transition hover:bg-gray-500 cursor-pointer"
-        >
-          <ArrowLeftOnRectangleIcon className="h-5 w-5 inline-block mr-2" />
-          Log out
-        </button>
+        {currentUser && (
+          <button
+            onClick={() => store.dispatch(logoutUser())}
+            className="text-white text-sm rounded-lg p-2 m-4 bg-gray-700 transition hover:bg-gray-500 cursor-pointer"
+          >
+            <ArrowLeftOnRectangleIcon className="h-5 w-5 inline-block mr-2" />
+            Log out
+          </button>
+        )}
       </div>
     </div>
   );
