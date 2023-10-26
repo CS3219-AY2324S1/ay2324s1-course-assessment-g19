@@ -1,21 +1,14 @@
-import { QuestionDescription as QuestionDescriptionType } from '../../../types';
-import SectionHeader from './SectionHeader';
+import { useSelector } from 'react-redux';
+import { selectDescription } from '../../../features/questions/creatorSlice';
 
-interface QuestionDescriptionProps {
-  description?: QuestionDescriptionType;
-}
+const QuestionDescription = () => {
+  const description = useSelector(selectDescription);
 
-const QuestionDescription: React.FC<QuestionDescriptionProps> = ({
-  description
-}) => {
   return (
-    <>
-      <div className="flex flex-col w-full gap-2">
-        <SectionHeader title="Description" />
-
-        <p className="text-sm text-gray-100">{description}</p>
-      </div>
-    </>
+    <div className="flex flex-col gap-2">
+      <h3 className="font-semibold">Description</h3>
+      <p className="whitespace-pre-wrap">{description}</p>
+    </div>
   );
 };
 

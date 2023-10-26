@@ -1,5 +1,5 @@
 export type User = {
-  role: any;
+  role: 'Admin' | 'User';
   id: string;
   name: string;
   email: string;
@@ -8,7 +8,6 @@ export type User = {
 
 export type Question = {
   _id: any;
-  id?: string;
   title: string;
   difficulty: QuestionDifficulty;
   tags: QuestionTag[];

@@ -29,7 +29,8 @@ const initialState: CreatorState = {
         explanation: ''
       }
     ],
-    constraints: []
+    constraints: [],
+    _id: undefined
   },
   status: 'DEFAULT'
 };
@@ -56,7 +57,7 @@ export const deleteQuestion = createAsyncThunk(
   '/creatorSlice/deleteQuestion',
   async ({ id }: { id: string }) => {
     const response = await axios.delete(`/question-api/questions/${id}`);
-    if (response.data.message == "Question deleted") {
+    if (response.data.message == 'Question deleted') {
       window.location.reload();
     }
     return response.data;
@@ -88,15 +89,13 @@ export const creatorSlice = createSlice({
     ) => {
       state.question.examples[action.payload.index] = action.payload.example;
     },
-    deleteExample: (state, action: PayloadAction<QuestionExample>) => {
+    deleteExample: (
+      state,
+      action: PayloadAction<{ example: QuestionExample; index: number }>
+    ) => {
       const examples = [...state.question.examples];
       state.question.examples = examples.filter(
-        (e) =>
-          !(
-            e.in === action.payload.in &&
-            e.out === action.payload.out &&
-            e.explanation === action.payload.explanation
-          )
+        (e, i) => i !== action.payload.index
       );
     },
     addConstraint: (state, action: PayloadAction<QuestionConstraint>) => {
@@ -109,14 +108,21 @@ export const creatorSlice = createSlice({
       state.question.constraints[action.payload.index] =
         action.payload.constraint;
     },
-    deleteConstraint: (state, action: PayloadAction<QuestionConstraint>) => {
+    deleteConstraint: (
+      state,
+      action: PayloadAction<{ constraint: QuestionConstraint; index: number }>
+    ) => {
       const constraints = [...state.question.constraints];
       state.question.constraints = constraints.filter(
-        (c) => c !== action.payload
+        (c, i) => i !== action.payload.index
       );
     },
     reset: (state) => {
-      state = initialState;
+      state.question = initialState.question;
+      state.status = initialState.status;
+    },
+    setQuestionInCreator: (state, action: PayloadAction<Question>) => {
+      state.question = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -145,7 +151,8 @@ export const {
   addConstraint,
   updateConstraint,
   deleteConstraint,
-  reset
+  reset,
+  setQuestionInCreator
 } = creatorSlice.actions;
 
 export const selectTitle = (state: RootState) => state.creator.question.title;

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import QuestionConstraints from '../../components/Questions/Write/QuestionConstraints';
-import QuestionDescription from '../../components/Questions/Write/QuestionDescription';
-import QuestionExamples from '../../components/Questions/Write/QuestionExamples';
-import QuestionHeader from '../../components/Questions/Write/QuestionHeader';
-import QuestionTags from '../../components/Questions/Write/QuestionTags';
+import QuestionConstraints from '../../components/Questions (prev)/Write/QuestionConstraints';
+import QuestionDescription from '../../components/Questions (prev)/Write/QuestionDescription';
+import QuestionExamples from '../../components/Questions (prev)/Write/QuestionExamples';
+import QuestionHeader from '../../components/Questions (prev)/Write/QuestionHeader';
+import QuestionTags from '../../components/Questions (prev)/Write/QuestionTags';
 import {
   createQuestion,
   selectCreatorQuestion

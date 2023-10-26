@@ -6,12 +6,14 @@
   position: fixed;
   top: 10%;
   left: 50%;
+  transition: ease-in-out 5s;
   transform: translate(-50%, -50%);
   background: #e7e4e4; /* Background color */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Box shadow */
   padding: 40px; /* Padding */
-  max-width: 500px; 
-  z-index: 50; 
+  max-width: 500px;
+  z-index: 50;
+  border-radius: 18px;
 }
 
 .custom-popup {
@@ -24,7 +26,8 @@
   background: #caccd4; /* Background color */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Box shadow */
   padding: 40px; /* Padding */
-  min-width: 500px; 
+  min-width: 500px;
   min-height: 500px;
-  z-index: 50; 
+  z-index: 50;
+  overflow-y: scroll;
 }
