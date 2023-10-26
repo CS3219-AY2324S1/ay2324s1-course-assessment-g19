@@ -1,12 +1,10 @@
-import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo-dark.png';
 import { registerUser } from '../../features/user/authSlice';
 import { store } from '../../store';
 
 const Register = () => {
-
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -17,8 +15,8 @@ const Register = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if(role == "Admin" && adminToken != "032190") { 
+
+    if (role == 'Admin' && adminToken != '032190') {
       setTokenError(true);
     } else {
       const credentials = { name, email, password, role };
@@ -30,13 +28,6 @@ const Register = () => {
 
   return (
     <>
-      <button onClick={() => navigate('/')} className="absolute top-8 left-8">
-        <div className="flex flex-row gap-2 border-[2px] hover:border-indigo-500 hover:scale-105 transition rounded-lg px-4 py-2">
-          <ArrowUturnLeftIcon className="w-5 h-5" />
-          <a className="text-sm">To Dashboard</a>
-        </div>
-      </button>
-
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img className="mx-auto h-10 w-auto" src={logo} alt="PeerPrep" />
@@ -63,7 +54,7 @@ const Register = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="border border-gray-300 rounded-md p-2 w-full sm:leading-6"
                 />
               </div>
             </div>
@@ -84,7 +75,7 @@ const Register = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="border border-gray-300 rounded-md p-2 w-full sm:leading-6"
                 />
               </div>
             </div>
@@ -100,7 +91,7 @@ const Register = () => {
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="border-transparent border-r-8 rounded-md p-2 outline outline-1 outline-gray-300"
                 >
                   <option value="User">User</option>
                   <option value="Admin">Admin</option>
@@ -123,16 +114,16 @@ const Register = () => {
                     onChange={(e) => setAdminToken(e.target.value)}
                     placeholder="Enter your 6 digit token here"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 px-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="border border-gray-300 rounded-md p-2 w-full sm:leading-6"
                   />
                 </div>
                 {tokenError && (
-                <label
-                  htmlFor="errorMessage"
-                  className="block text-sm font-medium leading-6 text-red-900 mt-2"
-                >
-                  Wrong token!
-                </label>
+                  <label
+                    htmlFor="errorMessage"
+                    className="block text-sm font-medium leading-6 text-red-900 mt-2"
+                  >
+                    Wrong token!
+                  </label>
                 )}
               </div>
             )}
@@ -163,7 +154,7 @@ const Register = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="border border-gray-300 rounded-md p-2 w-full sm:leading-6"
                 />
               </div>
             </div>
@@ -171,7 +162,7 @@ const Register = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-indigo-600 p-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Register
               </button>
