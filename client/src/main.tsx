@@ -13,10 +13,10 @@ import Login from './modules/Authentication/Login';
 import Register from './modules/Authentication/Register';
 import Dashboard from './modules/Dashboard/Dashboard';
 import Play from './modules/Play/Play';
-import QuestionCreator from './modules/Questions/QuestionCreator';
-import QuestionList from './modules/Questions/QuestionList';
+import QuestionCreator from './modules/Questions (prev)/QuestionCreator';
+import QuestonTable from './modules/Questions/QuestionTable';
 import { store } from './store';
-import QuestionEditor from './modules/Questions/QuestionEditor';
+import QuestionEditor from './modules/Questions (prev)/QuestionEditor';
 import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/questions',
-    element: <QuestionList />
+    element: <QuestonTable />
   },
   {
     path: '/questions/create',

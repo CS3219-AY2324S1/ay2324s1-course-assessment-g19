@@ -1,4 +1,4 @@
-import QuestionTable from '../../components/Dashboard/QuestionTable';
+import QuestionTable from '../Questions/QuestionTable';
 
 const QuestionList = () => {
   return <QuestionTable />;

@@ -1,19 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { setCurrentQuestion } from '../../features/play/playSlice';
-import {
-  fetchQuestions,
-  selectQuestions
-} from '../../features/questions/questionsSlice';
+import { selectQuestions } from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { Question } from '../../types';
 import { toCamelCase } from '../../utils/string';
 import { selectCurrentUser } from '../../features/user/authSlice';
-import { useNavigate } from 'react-router-dom';
 import {
-  createQuestion,
-  deleteQuestion,
-  editQuestion,
   reset,
   selectCreatorQuestion,
   setQuestionInCreator
@@ -23,52 +15,14 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/react/24/outline';
-import QuestionDetailsPopup from './QuestionDetailsPopup';
-
-const DeleteToast = (question: Question, onCloseDelete: Function) => {
-  const onConfirmDelete = (question: Question) => {
-    store.dispatch(deleteQuestion({ id: question._id }));
-    onCloseDelete();
-  };
-
-  return (
-    <div className="flex justify-center items-start pt-10 z-50 bg-black bg-opacity-30 w-[calc(100vw-136px)] h-screen absolute rounded-l-xl">
-      <div
-        className="flex flex-col gap-4 bg-slate-50 px-12 py-8 z-50 shadow-2xl rounded-2xl"
-        onClick={() => onCloseDelete()}
-      >
-        <h1 className="font-semibold">
-          Are you sure you want to delete this question?
-        </h1>
-        <div className="flex flex-row gap-2 justify-center items-center">
-          <button
-            onClick={() => onConfirmDelete(question!)}
-            className="bg-slate-500 text-white px-4 py-2 rounded-xl hover:bg-slate-600"
-          >
-            Yes
-          </button>
-          <button
-            onClick={() => onCloseDelete()}
-            className="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import QuestionDetailsPopup from '../../components/Questions/QuestionDetailsPopup';
+import ConfirmDeleteToast from '../../components/Questions/ConfirmDeleteToast';
 
 const QuestionTable = () => {
-  const navigate = useNavigate();
   const currentUser = useSelector(selectCurrentUser);
   const questions = useSelector(selectQuestions);
   const isAdmin = currentUser ? currentUser.role == 'Admin' : false;
-  const [questionToDelete, setQuestionToDelete] = useState<Question | null>(
-    null
-  );
   const [showDeleteToast, setShowDeleteToast] = useState<boolean>(false);
-
   const questionInCreator = useSelector(selectCreatorQuestion);
   const [questionDeepCopy, setQuestionDeepCopy] = useState<Question | null>(
     null
@@ -76,6 +30,23 @@ const QuestionTable = () => {
   const [showQuestionDeatilsPopup, setShowQuestionDetailsPopup] =
     useState<boolean>(false);
   const [mode, setMode] = useState<'CREATE' | 'EDIT' | 'VIEW'>('CREATE');
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (store.getState().creator.status == 'ERROR') {
+      setError('Error creating question');
+      setTimeout(() => {
+        setError(null);
+        store.dispatch(reset());
+      }, 3000);
+    }
+  }, [store.getState().creator.status]);
+
+  const onOpenCreate = () => {
+    setMode('CREATE');
+    store.dispatch(reset());
+    setShowQuestionDetailsPopup(true);
+  };
 
   const onOpenEdit = (question: Question) => {
     setQuestionDeepCopy({
@@ -88,30 +59,30 @@ const QuestionTable = () => {
     setShowQuestionDetailsPopup(true);
   };
 
-  const onOpenCreate = () => {
-    store.dispatch(reset());
-    setMode('CREATE');
-    setShowQuestionDetailsPopup(true);
-  };
-
-  const onCancelEdit = () => {
-    questionDeepCopy && store.dispatch(setQuestionInCreator(questionDeepCopy));
-    setMode('VIEW');
-  };
-
   const onOpenView = (question: Question) => {
     setMode('VIEW');
     store.dispatch(setQuestionInCreator(question));
     setShowQuestionDetailsPopup(true);
   };
 
-  const onCloseView = () => {
-    setShowQuestionDetailsPopup(false);
+  const onOpenDelete = (question: Question) => {
+    store.dispatch(setQuestionInCreator(question));
+    setShowDeleteToast(true);
   };
 
-  const handleDelete = (question: Question) => {
-    setQuestionToDelete(question);
-    setShowDeleteToast(true);
+  const onCancelEdit = () => {
+    if (mode === 'EDIT') {
+      questionDeepCopy &&
+        store.dispatch(setQuestionInCreator(questionDeepCopy));
+      setMode('VIEW');
+    } else if (mode === 'CREATE') {
+      store.dispatch(reset());
+      setShowQuestionDetailsPopup(false);
+    }
+  };
+
+  const onCloseView = () => {
+    setShowQuestionDetailsPopup(false);
   };
 
   const onCloseDelete = () => {
@@ -120,6 +91,11 @@ const QuestionTable = () => {
 
   return (
     <>
+      {error && (
+        <div className="flex justify-center items-center bg-red-500 text-white p-4">
+          {error}
+        </div>
+      )}
       {showQuestionDeatilsPopup &&
         QuestionDetailsPopup(
           questionInCreator!,
@@ -129,7 +105,7 @@ const QuestionTable = () => {
           isAdmin,
           mode
         )}
-      {showDeleteToast && DeleteToast(questionToDelete!, onCloseDelete)}
+      {showDeleteToast && ConfirmDeleteToast(questionInCreator!, onCloseDelete)}
       <div className="flex justify-center w-full">
         <div className="flex flex-col flex-grow gap-4 w-full p-4">
           <div className="flex flex-row justify-center items-center text-neutral-500 bg-slate-50 rounded-2xl p-4 shadow-lg sticky">
@@ -184,7 +160,7 @@ const QuestionTable = () => {
                           />
                           <TrashIcon
                             className="h-5 w-5 inline-block"
-                            onClick={() => handleDelete(question)}
+                            onClick={() => onOpenDelete(question)}
                           />
                         </>
                       )}
