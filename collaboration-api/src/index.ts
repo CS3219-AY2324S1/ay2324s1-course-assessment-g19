@@ -75,6 +75,11 @@ io.on('connection', (socket) => {
     io.to(data.gameId).emit('message_recv', data.message);
   });
 
+  socket.on('chat_message_send', (data) => {
+    console.log(data.message);
+    io.to(data.gameId).emit('chat_message_recv', data);
+  });
+
   socket.on('disconnect', () => {
     const rooms = Object.keys(socket.rooms);
 

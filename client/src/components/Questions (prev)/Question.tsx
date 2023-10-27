@@ -7,13 +7,14 @@ import QuestionFooter from './Read/QuestionFooter';
 import QuestionHeader from './Read/QuestionHeader';
 import QuestionTags from './Read/QuestionTags';
 import { selectGameQuestion } from '../../features/play/gameSlice';
+import Chat from '../Chat/Chat';
 
 const Question = () => {
   const question = useSelector(selectGameQuestion);
 
   return (
-    <div className="flex flex-col p-8">
-      <div className="flex flex-col gap-4 items-center p-8 bg-gray-800 rounded-lg h-full opacity-80 w-[448px] overflow-auto">
+    <div className="flex flex-col p-8 gap-8">
+      <div className="flex flex-col gap-4 items-center p-8 bg-gray-800 rounded-lg h-2/3 opacity-80 w-[448px] overflow-auto">
         <QuestionHeader
           title={question?.title}
           difficulty={question?.difficulty}
@@ -28,6 +29,10 @@ const Question = () => {
         <hr className="w-full my-2" />
         <a className="flex flex-grow" />
         <QuestionFooter />
+      </div>
+
+      <div className="h-1/3">
+        <Chat />
       </div>
     </div>
   );

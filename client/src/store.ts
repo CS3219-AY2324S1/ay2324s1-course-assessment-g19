@@ -5,12 +5,14 @@ import creatorReducer from './features/questions/creatorSlice';
 import questionReducer from './features/questions/questionsSlice';
 import authReducer from './features/user/authSlice';
 import gameReducer from './features/play/gameSlice';
+import chatReducer from './features/play/chatSlice';
 
 export const store = configureStore({
   reducer: {
     authentication: authReducer,
     play: playReducer,
     game: gameReducer,
+    chat: chatReducer,
     questions: questionReducer,
     creator: creatorReducer
   }
