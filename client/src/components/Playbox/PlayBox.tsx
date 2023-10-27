@@ -29,11 +29,13 @@ import CountUpTimerPopup from './CountUpTimer';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socket } from '../../socket';
+import { selectCurrentUser } from '../../features/user/authSlice';
 
 const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 
 const PlayBox = () => {
+  const currentUser = useSelector(selectCurrentUser);
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
   const [tab, setTab] = useState('GAME');
@@ -56,6 +58,7 @@ const PlayBox = () => {
     playerOneEmail: string,
     playerTwoEmail: string
   ) => {
+    if (!currentUser) return;
     console.log('handleJoinGame');
     setTimeout(() => {
       socket.emit(
@@ -63,7 +66,8 @@ const PlayBox = () => {
         gameId,
         difficulty,
         playerOneEmail,
-        playerTwoEmail
+        playerTwoEmail,
+        currentUser
       );
     }, 2000);
   };

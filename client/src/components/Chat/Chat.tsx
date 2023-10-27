@@ -18,8 +18,11 @@ const Chat = () => {
   const [messageInput, setMessageInput] = useState<string>('');
 
   useEffect(() => {
+    console.log('useEffect Chat!');
     socket.on('chat_message_recv', (payload: ChatMessage) => {
+      console.log('chat_message_recv');
       store.dispatch(addChatMessage(payload));
+      console.log(payload.message);
     });
   }, [socket, store]);
 

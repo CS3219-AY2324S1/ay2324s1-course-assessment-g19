@@ -46,15 +46,6 @@ const Editor = () => {
         store.dispatch(setGameQuestion(question));
         store.dispatch(setGamePlayers([playerOne, playerTwo]));
         store.dispatch(resetChat());
-
-        const time = new Date(Date.now());
-        socket.emit('chat_message_send', {
-          id: `game-${gameId}-system-${time.toLocaleString()}`,
-          sender: 'SYSTEM',
-          message: `User ${currentUser?.name} has joined the session!`,
-          timestamp: time,
-          gameId: gameId
-        });
       }
     );
 

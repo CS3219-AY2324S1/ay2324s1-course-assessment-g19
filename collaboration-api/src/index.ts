@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
 
   socket.on(
     'join_game',
-    async (gameId, difficulty, playerOneEmail, playerTwoEmail) => {
+    async (gameId, difficulty, playerOneEmail, playerTwoEmail, currentUser) => {
       console.log(`User ${socket.id} joined game ${gameId}`);
 
       let question = null;
@@ -62,6 +62,15 @@ io.on('connection', (socket) => {
 
       socket.join(gameId);
       socket.emit('confirm_game', gameId, question, playerOne, playerTwo);
+
+      const time = new Date(Date.now());
+      io.to(gameId).emit('chat_message_recv', {
+        id: `game-${gameId}-system-${time.toLocaleString()}`,
+        sender: 'SYSTEM',
+        message: `User ${currentUser.name} has joined the session!`,
+        timestamp: time,
+        gameId: gameId
+      });
     }
   );
 
