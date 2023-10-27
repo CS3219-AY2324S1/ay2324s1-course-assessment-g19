@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo-dark.png';
+import logo from '../../assets/logo.png';
 import { registerUser } from '../../features/user/authSlice';
 import { store } from '../../store';
 
@@ -31,7 +31,7 @@ const Register = () => {
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img className="mx-auto h-10 w-auto" src={logo} alt="PeerPrep" />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
             Register a new account
           </h2>
         </div>
@@ -41,7 +41,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-100"
               >
                 Name
               </label>
@@ -62,7 +62,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-100"
               >
                 Email address
               </label>
@@ -83,7 +83,7 @@ const Register = () => {
             <div>
               <label
                 htmlFor="role"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-100"
               >
                 Role
               </label>
@@ -103,7 +103,7 @@ const Register = () => {
               <div>
                 <label
                   htmlFor="adminToken"
-                  className="block text-sm font-medium leading-6 text-gray-900 mt-2"
+                  className="block text-sm font-medium leading-6 text-gray-100 mt-2"
                 >
                   Admin token
                 </label>
@@ -132,7 +132,7 @@ const Register = () => {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-100"
                 >
                   Password
                 </label>

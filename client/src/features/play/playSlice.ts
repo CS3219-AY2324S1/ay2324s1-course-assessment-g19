@@ -25,9 +25,6 @@ export const playSlice = createSlice({
     setIsActive: (state, action) => {
       state.isActive = action.payload;
     },
-    setCurrentQuestion: (state, action) => {
-      state.currentQuestion = action.payload;
-    },
     setLanguage: (state, action) => {
       state.language = action.payload;
     },
@@ -37,8 +34,7 @@ export const playSlice = createSlice({
   }
 });
 
-export const { setIsActive, setCurrentQuestion, setLanguage, setDifficulty } =
-  playSlice.actions;
+export const { setIsActive, setLanguage, setDifficulty } = playSlice.actions;
 
 export const selectIsActive = (state: RootState) => state.play.isActive;
 export const selectCurrentQuestion = (state: RootState) =>

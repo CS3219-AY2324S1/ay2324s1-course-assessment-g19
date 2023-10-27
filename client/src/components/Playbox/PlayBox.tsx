@@ -8,19 +8,14 @@ import {
   VariableIcon
 } from '@heroicons/react/24/outline';
 import { useCallback, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   selectDifficulty,
   selectLanguage,
-  setCurrentQuestion,
   setDifficulty,
   setIsActive,
   setLanguage
 } from '../../features/play/playSlice';
-import {
-  selectQuestionByDifficulty,
-  selectQuestionByTitle
-} from '../../features/questions/questionsSlice';
 import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
@@ -31,13 +26,16 @@ import {
   leaveQueue
 } from '../../features/collaboration/collaborationSlice'; // Import axios for making API requests
 import CountUpTimerPopup from './CountUpTimer';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { socket } from '../../socket';
+import { selectCurrentUser } from '../../features/user/authSlice';
 
 const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 
 const PlayBox = () => {
+  const currentUser = useSelector(selectCurrentUser);
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
   const [tab, setTab] = useState('GAME');
@@ -54,13 +52,30 @@ const PlayBox = () => {
   const isDifficultySelected = !!difficulty; // Check if a difficulty is selected
   const isUserLoggedIn = !!store.getState().authentication.currentUser;
 
+  const handleJoinGame = (
+    gameId: string,
+    difficulty: QuestionDifficulty,
+    playerOneEmail: string,
+    playerTwoEmail: string
+  ) => {
+    if (!currentUser) return;
+    console.log('handleJoinGame');
+    setTimeout(() => {
+      socket.emit(
+        'join_game',
+        gameId,
+        difficulty,
+        playerOneEmail,
+        playerTwoEmail,
+        currentUser
+      );
+    }, 2000);
+  };
+
   const handlePartnerFound = (partnerUser: string) => {
     setPartnerFound(true);
     setPartnerUsername(partnerUser);
     console.log('handlePartnerFound');
-    setTimeout(() => {
-      store.dispatch(setIsActive(true));
-    }, 2000);
   };
 
   const handlePartnerNotFound = () => {
@@ -82,6 +97,7 @@ const PlayBox = () => {
   };
 
   const findMatchCallbackProps = {
+    onJoinGame: handleJoinGame,
     onPartnerFound: handlePartnerFound,
     onPartnerNotFound: handlePartnerNotFound,
     onFindingPartner: handleFindingPartner
@@ -118,15 +134,9 @@ const PlayBox = () => {
     [store]
   );
 
-  // TODO: Get question from question server
-  const selectedQuestion = useSelector(
-    selectQuestionByDifficulty(difficulty || 'EASY')
-  );
-
   const onFindMatch = useCallback(async () => {
     setTimer(0);
     setShowFailed(false);
-    store.dispatch(setCurrentQuestion(selectedQuestion));
 
     if (isUserLoggedIn) {
       try {
@@ -141,7 +151,7 @@ const PlayBox = () => {
         position: 'top-center' // Adjust the position as needed
       });
     }
-  }, [selectedQuestion, isUserLoggedIn]);
+  }, [isUserLoggedIn]);
 
   const onLeave = async () => {
     await leaveQueue(store.getState());
@@ -214,18 +224,18 @@ const PlayBox = () => {
               : 'bg-gray-100 text-gray-800'
           }`}
         >
-          Find a Match
-          {showPopup && (
+          {showPopup ? (
             <CountUpTimerPopup
               timer={timer}
               partnerUsername={partnerUsername}
             />
-          )}
-          {showFailed && (
+          ) : showFailed ? (
             <div>
               <h2>Failed to find a match</h2>
               <p style={{ marginTop: '10px' }}>Click to try again</p>
             </div>
+          ) : (
+            <a>Find a Match</a>
           )}
         </button>
 
