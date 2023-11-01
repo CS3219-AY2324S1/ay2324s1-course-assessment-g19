@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import auth, collaboration
+from routes import auth, collaboration, user
 
 from models import Base
 from database import engine
@@ -16,3 +16,4 @@ async def root():
 
 app.include_router(auth.router, prefix="/auth", tags=['auth'])
 app.include_router(collaboration.router, prefix="/collaboration", tags=['collaboration'])
+app.include_router(user.router, prefix="/user", tags=['user'])

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo-dark.png';
+import logo from '../../assets/logo.png';
 import { loginUser } from '../../features/user/authSlice';
 import { store } from '../../store';
 
@@ -23,7 +23,7 @@ const Login = () => {
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img className="mx-auto h-10 w-auto" src={logo} alt="PeerPrep" />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-100">
             Sign in to your account
           </h2>
         </div>
@@ -33,7 +33,7 @@ const Login = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-medium leading-6 text-gray-100"
               >
                 Email address
               </label>
@@ -55,7 +55,7 @@ const Login = () => {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-100"
                 >
                   Password
                 </label>
