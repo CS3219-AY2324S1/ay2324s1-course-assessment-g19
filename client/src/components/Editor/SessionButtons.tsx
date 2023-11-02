@@ -1,16 +1,28 @@
 import { ArrowRightCircleIcon } from '@heroicons/react/24/outline';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { setIsActive } from '../../features/play/playSlice';
 import { store } from '../../store';
+import { resetGame, selectGameId } from '../../features/play/gameSlice';
+import { useSelector } from 'react-redux';
+import { socket } from '../../socket';
 
 const SessionButtons = () => {
+  const gameId = useSelector(selectGameId);
+
   const onNext = useCallback(() => {
     alert('to implement');
   }, []);
 
   const onLeave = useCallback(() => {
-    store.dispatch(setIsActive(false));
+    socket.emit('leave_game', gameId);
   }, []);
+
+  useEffect(() => {
+    socket.on('confirm_leave_game', () => {
+      store.dispatch(setIsActive(false));
+      store.dispatch(resetGame());
+    });
+  }, [socket, store]);
 
   return (
     <div className="flex flex-row gap-4">

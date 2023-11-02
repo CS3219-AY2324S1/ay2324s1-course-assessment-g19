@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 interface CountUpTimerPopupProps {
   timer: number;
@@ -7,14 +7,13 @@ interface CountUpTimerPopupProps {
 
 const CountUpTimerPopup: React.FC<CountUpTimerPopupProps> = ({
   timer,
-  partnerUsername,
+  partnerUsername
 }) => {
   return (
     <div className="count-up-timer-popup">
       {partnerUsername ? (
         <>
-          <h2>Matched!</h2>
-          <p>Partner: {partnerUsername}</p>
+          <h2>Game found!</h2>
         </>
       ) : (
         <>

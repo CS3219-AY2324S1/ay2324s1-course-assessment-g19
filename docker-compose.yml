@@ -13,6 +13,10 @@ services:
       - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
     networks:
       - peerprep-network
+    depends_on:
+      - peerprep-question-api
+      - peerprep-user-api
+      - peerprep-collaboration-api
 
   peerprep-user-api:
     image: user-api:peerprep
@@ -47,6 +51,19 @@ services:
     depends_on:
       - peerprep-mongo
 
+  peerprep-collaboration-api:
+    image: collaboration-api:peerprep
+    container_name: peerprep-collaboration-api
+    build:
+      context: ./collaboration-api
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./collaboration-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+
   peerprep-postgres:
     image: postgres:latest
     container_name: peerprep-postgres
@@ -75,15 +92,16 @@ services:
     image: nginx:latest
     container_name: peerprep-nginx
     ports:
-      - '80:80' # Expose Nginx on port 80
+      - '80:80'
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf # Mount the Nginx configuration file
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - peerprep-network
     depends_on:
-      - peerprep-client # Wait until Client app container is up
-      - peerprep-question-api # Wait until Server app container is up
+      - peerprep-client
+      - peerprep-question-api 
       - peerprep-user-api
+      - peerprep-collaboration-api
       - peerprep-rabbitmq
 
   peerprep-rabbitmq:

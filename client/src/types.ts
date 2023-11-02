@@ -33,3 +33,11 @@ export type QuestionExample = {
 export type QuestionConstraint = string;
 
 export type StatusType = 'DEFAULT' | 'LOADING' | 'SUCCESS' | 'ERROR';
+
+export type ChatMessage = {
+  id: string;
+  gameId: string;
+  sender: User | 'SYSTEM';
+  message: string;
+  timestamp: Date;
+};
