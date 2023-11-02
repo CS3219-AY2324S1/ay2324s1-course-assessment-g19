@@ -52,7 +52,7 @@ const Editor = () => {
       console.log("handleRunCode called");
       setIsRunning(true);
 
-      const response = await axios.post(`http://localhost:8000/run-code`, {
+      const response = await axios.post(`http://localhost:9000/run-code`, {
         source_code: code,
         language_id: 62, // Update this to the correct language_id for Java
       });
@@ -68,7 +68,7 @@ const Editor = () => {
         let resultResponse;
   
         while (attempts < maxAttempts) {
-          resultResponse = await axios.get(`http://localhost:8000/submission/${token}`);
+          resultResponse = await axios.get(`http://localhost:9000/submission/${token}`);
           console.log('Submission result:', resultResponse.data);
   
           if (resultResponse.data.status_id === 3) { // Assuming status_id 3 means 'Finished'
