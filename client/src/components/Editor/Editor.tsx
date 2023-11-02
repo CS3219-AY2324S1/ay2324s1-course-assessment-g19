@@ -157,22 +157,6 @@ const Editor = () => {
         <pre>{output}</pre>
       </div>
 
-      {/* Chat Section */}
-      <div className="border-4 border-dashed border-gray-800 flex flex-col flex-grow justify-center items-center rounded-lg my-4 gap-4">
-        {gameId && (
-          <>
-            <div className="flex flex-row bg-gray-800 w-full h-full gap-4">
-              <textarea
-                placeholder="Message"
-                className="flex m-4 rounded-lg bg-transparent text-white text-sm px-4 py-2 w-full flex-grow overflow-auto resize-none"
-                onChange={onChange}
-                value={data}
-              />
-            </div>
-          </>
-        )}
-      </div>
-
       <PlayerCard self />
     </div>
   );

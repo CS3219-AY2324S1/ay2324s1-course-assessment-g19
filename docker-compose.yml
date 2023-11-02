@@ -57,7 +57,7 @@ services:
     build:
       context: ./collaboration-api
     ports:
-      - '5000:5000'
+      - '5001:5001'
     volumes:
       - ./collaboration-api:/usr/src/app # Mount the Server source code directory as a volume
       - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
