@@ -26,14 +26,20 @@ const QuestionDetailsPopup = (
 ) => {
   const isEditMode = mode === 'CREATE' || mode === 'EDIT';
 
-  const onSave = () => {
+  const onSave = async () => {
+    let data;
     if (mode === 'EDIT') {
-      store.dispatch(editQuestion({ id: question._id, question: question }));
+      data = await store.dispatch(
+        editQuestion({ id: question._id, question: question })
+      );
     } else if (mode === 'CREATE') {
-      store.dispatch(createQuestion(question));
+      data = await store.dispatch(createQuestion(question));
     }
-    store.dispatch(fetchQuestions());
-    onCloseView();
+
+    if (data?.meta.requestStatus === 'fulfilled') {
+      await store.dispatch(fetchQuestions());
+      onCloseView();
+    }
   };
 
   return (

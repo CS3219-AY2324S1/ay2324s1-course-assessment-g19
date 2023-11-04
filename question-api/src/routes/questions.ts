@@ -1,21 +1,54 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
+import axios, { AxiosError } from 'axios';
 
 const mongoose = require('mongoose');
 const Question = require('../models/question');
 
 const router = Router();
 
-router.get('/', (req: Request, res: Response) => {
-  Question.find()
-    .then((questions: any) => {
-      res.json(questions);
-    })
-    .catch((err: any) => {
-      res.status(400).json({ message: err });
+axios.defaults.withCredentials = true;
+
+async function checkUserAuth(req: Request, res: Response, next: NextFunction) {
+  try {
+    await axios.get('http://peerprep-user-api:5050/auth/authorize', {
+      headers: { Cookie: req.headers.cookie }
     });
+    next();
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      return res.status(err.response?.status!).json({ message: err.message });
+    }
+  }
+}
+
+async function checkAdminAuth(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authResponse = await axios.get(
+      'http://peerprep-user-api:5050/auth/authorize',
+      { headers: { Cookie: req.headers.cookie } }
+    );
+    if (authResponse.data.role !== 'Admin') {
+      return res.status(401).json({ message: 'Unauthorized (Not `Admin`)' });
+    }
+    next();
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      return res.status(err.response?.status!).json({ message: err.message });
+    }
+  }
+}
+
+router.get('/', checkUserAuth, async (req: Request, res: Response) => {
+  try {
+    const questions = await Question.find();
+    res.json(questions);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: err });
+  }
 });
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', checkAdminAuth, async (req: Request, res: Response) => {
   try {
     const question = new Question({
       title: req.body.title,
@@ -33,7 +66,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // Delete a question by id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkAdminAuth, async (req: Request, res: Response) => {
   try {
     const removedQuestion = await Question.findByIdAndRemove(req.params.id);
     if (!removedQuestion) {
@@ -46,7 +79,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // New route to edit question by id
-router.put('/:id', async (req, res) => {
+router.put('/:id', checkAdminAuth, async (req: Request, res: Response) => {
   try {
     const updatedQuestion = await Question.findByIdAndUpdate(
       req.params.id, // id of the question to be updated
@@ -74,7 +107,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // New route to search for questions based on difficulty and language
-router.get('/search', async (req: Request, res: Response) => {
+router.get('/search', checkUserAuth, async (req: Request, res: Response) => {
   try {
     // Extract query parameters for difficulty and language
     const { difficulty } = req.query;
@@ -98,7 +131,7 @@ router.get('/search', async (req: Request, res: Response) => {
 });
 
 // New route to search for one question based on difficulty and language
-router.get('/where', async (req: Request, res: Response) => {
+router.get('/where', checkUserAuth, async (req: Request, res: Response) => {
   try {
     // Extract query parameters for difficulty and language
     const { difficulty } = req.query;

@@ -1,3 +1,5 @@
+import os
+from typing import Literal, Union
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
@@ -7,6 +9,8 @@ from models import UserModel
 from database import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+ADMIN_KEY = os.getenv("ADMIN_KEY")
 
 
 class UserService:
@@ -26,11 +30,14 @@ class UserService:
                 status_code=401, detail="Invalid password")
         return user
 
-    def add_user(self, email: str, password: str, name: str, role: str):
+    def add_user(self, email: str, password: str, name: str, role: Literal["Admin", "User"], admin_key: Union[str, None] = None):
         existing_user = self.get_user(email=email)
         if existing_user:
             raise HTTPException(
                 status_code=401, detail="Email already registered")
+        if role == "Admin" and admin_key != ADMIN_KEY:
+            raise HTTPException(
+                status_code=401, detail="Invalid admin key")
         hashed_password = pwd_context.hash(password)
         user = UserModel(
             email=email, hashed_password=hashed_password, name=name, role=role)
