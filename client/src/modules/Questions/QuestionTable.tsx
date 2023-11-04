@@ -78,7 +78,13 @@ const QuestionTable = () => {
     setShowDeleteToast(false);
   };
 
-  return (
+  return !currentUser ? (
+    <div className="flex h-screen justify-center items-center">
+      <h1 className="text-lg text-white font-semibold">
+        Please log in to view questions
+      </h1>
+    </div>
+  ) : (
     <>
       {showQuestionDetailsPopup &&
         QuestionDetailsPopup(
@@ -99,11 +105,7 @@ const QuestionTable = () => {
             <div className="w-2/12 flex justify-center">Difficulty</div>
             <div className="w-2/12 flex justify-center">Actions</div>
           </div>
-          {!currentUser ? (
-            <div className="flex justify-center items-center">
-              Please log in to view questions
-            </div>
-          ) : questions.length > 0 ? (
+          {questions.length > 0 ? (
             <div className="flex flex-col">
               {questions.map((question: Question, index: number) => (
                 <div
@@ -154,7 +156,9 @@ const QuestionTable = () => {
               ))}
             </div>
           ) : (
-            <div className="flex justify-center">No questions found</div>
+            <div className="flex justify-center">
+              <h2 className="text-white font-semibold">No questions found</h2>
+            </div>
           )}
           {isAdmin && (
             <div className="flex justify-center pt-4">
