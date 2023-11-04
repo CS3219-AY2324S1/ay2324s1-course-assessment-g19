@@ -17,6 +17,7 @@ services:
       - peerprep-question-api
       - peerprep-user-api
       - peerprep-collaboration-api
+      - peerprep-code-api
 
   peerprep-user-api:
     image: user-api:peerprep
@@ -51,13 +52,28 @@ services:
     depends_on:
       - peerprep-mongo
 
+  peerprep-code-api:
+    image: code-api:peerprep
+    container_name: peerprep-code-api
+    build:
+      context: ./code-api
+    ports:
+      - '9000:9000'
+    logging:
+      driver: json-file
+    volumes:
+      - ./code-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+
   peerprep-collaboration-api:
     image: collaboration-api:peerprep
     container_name: peerprep-collaboration-api
     build:
       context: ./collaboration-api
     ports:
-      - '5000:5000'
+      - '5001:5001'
     volumes:
       - ./collaboration-api:/usr/src/app # Mount the Server source code directory as a volume
       - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
@@ -103,6 +119,7 @@ services:
       - peerprep-user-api
       - peerprep-collaboration-api
       - peerprep-rabbitmq
+      - peerprep-code-api
 
   peerprep-rabbitmq:
     hostname: 'gareth-rabbit'
