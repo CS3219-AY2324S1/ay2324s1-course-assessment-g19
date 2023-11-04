@@ -1,20 +1,16 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
+import questionRoutes from './routes/questions';
 
 require('dotenv').config();
 require('./mongodb/db');
 
 const app: Express = express();
 const port = process.env.SERVER_PORT;
+const cookieParser = require('cookie-parser');
 
 app.use(express.json());
+app.use(cookieParser());
 
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('from Question API!');
-});
-
-// Assuming questionRoutes is correctly set up
-import questionRoutes from './routes/questions';
 app.use('/questions', questionRoutes);
 
 

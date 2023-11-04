@@ -18,7 +18,9 @@ axios.defaults.withCredentials = true;
 export const fetchQuestions = createAsyncThunk(
   '/questionsSlice/fetchQuestions',
   async () => {
-    const response = await axios.get('/question-api/questions');
+    const response = await axios.get('/question-api/questions', {
+      withCredentials: true
+    });
     return response.data;
   }
 );
@@ -47,16 +49,19 @@ export const selectQuestionById = (id: string) => (state: RootState) =>
 export const selectQuestionByTitle = (title?: string) => (state: RootState) =>
   state.questions.questions.find((question) => question.title === title);
 export const selectStatus = (state: RootState) => state.questions.status;
-export const selectQuestionByDifficulty = (difficulty: string) => (state: RootState) => {
-  const filteredQuestions = state.questions.questions.filter(question => question.difficulty === difficulty);
-  
-  if (filteredQuestions.length === 0) {
-    return null; // No questions with the specified difficulty found
-  }
+export const selectQuestionByDifficulty =
+  (difficulty: string) => (state: RootState) => {
+    const filteredQuestions = state.questions.questions.filter(
+      (question) => question.difficulty === difficulty
+    );
 
-  // Randomly select one question from the filtered array
-  const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
-  return filteredQuestions[randomIndex];
-};
+    if (filteredQuestions.length === 0) {
+      return null; // No questions with the specified difficulty found
+    }
+
+    // Randomly select one question from the filtered array
+    const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
+    return filteredQuestions[randomIndex];
+  };
 
 export default questionsSlice.reducer;

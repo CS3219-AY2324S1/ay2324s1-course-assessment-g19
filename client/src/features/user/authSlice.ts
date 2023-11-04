@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../../store';
 import { StatusType, User } from '../../types';
+import { toast } from 'react-toastify';
 
 interface AuthState {
   currentUser?: User;
@@ -18,36 +19,69 @@ axios.defaults.withCredentials = true;
 export const checkAuthStatus = createAsyncThunk(
   '/authSlice/checkAuthStatus',
   async () => {
-    const response = await axios.get('/user-api/auth/token');
-    console.log("returning auth token: ", response);
+    const response = await axios.get('/user-api/auth/authorize');
+    console.log('checking auth status: ', response);
     return response.data;
   }
 );
 
 export const registerUser = createAsyncThunk(
   '/authSlice/registerUser',
-  async (credentials: { name: string; email: string; password: string, role: string }) => {
-    const response = await axios.post('/user-api/auth/register', credentials);
-    console.log("registering: ", response);
-    return response.data;
+  async (credentials: {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    adminKey: string;
+  }) => {
+    try {
+      const response = await axios.post('/user-api/auth/register', {
+        ...credentials,
+        admin_key: credentials.adminKey
+      });
+      console.log('registering: ', response);
+      return response.data;
+    } catch (error: any) {
+      toast.error(error.response.data.detail, {
+        autoClose: 3000,
+        position: 'top-center'
+      });
+      throw error;
+    }
   }
 );
 
 export const loginUser = createAsyncThunk(
   '/authSlice/loginUser',
   async (credentials: { email: string; password: string }) => {
-    const response = await axios.post('/user-api/auth/login', credentials);
-    console.log("logging in: ", response);
-    return response.data;
+    try {
+      const response = await axios.post('/user-api/auth/login', credentials);
+      console.log('logging in: ', response);
+      return response.data;
+    } catch (error: any) {
+      toast.error(error.response.data.detail, {
+        autoClose: 3000,
+        position: 'top-center'
+      });
+      throw error;
+    }
   }
 );
 
 export const logoutUser = createAsyncThunk(
   '/authSlice/logoutUser',
   async () => {
-    const response = await axios.post('/user-api/auth/logout');
-    console.log("logging out: ", response)
-    return response.data;
+    try {
+      const response = await axios.post('/user-api/auth/logout');
+      console.log('logging out: ', response);
+      return response.data;
+    } catch (error: any) {
+      toast.error(error.response.data.detail, {
+        autoClose: 3000,
+        position: 'top-center'
+      });
+      throw error;
+    }
   }
 );
 
