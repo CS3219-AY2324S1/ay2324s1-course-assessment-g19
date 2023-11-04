@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Union
+from typing import Literal, Union
 
 
 class UserBase(BaseModel):
@@ -11,6 +11,7 @@ class User(UserBase):
     name: Union[str, None] = None
     disabled: Union[bool, None] = None
     role: str
+
     class Config:
         from_attributes = True
 
@@ -26,4 +27,5 @@ class LoginRequest(BaseModel):
 
 class RegisterRequest(LoginRequest):
     name: str
-    role: str
+    role: Literal["Admin", "User"]
+    admin_key: Union[str, None] = None

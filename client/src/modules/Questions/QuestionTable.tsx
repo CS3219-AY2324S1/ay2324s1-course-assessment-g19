@@ -27,20 +27,9 @@ const QuestionTable = () => {
   const [questionDeepCopy, setQuestionDeepCopy] = useState<Question | null>(
     null
   );
-  const [showQuestionDeatilsPopup, setShowQuestionDetailsPopup] =
+  const [showQuestionDetailsPopup, setShowQuestionDetailsPopup] =
     useState<boolean>(false);
   const [mode, setMode] = useState<'CREATE' | 'EDIT' | 'VIEW'>('CREATE');
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (store.getState().creator.status == 'ERROR') {
-      setError('Error creating question');
-      setTimeout(() => {
-        setError(null);
-        store.dispatch(reset());
-      }, 3000);
-    }
-  }, [store.getState().creator.status]);
 
   const onOpenCreate = () => {
     setMode('CREATE');
@@ -91,21 +80,16 @@ const QuestionTable = () => {
 
   return (
     <>
-      {error && (
-        <div className="flex justify-center items-center bg-red-500 text-white p-4">
-          {error}
-        </div>
-      )}
-      {showQuestionDeatilsPopup &&
+      {showQuestionDetailsPopup &&
         QuestionDetailsPopup(
-          questionInCreator!,
+          questionInCreator,
           onCloseView,
           onCancelEdit,
           onOpenEdit,
           isAdmin,
           mode
         )}
-      {showDeleteToast && ConfirmDeleteToast(questionInCreator!, onCloseDelete)}
+      {showDeleteToast && ConfirmDeleteToast(questionInCreator, onCloseDelete)}
       <div className="flex justify-center w-full">
         <div className="flex flex-col flex-grow gap-4 w-full p-4">
           <div className="flex flex-row justify-center items-center text-neutral-500 bg-slate-50 rounded-2xl p-4 shadow-lg sticky">

@@ -10,6 +10,7 @@ import {
   QuestionTag,
   StatusType
 } from '../../types';
+import { toast } from 'react-toastify';
 
 interface CreatorState {
   question: Question;
@@ -22,13 +23,7 @@ const initialState: CreatorState = {
     difficulty: 'EASY',
     tags: [],
     description: '',
-    examples: [
-      {
-        in: '',
-        out: '',
-        explanation: ''
-      }
-    ],
+    examples: [],
     constraints: [],
     _id: undefined
   },
@@ -40,27 +35,60 @@ axios.defaults.withCredentials = true;
 export const createQuestion = createAsyncThunk(
   '/creatorSlice/createQuestion',
   async (question: Question) => {
-    const response = await axios.post('/question-api/questions', question);
-    return response.data;
+    try {
+      const response = await axios.post('/question-api/questions', question);
+      console.log('creating question: ', response);
+      return response.data;
+    } catch (error: any) {
+      const errors = error.response.data.message.errors;
+      Object.keys(errors).forEach((key) => {
+        toast.error(errors[key].message, {
+          autoClose: 3000,
+          position: 'top-center'
+        });
+      });
+      throw error;
+    }
   }
 );
 
 export const editQuestion = createAsyncThunk(
   '/creatorSlice/editQuestion',
   async ({ id, question }: { id: string; question: Question }) => {
-    const response = await axios.put(`/question-api/questions/${id}`, question);
-    return response.data;
+    try {
+      const response = await axios.put(
+        `/question-api/questions/${id}`,
+        question
+      );
+      console.log('editing question: ', response);
+      return response.data;
+    } catch (error: any) {
+      const errors = error.response.data.message.errors;
+      Object.keys(errors).forEach((key) => {
+        toast.error(errors[key].message, {
+          autoClose: 3000,
+          position: 'top-center'
+        });
+      });
+      throw error;
+    }
   }
 );
 
 export const deleteQuestion = createAsyncThunk(
   '/creatorSlice/deleteQuestion',
   async ({ id }: { id: string }) => {
-    const response = await axios.delete(`/question-api/questions/${id}`);
-    if (response.data.message == 'Question deleted') {
-      window.location.reload();
+    try {
+      const response = await axios.delete(`/question-api/questions/${id}`);
+      console.log('deleting question: ', response);
+      return response.data;
+    } catch (error: any) {
+      toast.error(error.response.data.message, {
+        autoClose: 3000,
+        position: 'top-center'
+      });
+      throw error;
     }
-    return response.data;
   }
 );
 
