@@ -8,7 +8,7 @@ from services import UserService
 router = APIRouter()
 
 
-@router.get("/token", response_model=User)
+@router.get("/authorize", response_model=User)
 async def authorize_user(current_user: User = Depends(validate_access_token)):
     return current_user
 

@@ -19,7 +19,7 @@ axios.defaults.withCredentials = true;
 export const checkAuthStatus = createAsyncThunk(
   '/authSlice/checkAuthStatus',
   async () => {
-    const response = await axios.get('/user-api/auth/token');
+    const response = await axios.get('/user-api/auth/authorize');
     console.log('checking auth status: ', response);
     return response.data;
   }
