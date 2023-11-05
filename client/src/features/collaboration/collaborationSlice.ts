@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { RootState } from '../../store';
-import { QuestionDifficulty } from '../../types';
+import { Language, QuestionDifficulty } from '../../types';
 
 interface FindMatchProps {
   onJoinGame: (
@@ -14,7 +14,7 @@ interface FindMatchProps {
   onPartnerNotFound: () => void; // Callback function when no partner is found
 }
 
-const consumeMessage = async (language: string, difficulty: string) => {
+const consumeMessage = async (language: number, difficulty: string) => {
   const queue_name = `${language}-${difficulty}`;
   console.log('looking in queue: ', queue_name);
   return await axios.get(`/user-api/collaboration/check-queue/${queue_name}`);
@@ -23,12 +23,12 @@ const consumeMessage = async (language: string, difficulty: string) => {
 const joinQueue = async (
   user: string,
   difficulty: string,
-  language: string
+  language: Language
 ) => {
   const postData = {
     user: user,
     difficulty: difficulty,
-    language: language
+    language: language.id
   };
 
   return await axios.post('/user-api/collaboration/join-queue', postData, {
@@ -53,7 +53,7 @@ export const findMatch = async (
 
   try {
     // Check if there are any messages in the queue
-    const response = await consumeMessage(language, difficulty);
+    const response = await consumeMessage(language?.id, difficulty);
     callbacks.onFindingPartner();
 
     if (response.data.message != 'empty') {
@@ -132,7 +132,7 @@ export const leaveQueue = async (state: RootState) => {
     return;
   }
 
-  const response = await consumeMessage(language, difficulty);
+  const response = await consumeMessage(language?.id, difficulty);
 
   // someone has matched before you leave the queue
   if (response.data.message == 'empty') {

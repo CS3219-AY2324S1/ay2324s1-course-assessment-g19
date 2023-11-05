@@ -84,6 +84,10 @@ io.on('connection', (socket) => {
     io.to(data.gameId).emit('message_recv', data.message);
   });
 
+  socket.on('language_send', (data) => {
+    io.to(data.gameId).emit('language_recv', data.language);
+  });
+
   socket.on('chat_message_send', (data) => {
     console.log(data.message);
     io.to(data.gameId).emit('chat_message_recv', data);

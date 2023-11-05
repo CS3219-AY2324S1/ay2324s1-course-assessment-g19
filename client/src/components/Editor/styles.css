@@ -1,0 +1,10 @@
+.ace-tomorrow_night, .ace_editor {
+  background-color: #1F2937 !important; 
+  color: #fff !important; 
+}
+
+.ace-tomorrow_night .ace_gutter,
+.ace-tomorrow_night .ace_scroller {
+  background: #1F2937 !important; 
+  color: #fff !important;
+}

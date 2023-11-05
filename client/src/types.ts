@@ -41,3 +41,8 @@ export type ChatMessage = {
   message: string;
   timestamp: Date;
 };
+
+export type Language = {
+  id: number;
+  name: string;
+};

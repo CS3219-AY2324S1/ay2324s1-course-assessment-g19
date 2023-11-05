@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 import {
   selectDifficulty,
   selectLanguage,
+  selectLanguages,
   setDifficulty,
-  setIsActive,
   setLanguage
 } from '../../features/play/playSlice';
 import { store } from '../../store';
@@ -31,22 +31,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import { socket } from '../../socket';
 import { selectCurrentUser } from '../../features/user/authSlice';
 
-const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 
 const PlayBox = () => {
   const currentUser = useSelector(selectCurrentUser);
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
+  const languages = useSelector(selectLanguages);
   const [tab, setTab] = useState('GAME');
-  const [partnerFound, setPartnerFound] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
   const [partnerUsername, setPartnerUsername] = useState(''); // Store partner's username
   const [timer, setTimer] = useState(0); // Store the timer
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  // const [isDifficultySelected, setIsDifficultySelected] = useState(false);
-  // const [isLanguageSelected, setIsLanguageSelected] = useState(false);
 
   const isLanguageSelected = !!language; // Check if a language is selected
   const isDifficultySelected = !!difficulty; // Check if a difficulty is selected
@@ -73,7 +70,6 @@ const PlayBox = () => {
   };
 
   const handlePartnerFound = (partnerUser: string) => {
-    setPartnerFound(true);
     setPartnerUsername(partnerUser);
     console.log('handlePartnerFound');
   };
@@ -121,7 +117,6 @@ const PlayBox = () => {
   const onSetLanaguage = useCallback(
     (l: string) => {
       store.dispatch(setLanguage(l));
-      //setIsLanguageSelected(true);
     },
     [store]
   );
@@ -129,7 +124,6 @@ const PlayBox = () => {
   const onSetDifficulty = useCallback(
     (d: QuestionDifficulty) => {
       store.dispatch(setDifficulty(d));
-      //setIsDifficultySelected(true);
     },
     [store]
   );
@@ -193,9 +187,9 @@ const PlayBox = () => {
       <>
         <ConfigSelect
           option="language"
-          selected={language}
+          selected={language?.name}
           callback={onSetLanaguage}
-          options={languages}
+          options={languages.map((e) => e.name)}
           icon={<CodeBracketIcon className="h-4 w-4" />}
         />
         <ConfigSelect
