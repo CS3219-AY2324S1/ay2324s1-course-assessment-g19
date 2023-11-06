@@ -8,10 +8,8 @@ import PlayerCard from './PlayerCard';
 import { socket } from '../../socket';
 import { store } from '../../store';
 import {
-  executeCode,
   selectGameData,
   selectGameId,
-  selectGameIsRunning,
   selectGameOpponent,
   selectGameOutput,
   setGameData,

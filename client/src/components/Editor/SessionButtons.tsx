@@ -3,11 +3,12 @@ import { useCallback, useEffect } from 'react';
 import { selectLanguage, setIsActive } from '../../features/play/playSlice';
 import { store } from '../../store';
 import {
-  executeCode,
   resetGame,
   selectGameData,
   selectGameId,
-  selectGameIsRunning
+  selectGameIsRunning,
+  setGameIsRunning,
+  setGameOutput
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
 import { socket } from '../../socket';
@@ -26,15 +27,30 @@ const SessionButtons = () => {
     if (!language) {
       return;
     }
-
-    store.dispatch(
-      executeCode({ source_code: data, language_id: language.id })
-    );
+    socket.emit('execute_send', {
+      sourceCode: data,
+      languageId: language.id,
+      gameId
+    });
   }, [data, language]);
 
   const onLeave = useCallback(() => {
     socket.emit('leave_game', gameId);
   }, [gameId]);
+
+  useEffect(() => {
+    socket.on('execute_start', () => {
+      store.dispatch(setGameOutput(''));
+      store.dispatch(setGameIsRunning(true));
+    });
+  }, [store]);
+
+  useEffect(() => {
+    socket.on('execute_recv', (output: string) => {
+      store.dispatch(setGameOutput(output));
+      store.dispatch(setGameIsRunning(false));
+    });
+  }, [store]);
 
   useEffect(() => {
     socket.on('confirm_leave_game', () => {

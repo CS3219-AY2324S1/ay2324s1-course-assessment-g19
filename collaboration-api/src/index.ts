@@ -3,6 +3,7 @@ import axios from 'axios';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import { executeCode } from './code.controller';
 
 require('dotenv').config();
 
@@ -24,55 +25,55 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log(`User ${socket.id} connected`);
 
-  socket.on(
-    'join_game',
-    async (gameId, difficulty, playerOneEmail, playerTwoEmail, currentUser) => {
-      console.log(`User ${socket.id} joined game ${gameId}`);
+  socket.on('join_game', async (data) => {
+    const { gameId, difficulty, playerOneEmail, playerTwoEmail, currentUser } =
+      data;
 
-      let question = null;
+    console.log(`User ${socket.id} joined game ${gameId}`);
 
-      try {
-        const questionResponse = await axios.get(
-          `http://peerprep-question-api:8000/questions/where?difficulty=${difficulty}`
-        );
+    let question = null;
 
-        question = questionResponse.data;
-        console.log(`Caching question: ${question.title}`);
-      } catch (error) {
-        console.error(error);
-      }
+    try {
+      const questionResponse = await axios.get(
+        `http://peerprep-question-api:8000/questions/where?difficulty=${difficulty}`
+      );
 
-      let playerOne = null;
-      let playerTwo = null;
-
-      try {
-        const playerOneResponse = await axios.get(
-          `http://peerprep-user-api:5050/user/?email=${playerOneEmail}`
-        );
-        const playerTwoResponse = await axios.get(
-          `http://peerprep-user-api:5050/user/?email=${playerTwoEmail}`
-        );
-
-        playerOne = playerOneResponse.data;
-        playerTwo = playerTwoResponse.data;
-        console.log(`Caching players: ${playerOne.name} and ${playerTwo.name}`);
-      } catch (error) {
-        console.error(error);
-      }
-
-      socket.join(gameId);
-      socket.emit('confirm_game', gameId, question, playerOne, playerTwo);
-
-      const time = new Date(Date.now());
-      io.to(gameId).emit('chat_message_recv', {
-        id: `game-${gameId}-system-${time.toLocaleString()}`,
-        sender: 'SYSTEM',
-        message: `User ${currentUser.name} has joined the session!`,
-        timestamp: time,
-        gameId: gameId
-      });
+      question = questionResponse.data;
+      console.log(`Caching question: ${question.title}`);
+    } catch (error) {
+      console.error(error);
     }
-  );
+
+    let playerOne = null;
+    let playerTwo = null;
+
+    try {
+      const playerOneResponse = await axios.get(
+        `http://peerprep-user-api:5050/user/?email=${playerOneEmail}`
+      );
+      const playerTwoResponse = await axios.get(
+        `http://peerprep-user-api:5050/user/?email=${playerTwoEmail}`
+      );
+
+      playerOne = playerOneResponse.data;
+      playerTwo = playerTwoResponse.data;
+      console.log(`Caching players: ${playerOne.name} and ${playerTwo.name}`);
+    } catch (error) {
+      console.error(error);
+    }
+
+    socket.join(gameId);
+    socket.emit('confirm_game', gameId, question, playerOne, playerTwo);
+
+    const time = new Date(Date.now());
+    io.to(gameId).emit('chat_message_recv', {
+      id: `game-${gameId}-system-${time.toLocaleString()}`,
+      sender: 'SYSTEM',
+      message: `User ${currentUser.name} has joined the session!`,
+      timestamp: time,
+      gameId: gameId
+    });
+  });
 
   socket.on('leave_game', (gameId) => {
     console.log(`User ${socket.id} left game ${gameId}`);
@@ -86,6 +87,14 @@ io.on('connection', (socket) => {
 
   socket.on('language_send', (data) => {
     io.to(data.gameId).emit('language_recv', data.language);
+  });
+
+  socket.on('execute_send', async (data) => {
+    io.to(data.gameId).emit('execute_start');
+    console.log('Executing code...');
+    const response = await executeCode(data.sourceCode, data.languageId);
+    console.log('Execute code complete');
+    io.to(data.gameId).emit('execute_recv', response);
   });
 
   socket.on('chat_message_send', (data) => {

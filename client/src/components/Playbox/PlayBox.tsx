@@ -58,14 +58,13 @@ const PlayBox = () => {
     if (!currentUser) return;
     console.log('handleJoinGame');
     setTimeout(() => {
-      socket.emit(
-        'join_game',
+      socket.emit('join_game', {
         gameId,
         difficulty,
         playerOneEmail,
         playerTwoEmail,
         currentUser
-      );
+      });
     }, 2000);
   };
 
