@@ -6,6 +6,7 @@ interface FindMatchProps {
   onJoinGame: (
     gameId: string,
     difficulty: QuestionDifficulty,
+    language: string,
     playerOneEmail: string,
     playerTwoEmail: string
   ) => void; // Callback function when joining a game
@@ -78,6 +79,7 @@ export const findMatch = async (
       callbacks.onJoinGame(
         `${currentUser.email}-${partnerUser}`,
         difficulty,
+        language.name,
         currentUser.email,
         partnerUser
       );
@@ -106,8 +108,9 @@ export const findMatch = async (
           callbacks.onJoinGame(
             `${partnerUser}-${currentUser.email}`,
             difficulty,
-            currentUser.email,
-            partnerUser
+            language.name,
+            partnerUser,
+            currentUser.email
           );
           break;
         } else if (i == 5) {

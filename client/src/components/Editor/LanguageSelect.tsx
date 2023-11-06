@@ -43,12 +43,6 @@ const LanguageSelect = () => {
     };
   }, []);
 
-  useEffect(() => {
-    socket.on('language_recv', (language: string) => {
-      store.dispatch(setLanguage(language));
-    });
-  });
-
   return (
     <div className="flex flex-col gap-4 relative" ref={dropdownRef}>
       <div

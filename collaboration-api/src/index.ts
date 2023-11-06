@@ -1,5 +1,4 @@
-import express, { Express, Request, Response } from 'express';
-import axios from 'axios';
+import express, { Express } from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
@@ -11,12 +10,13 @@ require('dotenv').config();
 
 const app: Express = express();
 const port = process.env.SERVER_PORT;
+const connectionString = process.env.REDIS_URI;
 
 app.use(cors());
 
 const server = createServer(app);
 
-const redis = new Redis();
+const redis = new Redis(connectionString!);
 
 const io = new Server(server, {
   path: '/',
@@ -30,8 +30,14 @@ io.on('connection', (socket) => {
   console.log(`User ${socket.id} connected`);
 
   socket.on('join_game', async (data) => {
-    const { gameId, difficulty, playerOneEmail, playerTwoEmail, currentUser } =
-      data;
+    const {
+      gameId,
+      difficulty,
+      language,
+      playerOneEmail,
+      playerTwoEmail,
+      currentUser
+    } = data;
 
     console.log(`User ${socket.id} joined game ${gameId}`);
 
@@ -41,21 +47,36 @@ io.on('connection', (socket) => {
       playerTwoEmail
     );
 
-    const roomData = { gameId, question, playerOne, playerTwo };
-    await redis.set(gameId, JSON.stringify(roomData));
+    let roomData;
 
-    socket.join(gameId);
-    socket.emit('confirm_game', gameId, question, playerOne, playerTwo);
+    const roomDataString = await redis.get(gameId);
+
+    if (!roomDataString) {
+      roomData = {
+        gameId,
+        question,
+        language,
+        messages: [],
+        playerOne,
+        playerTwo
+      };
+    } else {
+      roomData = JSON.parse(roomDataString);
+    }
 
     const time = new Date(Date.now());
-
-    io.to(gameId).emit('chat_message_recv', {
+    roomData.messages.push({
       id: `game-${gameId}-system-${time.toLocaleString()}`,
       sender: 'SYSTEM',
       message: `User ${currentUser.name} has joined the session!`,
       timestamp: time,
       gameId: gameId
     });
+
+    await redis.set(gameId, JSON.stringify(roomData));
+
+    socket.join(gameId);
+    socket.emit('update', roomData);
   });
 
   socket.on('check_game', async (data) => {
@@ -70,13 +91,8 @@ io.on('connection', (socket) => {
     }
 
     const roomData = JSON.parse(roomDataString);
-    socket.emit(
-      'confirm_game',
-      roomData.gameId,
-      roomData.question,
-      roomData.playerOne,
-      roomData.playerTwo
-    );
+    socket.join(data.gameId);
+    socket.emit('update', roomData);
   });
 
   socket.on('leave_game', async (data) => {
@@ -90,13 +106,28 @@ io.on('connection', (socket) => {
 
     const roomData = JSON.parse(roomDataString);
 
-    if (data.currentUser.email === roomData.playerOne.email) {
-      roomData.playerOne.hasLeft = true;
-    } else if (data.currentUser.email === roomData.playerTwo.email) {
-      roomData.playerTwo.hasLeft = true;
+    if (
+      roomData.playerOne &&
+      data.currentUser.email === roomData.playerOne.email
+    ) {
+      roomData.playerOne = undefined;
+    } else if (
+      roomData.playerTwo &&
+      data.currentUser.email === roomData.playerTwo.email
+    ) {
+      roomData.playerTwo = undefined;
     }
 
-    if (roomData.playerOne.hasLeft && roomData.playerTwo.hasLeft) {
+    const time = new Date(Date.now());
+    roomData.messages.push({
+      id: `game-${data.gameId}-system-${time.toLocaleString()}`,
+      sender: 'SYSTEM',
+      message: `${data.currentUser.name} has left the session!`,
+      timestamp: time,
+      gameId: data.gameId
+    });
+
+    if (!roomData.playerOne && !roomData.playerTwo) {
       await redis.del(data.gameId);
     } else {
       await redis.set(data.gameId, JSON.stringify(roomData));
@@ -104,40 +135,88 @@ io.on('connection', (socket) => {
 
     socket.leave(data.gameId);
     socket.emit('confirm_leave_game');
-
-    const time = new Date(Date.now());
-
-    io.to(data.gameId).emit('chat_message_recv', {
-      id: `game-${data.gameId}-system-${time.toLocaleString()}`,
-      sender: 'SYSTEM',
-      message: `${data.currentUser.name} has left the session!`,
-      timestamp: time,
-      gameId: data.gameId
-    });
+    io.to(data.gameId).emit('update', roomData);
   });
 
-  socket.on('message_send', (data) => {
-    io.to(data.gameId).emit('message_recv', data.message);
+  socket.on('message_send', async (data) => {
+    const roomDataString = await redis.get(data.gameId);
+
+    if (!roomDataString) {
+      console.log(`No room data found for game ${data.gameId}`);
+      return;
+    }
+
+    const roomData = JSON.parse(roomDataString);
+
+    roomData.data = data.message;
+    await redis.set(data.gameId, JSON.stringify(roomData));
+
+    io.to(data.gameId).emit('update', roomData);
   });
 
-  socket.on('language_send', (data) => {
-    io.to(data.gameId).emit('language_recv', data.language);
+  socket.on('language_send', async (data) => {
+    console.log(
+      `User ${socket.id} sent language ${data.language} to game ${data.gameId}`
+    );
+
+    const roomDataString = await redis.get(data.gameId);
+
+    if (!roomDataString) {
+      console.log(`No room data found for game ${data.gameId}`);
+      return;
+    }
+
+    const roomData = JSON.parse(roomDataString);
+
+    roomData.language = data.language;
+    await redis.set(data.gameId, JSON.stringify(roomData));
+
+    io.to(data.gameId).emit('update', roomData);
   });
 
   socket.on('execute_send', async (data) => {
     io.to(data.gameId).emit('execute_start');
     console.log('Executing code...');
 
-    const response = await executeCode(data.sourceCode, data.languageId);
+    const output = await executeCode(data.sourceCode, data.languageId);
     console.log('Execute code complete');
 
-    io.to(data.gameId).emit('execute_recv', response);
+    const roomDataString = await redis.get(data.gameId);
+
+    if (!roomDataString) {
+      console.log(`No room data found for game ${data.gameId}`);
+      return;
+    }
+
+    const roomData = JSON.parse(roomDataString);
+
+    roomData.output = output;
+    await redis.set(data.gameId, JSON.stringify(roomData));
+
+    io.to(data.gameId).emit('execute_end');
+    io.to(data.gameId).emit('update', roomData);
   });
 
-  socket.on('chat_message_send', (data) => {
-    console.log(data.message);
+  socket.on('chat_message_send', async (data) => {
+    console.log(`User ${socket.id} said ${data.message}`);
 
-    io.to(data.gameId).emit('chat_message_recv', data);
+    const roomDataString = await redis.get(data.gameId);
+
+    if (!roomDataString) {
+      console.log(`No room data found for game ${data.gameId}`);
+      return;
+    }
+
+    const roomData = JSON.parse(roomDataString);
+
+    if (!roomData.messages) {
+      roomData.messages = [];
+    }
+
+    roomData.messages.push(data);
+    await redis.set(data.gameId, JSON.stringify(roomData));
+
+    io.to(data.gameId).emit('update', roomData);
   });
 
   socket.on('disconnect', () => {

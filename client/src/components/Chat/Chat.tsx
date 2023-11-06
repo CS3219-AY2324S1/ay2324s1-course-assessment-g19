@@ -1,10 +1,7 @@
 import { socket } from '../../socket';
 import { store } from '../../store';
 import { useSelector } from 'react-redux';
-import {
-  addChatMessage,
-  selectChatMessages
-} from '../../features/play/chatSlice';
+import { selectChatMessages } from '../../features/play/chatSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
 import { ChatMessage } from '../../types';
 import { useEffect, useState } from 'react';
@@ -16,15 +13,6 @@ const Chat = () => {
   const gameId = useSelector(selectGameId);
 
   const [messageInput, setMessageInput] = useState<string>('');
-
-  useEffect(() => {
-    console.log('useEffect Chat!');
-    socket.on('chat_message_recv', (payload: ChatMessage) => {
-      console.log('chat_message_recv');
-      store.dispatch(addChatMessage(payload));
-      console.log(payload.message);
-    });
-  }, [socket, store]);
 
   if (!currentUser) return null;
 
@@ -38,6 +26,7 @@ const Chat = () => {
       gameId: gameId
     };
 
+    console.log(payload);
     socket.emit('chat_message_send', payload);
     setMessageInput('');
   };

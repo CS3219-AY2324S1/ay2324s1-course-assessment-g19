@@ -13,6 +13,7 @@ import {
 import { useSelector } from 'react-redux';
 import { socket } from '../../socket';
 import { selectCurrentUser } from '../../features/user/authSlice';
+import Cookies from 'js-cookie';
 
 const SessionButtons = () => {
   const gameId = useSelector(selectGameId);
@@ -48,8 +49,7 @@ const SessionButtons = () => {
   }, [store]);
 
   useEffect(() => {
-    socket.on('execute_recv', (output: string) => {
-      store.dispatch(setGameOutput(output));
+    socket.on('execute_end', () => {
       store.dispatch(setGameIsRunning(false));
     });
   }, [store]);
@@ -58,6 +58,8 @@ const SessionButtons = () => {
     socket.on('confirm_leave_game', () => {
       store.dispatch(setIsActive(false));
       store.dispatch(resetGame());
+
+      Cookies.remove('gameId');
     });
   }, [socket, store]);
 

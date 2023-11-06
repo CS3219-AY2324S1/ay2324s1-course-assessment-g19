@@ -14,19 +14,32 @@ import {
   selectGameOutput,
   setGameData,
   setGameId,
+  setGameOutput,
   setGamePlayers,
   setGameQuestion
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
-import { QuestionDifficulty, User } from '../../types';
-import { setIsActive } from '../../features/play/playSlice';
+import { Question, QuestionDifficulty, User } from '../../types';
+import {
+  fetchLanguagesAndSetLanguage,
+  selectIsActive,
+  selectLanguage,
+  selectLanguages,
+  setIsActive,
+  setLanguage
+} from '../../features/play/playSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
-import { reset as resetChat } from '../../features/play/chatSlice';
+import {
+  reset as resetChat,
+  selectChatMessages,
+  setChatMessages
+} from '../../features/play/chatSlice';
 import 'ace-builds/src-noconflict/theme-tomorrow_night'; // A dark theme
 import './styles.css';
 import Cookies from 'js-cookie';
 
 const Editor = () => {
+  const isActive = useSelector(selectIsActive);
   const output = useSelector(selectGameOutput);
   const currentUser = useSelector(selectCurrentUser);
   const gameId = useSelector(selectGameId);
@@ -43,32 +56,34 @@ const Editor = () => {
   useEffect(() => {
     const cachedGameId = Cookies.get('gameId');
 
-    if (cachedGameId) {
+    if (!isActive && cachedGameId) {
       socket.emit('check_game', { gameId: cachedGameId });
     }
   }, [socket]);
 
   useEffect(() => {
-    socket.on(
-      'confirm_game',
-      (
-        id: string,
-        question: QuestionDifficulty,
-        playerOne: User,
-        playerTwo: User
-      ) => {
-        store.dispatch(setIsActive(true));
-        store.dispatch(setGameId(id));
-        store.dispatch(setGameQuestion(question));
-        store.dispatch(setGamePlayers([playerOne, playerTwo]));
-        store.dispatch(resetChat());
+    socket.on('update', (roomData) => {
+      const {
+        gameId,
+        question,
+        language,
+        data,
+        output,
+        messages,
+        playerOne,
+        playerTwo
+      } = roomData;
 
-        Cookies.set('gameId', id);
-      }
-    );
+      store.dispatch(setIsActive(true));
+      store.dispatch(setGameId(gameId));
+      store.dispatch(setGameQuestion(question));
+      store.dispatch(setGamePlayers([playerOne, playerTwo]));
+      store.dispatch(setGameData(data));
+      store.dispatch(setGameOutput(output));
+      store.dispatch(setChatMessages(messages));
+      store.dispatch(fetchLanguagesAndSetLanguage(language));
 
-    socket.on('message_recv', (msg: string) => {
-      store.dispatch(setGameData(msg));
+      Cookies.set('gameId', gameId);
     });
   }, [currentUser, socket, store]);
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
+import { RootState, store } from '../../store';
 import {
   Language,
   Question,
@@ -31,6 +31,14 @@ export const fetchLanguages = createAsyncThunk(
   async () => {
     const response = await axios.get(`/code-api/languages`);
     return response.data;
+  }
+);
+
+export const fetchLanguagesAndSetLanguage = createAsyncThunk(
+  '/playSlice/fetchLanguagesAndSetLanguage',
+  async (language: string) => {
+    await store.dispatch(fetchLanguages());
+    store.dispatch(setLanguage(language));
   }
 );
 

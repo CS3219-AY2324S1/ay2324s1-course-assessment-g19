@@ -50,6 +50,9 @@ export const gameSlice = createSlice({
       state.data = '';
       state.players = [];
       state.question = undefined;
+      state.isRunning = false;
+      state.output = '';
+      state.status = 'DEFAULT';
     }
   }
 });
@@ -71,6 +74,8 @@ export const selectGameId = (state: RootState) => state.game.gameId;
 export const selectGameIsRunning = (state: RootState) => state.game.isRunning;
 export const selectGameOutput = (state: RootState) => state.game.output;
 export const selectGameOpponent = (state: RootState) =>
-  state.game.players.find((e) => e.id !== state.authentication.currentUser?.id);
+  state.game.players.find(
+    (e) => e && e.id !== state.authentication.currentUser?.id
+  );
 
 export default gameSlice.reducer;
