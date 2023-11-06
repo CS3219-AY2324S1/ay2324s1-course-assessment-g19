@@ -24,6 +24,7 @@ import { selectCurrentUser } from '../../features/user/authSlice';
 import { reset as resetChat } from '../../features/play/chatSlice';
 import 'ace-builds/src-noconflict/theme-tomorrow_night'; // A dark theme
 import './styles.css';
+import Cookies from 'js-cookie';
 
 const Editor = () => {
   const output = useSelector(selectGameOutput);
@@ -40,6 +41,14 @@ const Editor = () => {
   );
 
   useEffect(() => {
+    const cachedGameId = Cookies.get('gameId');
+
+    if (cachedGameId) {
+      socket.emit('check_game', { gameId: cachedGameId });
+    }
+  }, [socket]);
+
+  useEffect(() => {
     socket.on(
       'confirm_game',
       (
@@ -53,6 +62,8 @@ const Editor = () => {
         store.dispatch(setGameQuestion(question));
         store.dispatch(setGamePlayers([playerOne, playerTwo]));
         store.dispatch(resetChat());
+
+        Cookies.set('gameId', id);
       }
     );
 

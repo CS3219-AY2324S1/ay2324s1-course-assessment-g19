@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import { executeCode } from './code.controller';
 import { fetchPlayers, fetchQuestion } from './connect.controller';
+import Redis from 'ioredis';
 
 require('dotenv').config();
 
@@ -14,6 +15,8 @@ const port = process.env.SERVER_PORT;
 app.use(cors());
 
 const server = createServer(app);
+
+const redis = new Redis();
 
 const io = new Server(server, {
   path: '/',
@@ -38,6 +41,9 @@ io.on('connection', (socket) => {
       playerTwoEmail
     );
 
+    const roomData = { gameId, question, playerOne, playerTwo };
+    await redis.set(gameId, JSON.stringify(roomData));
+
     socket.join(gameId);
     socket.emit('confirm_game', gameId, question, playerOne, playerTwo);
 
@@ -52,8 +58,49 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('leave_game', (data) => {
+  socket.on('check_game', async (data) => {
+    console.log(`User ${socket.id} checked game ${data.gameId}`);
+
+    const roomDataString = await redis.get(data.gameId);
+
+    if (!roomDataString) {
+      console.log(`No room data found for game ${data.gameId}`);
+      socket.emit('game_not_found');
+      return;
+    }
+
+    const roomData = JSON.parse(roomDataString);
+    socket.emit(
+      'confirm_game',
+      roomData.gameId,
+      roomData.question,
+      roomData.playerOne,
+      roomData.playerTwo
+    );
+  });
+
+  socket.on('leave_game', async (data) => {
     console.log(`User ${data.currentUser} left game ${data.gameId}`);
+    const roomDataString = await redis.get(data.gameId);
+
+    if (!roomDataString) {
+      console.log(`No room data found for game ${data.gameId}`);
+      return;
+    }
+
+    const roomData = JSON.parse(roomDataString);
+
+    if (data.currentUser.email === roomData.playerOne.email) {
+      roomData.playerOne.hasLeft = true;
+    } else if (data.currentUser.email === roomData.playerTwo.email) {
+      roomData.playerTwo.hasLeft = true;
+    }
+
+    if (roomData.playerOne.hasLeft && roomData.playerTwo.hasLeft) {
+      await redis.del(data.gameId);
+    } else {
+      await redis.set(data.gameId, JSON.stringify(roomData));
+    }
 
     socket.leave(data.gameId);
     socket.emit('confirm_leave_game');
