@@ -12,12 +12,14 @@ import {
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
 import { socket } from '../../socket';
+import { selectCurrentUser } from '../../features/user/authSlice';
 
 const SessionButtons = () => {
   const gameId = useSelector(selectGameId);
   const data = useSelector(selectGameData);
   const language = useSelector(selectLanguage);
   const isRunning = useSelector(selectGameIsRunning);
+  const currentUser = useSelector(selectCurrentUser);
 
   const onNext = useCallback(() => {
     alert('to implement');
@@ -35,7 +37,7 @@ const SessionButtons = () => {
   }, [data, language]);
 
   const onLeave = useCallback(() => {
-    socket.emit('leave_game', gameId);
+    socket.emit('leave_game', { gameId, currentUser });
   }, [gameId]);
 
   useEffect(() => {

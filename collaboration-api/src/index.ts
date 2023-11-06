@@ -52,11 +52,21 @@ io.on('connection', (socket) => {
     });
   });
 
-  socket.on('leave_game', (gameId) => {
-    console.log(`User ${socket.id} left game ${gameId}`);
+  socket.on('leave_game', (data) => {
+    console.log(`User ${data.currentUser} left game ${data.gameId}`);
 
-    socket.leave(gameId);
+    socket.leave(data.gameId);
     socket.emit('confirm_leave_game');
+
+    const time = new Date(Date.now());
+
+    io.to(data.gameId).emit('chat_message_recv', {
+      id: `game-${data.gameId}-system-${time.toLocaleString()}`,
+      sender: 'SYSTEM',
+      message: `${data.currentUser.name} has left the session!`,
+      timestamp: time,
+      gameId: data.gameId
+    });
   });
 
   socket.on('message_send', (data) => {
