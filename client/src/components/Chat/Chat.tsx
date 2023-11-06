@@ -26,7 +26,6 @@ const Chat = () => {
       gameId: gameId
     };
 
-    console.log(payload);
     socket.emit('chat_message_send', payload);
     setMessageInput('');
   };

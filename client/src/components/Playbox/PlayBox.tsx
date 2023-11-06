@@ -57,7 +57,6 @@ const PlayBox = () => {
     playerTwoEmail: string
   ) => {
     if (!currentUser) return;
-    console.log('handleJoinGame');
     setTimeout(() => {
       socket.emit('join_game', {
         gameId,
@@ -72,14 +71,12 @@ const PlayBox = () => {
 
   const handlePartnerFound = (partnerUser: string) => {
     setPartnerUsername(partnerUser);
-    console.log('handlePartnerFound');
   };
 
   const handlePartnerNotFound = () => {
     setShowPopup(false);
     setShowFailed(true);
     setIsButtonDisabled(false); // Enable the button
-    console.log('handlePartnerNotFound');
     // Trigger actions when no partner is found
     // For example, show a message or take other actions
   };
@@ -88,7 +85,6 @@ const PlayBox = () => {
     setShowFailed(false);
     setShowPopup(true);
     setIsButtonDisabled(true); // Disable the button
-    console.log('handleFindingPartner');
     // Trigger actions when no partner is found
     // For example, show a message or take other actions
   };
@@ -140,7 +136,6 @@ const PlayBox = () => {
         console.error('Error:', error);
       }
     } else {
-      console.log('Please log in to find a match.');
       toast.error('Please log in to find a match.', {
         autoClose: 3000, // Adjust this as needed
         position: 'top-center' // Adjust the position as needed
@@ -167,7 +162,6 @@ const PlayBox = () => {
     if (timer >= 30) {
       // After 30 seconds with no partner, close the popup
       setPartnerUsername(''); // Clear partner's username
-      console.log('timer >=30');
       if (interval) {
         clearInterval(interval);
       }
