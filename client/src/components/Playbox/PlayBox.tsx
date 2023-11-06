@@ -30,6 +30,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socket } from '../../socket';
 import { selectCurrentUser } from '../../features/user/authSlice';
+import AI from '../AI/AI';
 
 const languages = ['javascript', 'python', 'java', 'c++', 'c#'];
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
@@ -270,6 +271,7 @@ const PlayBox = () => {
   } else if (tab === 'HISTORY') {
     render = (
       <div className="flex flex-col items-center">
+        <AI />
         <a className="text-white">TO IMPLEMENT</a>
       </div>
     );
