@@ -1,9 +1,7 @@
-import React from 'react';
-import axios from 'axios';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-java';
 import 'ace-builds/src-noconflict/theme-github';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import { socket } from '../../socket';
 import { store } from '../../store';
@@ -19,21 +17,13 @@ import {
   setGameQuestion
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
-import { Question, QuestionDifficulty, User } from '../../types';
 import {
   fetchLanguagesAndSetLanguage,
   selectIsActive,
-  selectLanguage,
-  selectLanguages,
-  setIsActive,
-  setLanguage
+  setIsActive
 } from '../../features/play/playSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
-import {
-  reset as resetChat,
-  selectChatMessages,
-  setChatMessages
-} from '../../features/play/chatSlice';
+import { setChatMessages } from '../../features/play/chatSlice';
 import 'ace-builds/src-noconflict/theme-tomorrow_night'; // A dark theme
 import './styles.css';
 import Cookies from 'js-cookie';
