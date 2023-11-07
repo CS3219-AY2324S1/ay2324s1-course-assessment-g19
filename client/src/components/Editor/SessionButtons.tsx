@@ -27,9 +27,10 @@ const SessionButtons = () => {
   }, []);
 
   const onExecute = useCallback(() => {
-    if (!language) {
+    if (!language || !gameId) {
       return;
     }
+
     socket.emit('execute_send', {
       sourceCode: data,
       languageId: language.id,
@@ -38,6 +39,10 @@ const SessionButtons = () => {
   }, [data, language]);
 
   const onLeave = useCallback(() => {
+    if (!gameId || !currentUser) {
+      return;
+    }
+
     socket.emit('leave_game', { gameId, currentUser });
   }, [gameId]);
 

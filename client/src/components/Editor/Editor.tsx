@@ -47,8 +47,8 @@ const Editor = () => {
   const opponentPlayer = useSelector(selectGameOpponent);
 
   const onChange = useCallback(
-    (message: string) => {
-      socket.emit('message_send', { message, gameId });
+    (data: string) => {
+      socket.emit('data_send', { data, gameId });
     },
     [socket, gameId]
   );
