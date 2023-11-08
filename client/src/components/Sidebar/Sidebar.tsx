@@ -52,20 +52,16 @@ const Sidebar = () => {
 
       <div className="flex flex-col pb-8">
         {currentUser && (
-          <div className="flex flex-col items-center gap-4 p-4">
+          <a className="flex flex-col items-center gap-4 p-4" href="/settings">
             <img
-              onClick={() => alert('to implement')}
               className="h-12 w-12 rounded-full border-2 border-gray-500 cursor-pointer"
               src={currentUser.imgSrc || avatar}
               alt="Your avatar"
             />
-            <span
-              onClick={() => alert('to implement')}
-              className="text-gray-100 bg-gray-700 w-full text-center text-sm p-1 rounded-md cursor-pointer transition hover:bg-gray-500"
-            >
+            <span className="text-gray-100 bg-gray-700 w-full text-center text-sm p-1 rounded-md cursor-pointer transition hover:bg-gray-500">
               {currentUser.name}
             </span>
-          </div>
+          </a>
         )}
 
         {footers.map((footer, index) => (
