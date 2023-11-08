@@ -1,9 +1,14 @@
 import axios from 'axios';
 
-export const fetchQuestion = async (difficulty: string) => {
+export const fetchQuestion = async (
+  difficulty: string,
+  questionIds: string[]
+) => {
   try {
     const questionResponse = await axios.get(
-      `http://peerprep-question-api:8000/questions/where?difficulty=${difficulty}`
+      `http://peerprep-question-api:8000/questions/where?difficulty=${difficulty}&questionIds=${questionIds.join(
+        ','
+      )}`
     );
 
     return questionResponse.data;

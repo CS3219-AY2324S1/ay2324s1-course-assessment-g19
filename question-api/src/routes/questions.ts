@@ -101,7 +101,8 @@ router.get('/search', async (req: Request, res: Response) => {
 router.get('/where', async (req: Request, res: Response) => {
   try {
     // Extract query parameters for difficulty and language
-    const { difficulty } = req.query;
+    const { difficulty, questionIds } = req.query;
+    const questionIdsArray = (questionIds as string).split(',');
 
     // Create a query object to filter questions
     const query: any = {};
@@ -110,8 +111,11 @@ router.get('/where', async (req: Request, res: Response) => {
       query.difficulty = difficulty;
     }
 
-    // Perform the search based on the query
-    const question = await Question.findOne(query);
+    const questions = await Question.find(query);
+    const shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    const question = shuffledQuestions.find(
+      (question: any) => !questionIdsArray.includes(question._id.toString())
+    );
 
     // Send the matching questions as a JSON response
     res.json(question);

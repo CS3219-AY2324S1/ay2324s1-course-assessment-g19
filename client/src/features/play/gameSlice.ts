@@ -1,13 +1,13 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../store';
 import { Question, StatusType, User } from '../../types';
-import axios from 'axios';
 
 interface GameState {
   gameId: string;
+  startedAt?: Date;
   data: string;
   players: User[];
-  question?: Question;
+  questions: Question[];
   isRunning: boolean;
   output: string;
   status: StatusType;
@@ -15,9 +15,10 @@ interface GameState {
 
 const initialState: GameState = {
   gameId: '',
+  startedAt: undefined,
   data: '',
   players: [],
-  question: undefined,
+  questions: [],
   isRunning: false,
   output: '',
   status: 'DEFAULT'
@@ -30,14 +31,17 @@ export const gameSlice = createSlice({
     setGameId: (state, action) => {
       state.gameId = action.payload;
     },
+    setGameStartedAt: (state, action) => {
+      state.startedAt = action.payload;
+    },
     setGameData: (state, action) => {
       state.data = action.payload;
     },
     setGamePlayers: (state, action) => {
       state.players = action.payload;
     },
-    setGameQuestion: (state, action) => {
-      state.question = action.payload;
+    setGameQuestions: (state, action) => {
+      state.questions = action.payload;
     },
     setGameIsRunning: (state, action) => {
       state.isRunning = action.payload;
@@ -47,9 +51,10 @@ export const gameSlice = createSlice({
     },
     resetGame: (state) => {
       state.gameId = '';
+      state.startedAt = undefined;
       state.data = '';
       state.players = [];
-      state.question = undefined;
+      state.questions = [];
       state.isRunning = false;
       state.output = '';
       state.status = 'DEFAULT';
@@ -59,15 +64,17 @@ export const gameSlice = createSlice({
 
 export const {
   setGameId,
+  setGameStartedAt,
   setGameData,
   setGamePlayers,
-  setGameQuestion,
+  setGameQuestions,
   setGameIsRunning,
   setGameOutput,
   resetGame
 } = gameSlice.actions;
 
-export const selectGameQuestion = (state: RootState) => state.game.question;
+export const selectGameQuestions = (state: RootState) => state.game.questions;
+export const selectGameStartedAt = (state: RootState) => state.game.startedAt;
 export const selectGameData = (state: RootState) => state.game.data;
 export const selectGamePlayers = (state: RootState) => state.game.players;
 export const selectGameId = (state: RootState) => state.game.gameId;

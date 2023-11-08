@@ -10,16 +10,19 @@ import {
   selectGameId,
   selectGameOpponent,
   selectGameOutput,
+  selectGameStartedAt,
   setGameData,
   setGameId,
   setGameOutput,
   setGamePlayers,
-  setGameQuestion
+  setGameQuestions,
+  setGameStartedAt
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
 import {
   fetchLanguagesAndSetLanguage,
   selectIsActive,
+  setDifficulty,
   setIsActive
 } from '../../features/play/playSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
@@ -55,7 +58,9 @@ const Editor = () => {
     socket.on('update', (roomData) => {
       const {
         gameId,
-        question,
+        startedAt,
+        difficulty,
+        questions,
         language,
         data,
         output,
@@ -66,7 +71,9 @@ const Editor = () => {
 
       store.dispatch(setIsActive(true));
       store.dispatch(setGameId(gameId));
-      store.dispatch(setGameQuestion(question));
+      store.dispatch(setGameStartedAt(startedAt));
+      store.dispatch(setDifficulty(difficulty));
+      store.dispatch(setGameQuestions(questions));
       store.dispatch(setGamePlayers([playerOne, playerTwo]));
       store.dispatch(setGameData(data));
       store.dispatch(setGameOutput(output));

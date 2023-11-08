@@ -25,6 +25,7 @@ const io = new Server(server, {
 });
 
 const registerGameHandler = require('./sockets/gameHandler');
+const registerQuestionHandler = require('./sockets/questionHandler');
 const registerDataHandler = require('./sockets/dataHandler');
 const registerLanguageHandler = require('./sockets/languageHandler');
 const registerExecuteHandler = require('./sockets/executeHandler');
@@ -34,6 +35,7 @@ io.on('connection', (socket) => {
   console.log(`User ${socket.id} connected`);
 
   registerGameHandler(io, socket, redis);
+  registerQuestionHandler(io, socket, redis);
   registerDataHandler(io, socket, redis);
   registerLanguageHandler(io, socket, redis);
   registerExecuteHandler(io, socket, redis);

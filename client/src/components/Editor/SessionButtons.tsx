@@ -23,8 +23,8 @@ const SessionButtons = () => {
   const currentUser = useSelector(selectCurrentUser);
 
   const onNext = useCallback(() => {
-    alert('to implement');
-  }, []);
+    socket.emit('question_send', { gameId });
+  }, [socket, gameId]);
 
   const onExecute = useCallback(() => {
     if (!language || !gameId) {
@@ -44,7 +44,7 @@ const SessionButtons = () => {
     }
 
     socket.emit('leave_game', { gameId, currentUser });
-  }, [gameId]);
+  }, [socket, gameId]);
 
   useEffect(() => {
     socket.on('execute_start', () => {

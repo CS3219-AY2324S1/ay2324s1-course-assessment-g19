@@ -27,7 +27,7 @@ module.exports = (
 
     console.log(`User ${socket.id} joined game ${gameId}`);
 
-    const question = await fetchQuestion(difficulty);
+    const question = await fetchQuestion(difficulty, []);
     const { playerOne, playerTwo } = await fetchPlayers(
       playerOneEmail,
       playerTwoEmail
@@ -39,7 +39,9 @@ module.exports = (
     if (!roomDataString) {
       roomData = {
         gameId,
-        question,
+        startedAt: new Date(Date.now()),
+        difficulty,
+        questions: [question],
         language,
         messages: [],
         playerOne,
