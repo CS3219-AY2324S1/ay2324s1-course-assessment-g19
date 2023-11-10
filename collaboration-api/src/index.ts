@@ -3,6 +3,7 @@ import axios from 'axios';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import openaiRouter from './openai'
 
 require('dotenv').config();
 
@@ -10,6 +11,13 @@ const app: Express = express();
 const port = process.env.SERVER_PORT;
 
 app.use(cors());
+app.use(express.json());
+
+app.use('/openai', openaiRouter); 
+
+app.get('/', (req, res) => {
+  res.json('Hello World!');
+});
 
 const server = createServer(app);
 
