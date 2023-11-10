@@ -10,8 +10,6 @@ const app: Express = express();
 const port = process.env.SERVER_PORT;
 const connectionString = process.env.REDIS_URI;
 
-app.use(cors());
-
 const server = createServer(app);
 
 const redis = new Redis(connectionString!);
