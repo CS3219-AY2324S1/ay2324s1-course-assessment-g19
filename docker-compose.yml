@@ -18,6 +18,7 @@ services:
       - peerprep-user-api
       - peerprep-collaboration-api
       - peerprep-code-api
+      - peerprep-assistant-api
 
   peerprep-user-api:
     image: user-api:peerprep
@@ -63,6 +64,21 @@ services:
       driver: json-file
     volumes:
       - ./code-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+
+  peerprep-assistant-api:
+    image: assistant-api:peerprep
+    container_name: peerprep-assistant-api
+    build:
+      context: ./assistant-api
+    ports:
+      - '3030:3030'
+    logging:
+      driver: json-file
+    volumes:
+      - ./assistant-api:/usr/src/app # Mount the Server source code directory as a volume
       - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
     networks:
       - peerprep-network
