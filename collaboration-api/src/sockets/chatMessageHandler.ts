@@ -63,6 +63,8 @@ module.exports = (
       const aiResponse = await fetchAiResponse(
         data.message.substring(data.message.indexOf('?') + 1).trim(),
         roomData.messages,
+        roomData.questions[roomData.questions.length - 1],
+        roomData.data,
         data.sender
       );
 

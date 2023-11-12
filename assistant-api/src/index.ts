@@ -31,7 +31,10 @@ app.post('/sendQuestion', async (req: Request, res: Response) => {
     console.log(`REQUEST: ${req.body.prompt.content}`);
 
     const messages = req.body.messages;
-    messages.push(req.body.prompt);
+    messages.unshift(req.body.context); // Give context to the AI
+    messages.push(req.body.question); // Give question to the AI
+    messages.push(req.body.code); // Give code to the AI
+    messages.push(req.body.prompt); // Give the prompt to the AI
 
     const completion = await openai.chat.completions.create({
       messages,

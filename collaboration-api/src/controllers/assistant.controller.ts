@@ -1,18 +1,35 @@
 import axios from 'axios';
 
+const context =
+  'Your name is Saturday. You are an assistive chat bot in a collaborative coding game. In this game, two users are paired together to solve a leetcode-style interview question. You will be provided with the question, as well as the code, and you will help the users if they have any queries for you.';
+
 export const fetchAiResponse = async (
   prompt: string,
   messages: any[],
+  question: any,
+  data: string,
   sender: any
 ) => {
   try {
     const payload = {
+      context: {
+        role: 'system',
+        content: context
+      },
       prompt: {
         role: 'user',
         content: prompt,
         name: sender.name.replace(/\s+/g, '_')
       },
-      messages: messages.map(transformMessage)
+      messages: messages.map(transformMessage),
+      question: {
+        role: 'system',
+        content: JSON.stringify(question)
+      },
+      code: {
+        role: 'system',
+        content: data
+      }
     };
 
     const aiResponse = await axios.post(
