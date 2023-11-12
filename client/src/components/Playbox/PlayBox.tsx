@@ -2,9 +2,6 @@ import {
   ArchiveBoxIcon,
   CodeBracketIcon,
   PuzzlePieceIcon,
-  TrophyIcon,
-  UserGroupIcon,
-  UserPlusIcon,
   VariableIcon
 } from '@heroicons/react/24/outline';
 import { useCallback, useState, useEffect } from 'react';
@@ -20,7 +17,6 @@ import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
 import PlayTab from './PlayTab';
-import QuestionSelect from './QuestionSelect';
 import {
   findMatch,
   leaveQueue
@@ -106,10 +102,6 @@ const PlayBox = () => {
     {
       label: 'HISTORY',
       icon: <ArchiveBoxIcon className="h-4 w-4" />
-    },
-    {
-      label: 'FRIENDS',
-      icon: <UserGroupIcon className="h-4 w-4" />
     }
   ];
 
@@ -240,31 +232,10 @@ const PlayBox = () => {
             Leave Queue
           </button>
         )}
-        <QuestionSelect />
         <a className="flex flex-grow" />
-        <button
-          onClick={() => alert('Play!')}
-          className="flex justify-center items-center gap-2 font-semibold text-gray-100 w-64 py-4 bg-gray-900 rounded-lg transition hover:scale-95 hover:shadow-inner"
-        >
-          <UserPlusIcon className="h-4 w-4 inline-block" />
-          Play a Friend
-        </button>
-        <button
-          onClick={() => alert('Play!')}
-          className="flex justify-center items-center gap-2 font-semibold text-gray-100 w-64 py-4 bg-gray-900 rounded-lg transition hover:scale-95 hover:shadow-inner"
-        >
-          <TrophyIcon className="h-4 w-4 inline-block" />
-          Tournaments
-        </button>
       </>
     );
   } else if (tab === 'HISTORY') {
-    render = (
-      <div className="flex flex-col items-center">
-        <a className="text-white">TO IMPLEMENT</a>
-      </div>
-    );
-  } else if (tab === 'FRIENDS') {
     render = (
       <div className="flex flex-col items-center">
         <a className="text-white">TO IMPLEMENT</a>

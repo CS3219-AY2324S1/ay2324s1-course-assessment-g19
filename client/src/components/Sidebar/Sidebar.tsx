@@ -4,7 +4,6 @@ import avatar from '../../assets/avatar.png';
 import logo from '../../assets/logo.png';
 import { logoutUser, selectCurrentUser } from '../../features/user/authSlice';
 import { store } from '../../store';
-import Footertab from './Footertab';
 import Sidetab from './Sidetab';
 import { useCallback } from 'react';
 import { socket } from '../../socket';
@@ -16,14 +15,7 @@ const Sidebar = () => {
 
   const tabs = [
     { label: 'Play', href: '/play' },
-    { label: 'Questions', href: '/questions' },
-    { label: 'Friends', href: '/friends' }
-  ];
-
-  const footers = [
-    { label: 'Settings', href: '/settings' },
-    { label: 'Help', href: '/help' },
-    { label: 'Terms', href: '/terms' }
+    { label: 'Questions', href: '/questions' }
   ];
 
   const onLogout = useCallback(() => {
@@ -82,9 +74,6 @@ const Sidebar = () => {
           </div>
         )}
 
-        {footers.map((footer, index) => (
-          <Footertab key={index} label={footer.label} href={footer.href} />
-        ))}
         {currentUser && (
           <button
             onClick={onLogout}

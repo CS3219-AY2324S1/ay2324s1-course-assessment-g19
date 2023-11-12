@@ -4,7 +4,6 @@ import QuestionDescription from './Read/QuestionDescription';
 import QuestionExamples from './Read/QuestionExamples';
 import QuestionFooter from './Read/QuestionFooter';
 import QuestionHeader from './Read/QuestionHeader';
-import QuestionTags from './Read/QuestionTags';
 import { selectGameQuestions } from '../../features/play/gameSlice';
 import Chat from '../Chat/Chat';
 
