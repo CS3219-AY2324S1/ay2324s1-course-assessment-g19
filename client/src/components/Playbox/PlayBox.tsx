@@ -150,6 +150,14 @@ const PlayBox = () => {
     setIsButtonDisabled(false);
   };
 
+  const filteredLanguages = languages.filter(language => 
+    language.name.includes("Python (3.8.1)") || 
+    language.name.includes("JavaScript (Node.js 12.14.0)") || 
+    language.name.includes("Java (JDK 17.0.6)") || 
+    language.name.includes("C#")||
+    language.name.includes("Ruby")
+  );
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -184,7 +192,7 @@ const PlayBox = () => {
           option="language"
           selected={language?.name}
           callback={onSetLanaguage}
-          options={languages.map((e) => e.name)}
+          options={filteredLanguages.map((e) => e.name)}
           icon={<CodeBracketIcon className="h-4 w-4" />}
         />
         <ConfigSelect

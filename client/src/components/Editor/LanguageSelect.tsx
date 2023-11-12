@@ -19,6 +19,16 @@ const LanguageSelect = () => {
   const languages = useSelector(selectLanguages);
   const gameId = useSelector(selectGameId);
 
+
+const filteredLanguages = languages.filter(language => 
+  language.name.includes("Python (3.8.1)") || 
+  language.name.includes("JavaScript (Node.js 12.14.0)") || 
+  language.name.includes("Java (JDK 17.0.6)") || 
+  language.name.includes("C#")  ||
+  language.name.includes("Ruby") 
+);
+
+
   const handleClick = useCallback(
     (e: Language) => {
       socket.emit('language_send', { language: e.name, gameId });
@@ -54,13 +64,13 @@ const LanguageSelect = () => {
       </div>
       {isOpen && (
         <div className="absolute top-0 translate-y-12 z-30 flex flex-col rounded-lg max-h-96 overflow-auto">
-          {languages.map((item, index) => (
+          {filteredLanguages.map((item, index) => (
             <div
               key={index}
               onClick={() => handleClick(item)}
               className={`gap-4 w-64 p-4 text-gray-100 bg-gray-500 cursor-pointer transition hover:opacity-90 ${
                 index === 0 && 'rounded-tl-lg'
-              } ${index === languages.length - 1 && 'rounded-bl-lg'}`}
+              } ${index === filteredLanguages.length - 1 && 'rounded-bl-lg'}`}
             >
               <a>{toCamelCase(item.name)}</a>
             </div>
