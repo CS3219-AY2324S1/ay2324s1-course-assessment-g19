@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import Redis from 'ioredis';
+import { fetchAiResponse } from '../controllers/assistant.controller';
 
 module.exports = (
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
@@ -33,6 +34,36 @@ module.exports = (
     await redis.set(data.gameId, JSON.stringify(roomData));
 
     io.to(data.gameId).emit('update', roomData);
+
+    if (data.message.startsWith('?')) {
+      const aiResponse = await fetchAiResponse(
+        data.message.substring(data.message.indexOf('?'))
+      );
+      console.log(`Assistant sent chat message ${aiResponse}`);
+
+      const time = new Date(Date.now());
+      const aiMessage = {
+        id: `game-${data.gameId}-assistant-${time.toLocaleString()}`,
+        sender: { id: 'SATURDAY', name: 'Saturday' },
+        message: aiResponse,
+        timestamp: time,
+        gameId: data.gameId
+      };
+
+      const roomDataString = await redis.get(data.gameId);
+
+      if (!roomDataString) {
+        console.log(`No room data found for game ${data.gameId}`);
+        return;
+      }
+
+      const roomData = JSON.parse(roomDataString);
+
+      roomData.messages.push(aiMessage);
+      await redis.set(data.gameId, JSON.stringify(roomData));
+
+      io.to(data.gameId).emit('update', roomData);
+    }
   };
 
   socket.on('chat_message_send', sendChatMessage);

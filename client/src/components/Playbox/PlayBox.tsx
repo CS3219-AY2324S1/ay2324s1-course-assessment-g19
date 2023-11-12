@@ -30,7 +30,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { socket } from '../../socket';
 import { selectCurrentUser } from '../../features/user/authSlice';
-import ChatAi from '../ChatAi/ChatAi';
 
 const difficulties: QuestionDifficulty[] = ['EASY', 'MEDIUM', 'HARD'];
 
@@ -259,8 +258,8 @@ const PlayBox = () => {
     );
   } else if (tab === 'HISTORY') {
     render = (
-      <div className="">
-        <ChatAi />
+      <div className="flex flex-col items-center">
+        <a className="text-white">TO IMPLEMENT</a>
       </div>
     );
   } else if (tab === 'FRIENDS') {
