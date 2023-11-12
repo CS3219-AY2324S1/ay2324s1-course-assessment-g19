@@ -40,6 +40,7 @@ export type ChatMessage = {
   sender: User | 'SYSTEM';
   message: string;
   timestamp: Date;
+  isPrompt?: boolean;
 };
 
 export type Language = {

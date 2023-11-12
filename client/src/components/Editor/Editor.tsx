@@ -26,7 +26,10 @@ import {
   setIsActive
 } from '../../features/play/playSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
-import { setChatMessages } from '../../features/play/chatSlice';
+import {
+  setChatMessages,
+  setIsAssistantLoading
+} from '../../features/play/chatSlice';
 import 'ace-builds/src-noconflict/theme-tomorrow_night'; // A dark theme
 import './styles.css';
 import Cookies from 'js-cookie';
@@ -66,7 +69,8 @@ const Editor = () => {
         output,
         messages,
         playerOne,
-        playerTwo
+        playerTwo,
+        isAssistantLoading
       } = roomData;
 
       store.dispatch(setIsActive(true));
@@ -78,6 +82,7 @@ const Editor = () => {
       store.dispatch(setGameData(data));
       store.dispatch(setGameOutput(output));
       store.dispatch(setChatMessages(messages));
+      store.dispatch(setIsAssistantLoading(isAssistantLoading));
       store.dispatch(fetchLanguagesAndSetLanguage(language));
 
       Cookies.set('gameId', gameId);

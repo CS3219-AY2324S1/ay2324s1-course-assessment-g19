@@ -14,6 +14,7 @@ module.exports = (
     message: string;
     timestamp: Date;
     gameId: string;
+    isPrompt?: boolean;
   }) => {
     console.log(`User ${socket.id} sent chat message ${data.message}`);
 
@@ -30,17 +31,41 @@ module.exports = (
       roomData.messages = [];
     }
 
-    roomData.messages.push(data);
+    if (data.message.startsWith('?')) {
+      roomData.messages.push({
+        ...data,
+        message: data.message.substring(data.message.indexOf('?') + 1).trim(),
+        isPrompt: true
+      });
+    } else {
+      roomData.messages.push(data);
+    }
+
     await redis.set(data.gameId, JSON.stringify(roomData));
 
     io.to(data.gameId).emit('update', roomData);
 
     if (data.message.startsWith('?')) {
-      io.to(data.gameId).emit('is_assistant_loading', true);
+      const roomDataString = await redis.get(data.gameId);
+
+      if (!roomDataString) {
+        console.log(`No room data found for game ${data.gameId}`);
+        return;
+      }
+
+      const roomData = JSON.parse(roomDataString);
+
+      roomData.isAssistantLoading = true;
+      await redis.set(data.gameId, JSON.stringify(roomData));
+
+      io.to(data.gameId).emit('update', roomData);
 
       const aiResponse = await fetchAiResponse(
-        data.message.substring(data.message.indexOf('?'))
+        data.message.substring(data.message.indexOf('?') + 1).trim(),
+        roomData.messages,
+        data.sender
       );
+
       console.log(`Assistant sent chat message ${aiResponse}`);
 
       const time = new Date(Date.now());
@@ -52,20 +77,11 @@ module.exports = (
         gameId: data.gameId
       };
 
-      const roomDataString = await redis.get(data.gameId);
-
-      if (!roomDataString) {
-        console.log(`No room data found for game ${data.gameId}`);
-        return;
-      }
-
-      const roomData = JSON.parse(roomDataString);
-
       roomData.messages.push(aiMessage);
+      roomData.isAssistantLoading = false;
       await redis.set(data.gameId, JSON.stringify(roomData));
 
       io.to(data.gameId).emit('update', roomData);
-      io.to(data.gameId).emit('is_assistant_loading', false);
     }
   };
 

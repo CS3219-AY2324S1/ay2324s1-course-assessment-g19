@@ -1,10 +1,12 @@
 import { socket } from '../../socket';
-import { store } from '../../store';
 import { useSelector } from 'react-redux';
-import { selectChatMessages } from '../../features/play/chatSlice';
+import {
+  selectChatMessages,
+  selectIsAssistantLoading
+} from '../../features/play/chatSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
 import { ChatMessage } from '../../types';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { selectGameId } from '../../features/play/gameSlice';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { obsidian } from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -14,9 +16,10 @@ const Chat = () => {
   const currentUser = useSelector(selectCurrentUser);
   const messages = useSelector(selectChatMessages);
   const gameId = useSelector(selectGameId);
+  const isAssistantLoading = useSelector(selectIsAssistantLoading);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const [messageInput, setMessageInput] = useState<string>('');
-  const [isAssistantLoading, setIsAssistantLoading] = useState<boolean>(false);
 
   if (!currentUser) return null;
 
@@ -35,13 +38,16 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    socket.on('is_assistant_loading', (payload: boolean) => {
-      setIsAssistantLoading(payload);
-    });
-  }, [socket]);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
-    <div className="flex flex-col gap-1 items-center bg-gray-800 rounded-lg h-full opacity-80 w-[448px] overflow-auto">
+    <div
+      ref={messagesEndRef}
+      className="flex flex-col gap-1 items-center bg-gray-800 rounded-lg h-full opacity-80 w-[448px] overflow-auto"
+    >
       <div className="flex flex-col-reverse flex-grow gap-2 justify-end items-center w-full px-4 pt-4">
         {messages.toReversed().map((message, index) => {
           const parts = message.message.split('```');
@@ -51,7 +57,7 @@ const Chat = () => {
               <div
                 className={`rounded-xl break-words flex flex-col gap-1 w-full items-${
                   message.sender === 'SYSTEM'
-                    ? 'center'
+                    ? 'center pb-2'
                     : message.sender.id === 'SATURDAY'
                     ? 'end bg-gray-100 p-2'
                     : message.sender.id === currentUser.id
@@ -65,6 +71,11 @@ const Chat = () => {
                       <span
                         key={partIndex}
                         className={`text-sm mx-2 ${
+                          (message.isPrompt ||
+                            (message.sender !== 'SYSTEM' &&
+                              message.sender.id === 'SATURDAY')) &&
+                          'font-semibold'
+                        } ${
                           message.sender === 'SYSTEM'
                             ? 'text-gray-400'
                             : message.sender.id === 'SATURDAY'
@@ -114,7 +125,9 @@ const Chat = () => {
       </div>
 
       {isAssistantLoading && (
-        <div className="loading text-gray-100 w-full px-6 text-left"></div>
+        <div className="loading text-gray-100 w-full px-6 text-left text-xs font-semibold">
+          Saturday is typing
+        </div>
       )}
 
       <div className="flex flex-row gap-4 items-center w-full sticky bottom-0 bg-gray-800 p-4">

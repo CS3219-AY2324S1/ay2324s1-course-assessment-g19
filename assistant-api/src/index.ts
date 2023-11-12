@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express';
+import { OpenAI } from 'openai';
 import axios from 'axios';
 import cors from 'cors';
 
@@ -23,42 +24,29 @@ app.get('/', (req: Request, res: Response) => {
   res.send('from Assistant API!');
 });
 
+const openai = new OpenAI({ apiKey: openai_api });
+
 app.post('/sendQuestion', async (req: Request, res: Response) => {
   try {
-    const data = {
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: req.body.content }],
-      temperature: 0.7
-    };
+    console.log(`REQUEST: ${req.body.prompt.content}`);
 
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${openai_api}`
-    };
+    const messages = req.body.messages;
+    messages.push(req.body.prompt);
 
-    axios
-      .post('https://api.openai.com/v1/chat/completions', data, { headers })
-      .then((response) => {
-        console.log(response.data);
-        res.json(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const completion = await openai.chat.completions.create({
+      messages,
+      model: 'gpt-3.5-turbo'
+    });
+
+    console.log(`RESPONSE: ${completion.choices[0].message.content}`);
+    res.json(completion.choices[0].message.content);
   } catch (error) {
-    console.log(error);
+    console.log(`ERROR: ${error}`);
+  } finally {
+    console.log('');
   }
 });
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
-
-// curl https://api.openai.com/v1/chat/completions \
-//   -H "Content-Type: application/json" \
-//   -H "Authorization: Bearer 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" \
-//   -d '{
-  //    "model": "gpt-3.5-turbo",
-  //    "messages": [{"role": "user", "content": "Say this is a test!"}],
-  //    "temperature": 0.7
-  //  }'

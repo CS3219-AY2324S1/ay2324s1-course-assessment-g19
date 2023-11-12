@@ -17,7 +17,7 @@ const Question = () => {
       <div className="flex flex-col p-8 gap-8">
         <div className="flex flex-col gap-4 items-center justify-center p-8 bg-gray-800 rounded-lg h-2/3 opacity-80 w-[448px] overflow-auto">
           <a className="text-white text-xl font-semibold">
-            You've done all the questions!
+            You've completed all the questions!
           </a>
         </div>
 
@@ -35,7 +35,7 @@ const Question = () => {
           title={question?.title}
           difficulty={question?.difficulty}
         />
-        <QuestionTags tags={question?.tags} />
+        {/* <QuestionTags tags={question?.tags} /> */}
         <hr className="w-full my-2" />
         <QuestionDescription description={question?.description} />
         <hr className="w-full my-2" />

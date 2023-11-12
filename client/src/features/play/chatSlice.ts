@@ -4,10 +4,12 @@ import { RootState } from '../../store';
 
 interface ChatState {
   messages: ChatMessage[];
+  isAssistantLoading: boolean;
 }
 
 const initialState: ChatState = {
-  messages: []
+  messages: [],
+  isAssistantLoading: false
 };
 
 export const chatSlice = createSlice({
@@ -17,14 +19,20 @@ export const chatSlice = createSlice({
     setChatMessages: (state, action: PayloadAction<ChatMessage[]>) => {
       state.messages = action.payload;
     },
+    setIsAssistantLoading: (state, action: PayloadAction<boolean>) => {
+      state.isAssistantLoading = action.payload;
+    },
     reset: (state) => {
       state.messages = [];
     }
   }
 });
 
-export const { setChatMessages, reset } = chatSlice.actions;
+export const { setChatMessages, setIsAssistantLoading, reset } =
+  chatSlice.actions;
 
 export const selectChatMessages = (state: RootState) => state.chat.messages;
+export const selectIsAssistantLoading = (state: RootState) =>
+  state.chat.isAssistantLoading;
 
 export default chatSlice.reducer;
