@@ -16,6 +16,7 @@ import Play from './modules/Play/Play';
 import QuestonTable from './modules/Questions/QuestionTable';
 import { store } from './store';
 import { ToastContainer } from 'react-toastify';
+import Settings from './modules/Settings/Settings';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: '/questions',
     element: <QuestonTable />
+  },
+  {
+    path: '/settings',
+    element: <Settings />
   }
 ]);
 
