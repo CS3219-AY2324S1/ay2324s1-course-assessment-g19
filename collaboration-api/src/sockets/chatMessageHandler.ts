@@ -36,6 +36,8 @@ module.exports = (
     io.to(data.gameId).emit('update', roomData);
 
     if (data.message.startsWith('?')) {
+      io.to(data.gameId).emit('is_assistant_loading', true);
+
       const aiResponse = await fetchAiResponse(
         data.message.substring(data.message.indexOf('?'))
       );
@@ -63,6 +65,7 @@ module.exports = (
       await redis.set(data.gameId, JSON.stringify(roomData));
 
       io.to(data.gameId).emit('update', roomData);
+      io.to(data.gameId).emit('is_assistant_loading', false);
     }
   };
 

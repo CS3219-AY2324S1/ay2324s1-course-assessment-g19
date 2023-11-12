@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { selectGameId } from '../../features/play/gameSlice';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { obsidian } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import './styles.css';
 
 const Chat = () => {
   const currentUser = useSelector(selectCurrentUser);
@@ -15,6 +16,7 @@ const Chat = () => {
   const gameId = useSelector(selectGameId);
 
   const [messageInput, setMessageInput] = useState<string>('');
+  const [isAssistantLoading, setIsAssistantLoading] = useState<boolean>(false);
 
   if (!currentUser) return null;
 
@@ -31,6 +33,12 @@ const Chat = () => {
     socket.emit('chat_message_send', payload);
     setMessageInput('');
   };
+
+  useEffect(() => {
+    socket.on('is_assistant_loading', (payload: boolean) => {
+      setIsAssistantLoading(payload);
+    });
+  }, [socket]);
 
   return (
     <div className="flex flex-col gap-1 items-center bg-gray-800 rounded-lg h-full opacity-80 w-[448px] overflow-auto">
@@ -78,7 +86,7 @@ const Chat = () => {
                         key={partIndex}
                         language={language}
                         style={obsidian}
-                        className="text-sm rounded-lg"
+                        className="text-sm rounded-lg m-2"
                       >
                         {code}
                       </SyntaxHighlighter>
@@ -104,6 +112,10 @@ const Chat = () => {
           );
         })}
       </div>
+
+      {isAssistantLoading && (
+        <div className="loading text-gray-100 w-full px-6 text-left"></div>
+      )}
 
       <div className="flex flex-row gap-4 items-center w-full sticky bottom-0 bg-gray-800 p-4">
         <input
