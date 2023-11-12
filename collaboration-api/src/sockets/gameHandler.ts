@@ -12,6 +12,7 @@ module.exports = (
     gameId: string;
     difficulty: string;
     language: string;
+    boilerplate: string;
     playerOneEmail: string;
     playerTwoEmail: string;
     currentUser: any;
@@ -20,6 +21,7 @@ module.exports = (
       gameId,
       difficulty,
       language,
+      boilerplate,
       playerOneEmail,
       playerTwoEmail,
       currentUser
@@ -43,6 +45,7 @@ module.exports = (
         difficulty,
         questions: [question],
         language,
+        data: boilerplate,
         messages: [],
         playerOne,
         playerTwo

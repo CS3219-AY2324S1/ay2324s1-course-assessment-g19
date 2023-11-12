@@ -47,18 +47,18 @@ const LanguageSelect = () => {
     <div className="flex flex-col gap-4 relative" ref={dropdownRef}>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="flex flex-row gap-2 justify-between w-64 h-full items-center cursor-pointer text-gray-100 px-4 py-2 bg-gray-800 rounded-lg transition hover:opacity-80"
+        className="flex flex-row gap-2 justify-between w-32 h-full items-center cursor-pointer text-gray-100 px-4 py-2 bg-gray-800 rounded-lg transition hover:opacity-80"
       >
         <a>{toCamelCase(language?.name)}</a>
         <ChevronDownIcon className="w-5 h-5" />
       </div>
       {isOpen && (
-        <div className="absolute top-0 translate-y-12 z-30 flex flex-col rounded-lg max-h-96 overflow-auto">
+        <div className="absolute top-2 translate-y-12 z-30 flex flex-col rounded-lg max-h-96 overflow-auto">
           {languages.map((item, index) => (
             <div
               key={index}
               onClick={() => handleClick(item)}
-              className={`gap-4 w-64 p-4 text-gray-100 bg-gray-500 cursor-pointer transition hover:opacity-90 ${
+              className={`gap-4 w-32 p-4 text-gray-100 bg-gray-500 cursor-pointer transition hover:opacity-90 ${
                 index === 0 && 'rounded-tl-lg'
               } ${index === languages.length - 1 && 'rounded-bl-lg'}`}
             >

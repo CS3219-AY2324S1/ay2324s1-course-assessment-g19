@@ -1,5 +1,10 @@
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-java';
+import 'ace-builds/src-noconflict/mode-python';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-csharp';
+import 'ace-builds/src-noconflict/mode-ruby';
+import 'ace-builds/src-noconflict/mode-text';
 import 'ace-builds/src-noconflict/theme-github';
 import { useCallback, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
@@ -10,7 +15,6 @@ import {
   selectGameId,
   selectGameOpponent,
   selectGameOutput,
-  selectGameStartedAt,
   setGameData,
   setGameId,
   setGameOutput,
@@ -22,6 +26,7 @@ import { useSelector } from 'react-redux';
 import {
   fetchLanguagesAndSetLanguage,
   selectIsActive,
+  selectLanguage,
   setDifficulty,
   setIsActive
 } from '../../features/play/playSlice';
@@ -41,6 +46,7 @@ const Editor = () => {
   const gameId = useSelector(selectGameId);
   const data = useSelector(selectGameData);
   const opponentPlayer = useSelector(selectGameOpponent);
+  const language = useSelector(selectLanguage);
 
   const onChange = useCallback(
     (data: string) => {
@@ -95,11 +101,12 @@ const Editor = () => {
 
       <div className="flex flex-col flex-grow rounded-lg gap-8 bg-gray-800 my-4 py-8">
         <AceEditor
-          mode="java"
+          mode={language?.slug ?? 'text'}
           theme="tomorrow_night"
           onChange={onChange}
+          fontSize={14}
           name="code_editor"
-          value={data}
+          value={isActive ? data : language?.boilerplate ?? ''}
           editorProps={{ $blockScrolling: true }}
           style={{ width: '100%', height: '100%' }}
         />

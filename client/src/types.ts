@@ -46,4 +46,6 @@ export type ChatMessage = {
 export type Language = {
   id: number;
   name: string;
+  slug: string;
+  boilerplate: string;
 };

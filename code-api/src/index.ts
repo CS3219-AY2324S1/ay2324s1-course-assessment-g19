@@ -51,21 +51,52 @@ app.post('/run-code', async (req, res) => {
 
 app.get('/languages', async (req, res) => {
   try {
-    const options = {
-      method: 'GET',
-      url: 'https://judge0-ce.p.rapidapi.com/languages',
-      params: {
-        base64_encoded: 'false',
-        fields: 'stdout,stderr,status_id,language_id,status'
+    const languages = [
+      {
+        id: 71,
+        name: 'Python',
+        slug: 'python',
+        boilerplate:
+          'def main():\n    print("Hello from Python!")\n\nif __name__ == "__main__":\n    main()'
       },
-      headers: {
-        'X-RapidAPI-Key': process.env.JUDGE0_API_KEY,
-        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+      {
+        id: 91,
+        name: 'Java',
+        slug: 'java',
+        boilerplate:
+          'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello from Java!");\n    }\n}'
+      },
+      {
+        id: 54,
+        name: 'C++',
+        slug: 'csharp',
+        boilerplate:
+          '#include <iostream>\n\nint main() {\n    std::cout << "Hello from C++!" << std::endl;\n    return 0;\n}'
+      },
+      {
+        id: 51,
+        name: 'C#',
+        slug: 'csharp',
+        boilerplate:
+          'using System;\n\nclass Program {\n    static void Main(string[] args) {\n        Console.WriteLine("Hello from C#!");\n    }\n}'
+      },
+      {
+        id: 93,
+        name: 'JavaScript',
+        slug: 'javascript',
+        boilerplate:
+          'function main() {\n    console.log("Hello from JavaScript!");\n}\n\nmain();'
+      },
+      {
+        id: 94,
+        name: 'TypeScript',
+        slug: 'javascript',
+        boilerplate:
+          'function main(): void {\n    console.log("Hello from TypeScript!");\n}\n\nmain();'
       }
-    };
+    ];
 
-    const response = await axios.request(options);
-    res.json(response.data);
+    res.json(languages);
   } catch (error) {
     console.error('Error fetching languages:', error);
   }
