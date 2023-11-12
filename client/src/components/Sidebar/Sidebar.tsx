@@ -8,6 +8,7 @@ import Sidetab from './Sidetab';
 import { useCallback } from 'react';
 import { socket } from '../../socket';
 import { selectGameId } from '../../features/play/gameSlice';
+import { current } from '@reduxjs/toolkit';
 
 const Sidebar = () => {
   const currentUser = useSelector(selectCurrentUser);
@@ -19,14 +20,13 @@ const Sidebar = () => {
   ];
 
   const onLogout = useCallback(() => {
-    store.dispatch(logoutUser());
-
     if (!gameId || !currentUser) {
       return;
     }
 
     socket.emit('leave_game', { gameId, currentUser });
-  }, [store, socket, gameId, currentUser]);
+    store.dispatch(logoutUser());
+  }, [store, gameId, currentUser]);
 
   return (
     <div className="flex flex-col justify-between bg-gray-800 rounded-r-xl w-36">
