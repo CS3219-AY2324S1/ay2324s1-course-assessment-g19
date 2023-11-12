@@ -6,9 +6,13 @@ import { logoutUser, selectCurrentUser } from '../../features/user/authSlice';
 import { store } from '../../store';
 import Footertab from './Footertab';
 import Sidetab from './Sidetab';
+import { useCallback } from 'react';
+import { socket } from '../../socket';
+import { selectGameId } from '../../features/play/gameSlice';
 
 const Sidebar = () => {
   const currentUser = useSelector(selectCurrentUser);
+  const gameId = useSelector(selectGameId);
 
   const tabs = [
     { label: 'Play', href: '/play' },
@@ -21,6 +25,16 @@ const Sidebar = () => {
     { label: 'Help', href: '/help' },
     { label: 'Terms', href: '/terms' }
   ];
+
+  const onLogout = useCallback(() => {
+    store.dispatch(logoutUser());
+
+    if (!gameId || !currentUser) {
+      return;
+    }
+
+    socket.emit('leave_game', { gameId, currentUser });
+  }, [store, socket, gameId, currentUser]);
 
   return (
     <div className="flex flex-col justify-between bg-gray-800 rounded-r-xl w-36">
@@ -73,7 +87,7 @@ const Sidebar = () => {
         ))}
         {currentUser && (
           <button
-            onClick={() => store.dispatch(logoutUser())}
+            onClick={onLogout}
             className="text-white text-sm rounded-lg p-2 m-4 bg-gray-700 transition hover:bg-gray-500 cursor-pointer"
           >
             <ArrowLeftOnRectangleIcon className="h-5 w-5 inline-block mr-2" />

@@ -52,6 +52,8 @@ const PlayBox = () => {
   const handleJoinGame = (
     gameId: string,
     difficulty: QuestionDifficulty,
+    language: string,
+    boilerplate: string,
     playerOneEmail: string,
     playerTwoEmail: string
   ) => {
@@ -60,8 +62,8 @@ const PlayBox = () => {
       socket.emit('join_game', {
         gameId,
         difficulty,
-        language: language?.name,
-        boilerplate: language?.boilerplate,
+        language,
+        boilerplate,
         playerOneEmail,
         playerTwoEmail,
         currentUser
