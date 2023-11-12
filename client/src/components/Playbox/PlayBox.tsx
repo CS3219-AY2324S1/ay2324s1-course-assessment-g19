@@ -1,5 +1,4 @@
 import {
-  ArchiveBoxIcon,
   CodeBracketIcon,
   PuzzlePieceIcon,
   VariableIcon
@@ -16,7 +15,6 @@ import {
 import { store } from '../../store';
 import { QuestionDifficulty } from '../../types';
 import ConfigSelect from './ConfigSelect';
-import PlayTab from './PlayTab';
 import {
   findMatch,
   leaveQueue
@@ -34,7 +32,6 @@ const PlayBox = () => {
   const language = useSelector(selectLanguage);
   const difficulty = useSelector(selectDifficulty);
   const languages = useSelector(selectLanguages);
-  const [tab, setTab] = useState('GAME');
   const [showPopup, setShowPopup] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
   const [partnerUsername, setPartnerUsername] = useState(''); // Store partner's username
@@ -93,17 +90,6 @@ const PlayBox = () => {
     onPartnerNotFound: handlePartnerNotFound,
     onFindingPartner: handleFindingPartner
   };
-
-  const tabs = [
-    {
-      label: 'GAME',
-      icon: <PuzzlePieceIcon className="h-4 w-4" />
-    },
-    {
-      label: 'HISTORY',
-      icon: <ArchiveBoxIcon className="h-4 w-4" />
-    }
-  ];
 
   const onSetLanaguage = useCallback(
     (l: string) => {
@@ -171,92 +157,73 @@ const PlayBox = () => {
 
   let render;
 
-  if (tab === 'GAME') {
-    render = (
-      <>
-        <ConfigSelect
-          option="language"
-          selected={language?.name}
-          callback={onSetLanaguage}
-          options={languages.map((e) => e.name)}
-          icon={<CodeBracketIcon className="h-4 w-4" />}
-        />
-        <ConfigSelect
-          option="difficulty"
-          selected={difficulty}
-          callback={onSetDifficulty}
-          options={difficulties}
-          icon={<VariableIcon className="h-4 w-4" />}
-        />
-        {(!isLanguageSelected || !isDifficultySelected) &&
-          !isButtonDisabled && (
-            <div className="text-red-500 text-sm mt-2">
-              Please select a language and difficulty before finding a match.
-            </div>
-          )}
+  render = (
+    <>
+      <div className="flex justify-center items-center text-gray-100 text-xl font-semibold p-4 mb-4 bg-gray-700 border-gray-700 gap-4 border rounded-lg w-full">
+        <PuzzlePieceIcon className="h-6 w-6 inline-block" />
+        Play Box
+      </div>
+      <ConfigSelect
+        option="language"
+        selected={language?.name}
+        callback={onSetLanaguage}
+        options={languages.map((e) => e.name)}
+        icon={<CodeBracketIcon className="h-4 w-4" />}
+      />
+      <ConfigSelect
+        option="difficulty"
+        selected={difficulty}
+        callback={onSetDifficulty}
+        options={difficulties}
+        icon={<VariableIcon className="h-4 w-4" />}
+      />
+      {(!isLanguageSelected || !isDifficultySelected) && !isButtonDisabled && (
+        <div className="text-red-500 text-sm mt-2">
+          Please select a language and difficulty before finding a match.
+        </div>
+      )}
+      <button
+        onClick={() => {
+          onFindMatch();
+        }}
+        disabled={
+          isButtonDisabled || !isLanguageSelected || !isDifficultySelected
+        }
+        className={`font-semibold w-64 py-4 rounded-lg transition hover:scale-95 hover:shadow-inner ${
+          isButtonDisabled
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-gray-100 text-gray-800'
+        }`}
+      >
+        {showPopup ? (
+          <CountUpTimerPopup timer={timer} partnerUsername={partnerUsername} />
+        ) : showFailed ? (
+          <div>
+            <h2>Failed to find a match</h2>
+            <p style={{ marginTop: '10px' }}>Click to try again</p>
+          </div>
+        ) : (
+          <a>Find a Match</a>
+        )}
+      </button>
+
+      {showPopup && !partnerUsername && (
         <button
           onClick={() => {
-            onFindMatch();
+            onLeave();
           }}
-          disabled={
-            isButtonDisabled || !isLanguageSelected || !isDifficultySelected
-          }
-          className={`font-semibold w-64 py-4 rounded-lg transition hover:scale-95 hover:shadow-inner ${
-            isButtonDisabled
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-gray-100 text-gray-800'
-          }`}
+          className="font-semibold w-64 py-4 bg-red-500 text-white rounded-lg transition hover:scale-95 hover:shadow-inner"
         >
-          {showPopup ? (
-            <CountUpTimerPopup
-              timer={timer}
-              partnerUsername={partnerUsername}
-            />
-          ) : showFailed ? (
-            <div>
-              <h2>Failed to find a match</h2>
-              <p style={{ marginTop: '10px' }}>Click to try again</p>
-            </div>
-          ) : (
-            <a>Find a Match</a>
-          )}
+          Leave Queue
         </button>
-
-        {showPopup && !partnerUsername && (
-          <button
-            onClick={() => {
-              onLeave();
-            }}
-            className="font-semibold w-64 py-4 bg-red-500 text-white rounded-lg transition hover:scale-95 hover:shadow-inner"
-          >
-            Leave Queue
-          </button>
-        )}
-        <a className="flex flex-grow" />
-      </>
-    );
-  } else if (tab === 'HISTORY') {
-    render = (
-      <div className="flex flex-col items-center">
-        <a className="text-white">TO IMPLEMENT</a>
-      </div>
-    );
-  }
+      )}
+      <a className="flex flex-grow" />
+    </>
+  );
 
   return (
     <div className="flex flex-col p-8">
-      <div className="flex flex-row justify-between bg-gray-700 w-full text-gray-100 text-sm">
-        {tabs.map((item, index) => (
-          <PlayTab
-            key={index}
-            item={item.label}
-            icon={item.icon}
-            tab={tab}
-            setTab={setTab}
-          />
-        ))}
-      </div>
-      <div className="flex flex-col gap-4 items-center p-8 bg-gray-800 rounded-b-lg h-full opacity-80 w-[448px]">
+      <div className="flex flex-col gap-4 items-center p-8 bg-gray-800 rounded-lg h-full opacity-80 w-[448px]">
         {render}
       </div>
     </div>
