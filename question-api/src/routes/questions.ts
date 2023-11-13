@@ -135,7 +135,7 @@ router.get('/search', checkUserAuth, async (req: Request, res: Response) => {
 });
 
 // New route to search for one question based on difficulty and language
-router.get('/where', checkUserAuth, async (req: Request, res: Response) => {
+router.get('/where', async (req: Request, res: Response) => {
   try {
     // Extract query parameters for difficulty and language
     const { difficulty, questionIds } = req.query;

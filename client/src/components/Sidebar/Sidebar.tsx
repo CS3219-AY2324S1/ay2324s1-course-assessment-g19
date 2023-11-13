@@ -8,7 +8,6 @@ import Sidetab from './Sidetab';
 import { useCallback } from 'react';
 import { socket } from '../../socket';
 import { selectGameId } from '../../features/play/gameSlice';
-import { current } from '@reduxjs/toolkit';
 
 const Sidebar = () => {
   const currentUser = useSelector(selectCurrentUser);
@@ -20,11 +19,10 @@ const Sidebar = () => {
   ];
 
   const onLogout = useCallback(() => {
-    if (!gameId || !currentUser) {
-      return;
+    if (gameId && currentUser) {
+      socket.emit('leave_game', { gameId, currentUser });
     }
 
-    socket.emit('leave_game', { gameId, currentUser });
     store.dispatch(logoutUser());
   }, [store, gameId, currentUser]);
 

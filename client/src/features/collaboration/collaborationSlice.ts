@@ -56,7 +56,10 @@ export const findMatch = async (
     const response = await consumeMessage(language?.id, difficulty);
     callbacks.onFindingPartner();
 
-    if (response.data.message != 'empty') {
+    if (response.data.message.user == currentUser.email) {
+      console.log('Matched with self, rejoining queue');
+      await joinQueue(currentUser.email, difficulty, language);
+    } else if (response.data.message != 'empty') {
       // If there's a message in the queue, consume it
 
       const partnerUser = response.data.message.user;
