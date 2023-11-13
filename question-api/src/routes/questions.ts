@@ -53,7 +53,6 @@ router.post('/', checkAdminAuth, async (req: Request, res: Response) => {
     const question = new Question({
       title: req.body.title,
       difficulty: req.body.difficulty,
-      tags: req.body.tags,
       description: req.body.description,
       examples: req.body.examples,
       constraints: req.body.constraints
@@ -84,16 +83,13 @@ router.put('/:id', checkAdminAuth, async (req: Request, res: Response) => {
     const updatedQuestion = await Question.findByIdAndUpdate(
       req.params.id, // id of the question to be updated
       {
-        $set: {
-          title: req.body.title,
-          difficulty: req.body.difficulty,
-          tags: req.body.tags,
-          description: req.body.description,
-          examples: req.body.examples,
-          constraints: req.body.constraints
-        }
+        title: req.body.title,
+        difficulty: req.body.difficulty,
+        description: req.body.description,
+        examples: req.body.examples,
+        constraints: req.body.constraints
       },
-      { new: true } // Return the updated question after the update
+      { new: true, runValidators: true } // Return the updated question after the update
     );
 
     if (!updatedQuestion) {

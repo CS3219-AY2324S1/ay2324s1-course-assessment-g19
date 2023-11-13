@@ -7,7 +7,6 @@ import {
   QuestionDescription,
   QuestionDifficulty,
   QuestionExample,
-  QuestionTag,
   StatusType
 } from '../../types';
 import { toast } from 'react-toastify';
@@ -21,7 +20,6 @@ const initialState: CreatorState = {
   question: {
     title: '',
     difficulty: 'EASY',
-    tags: [],
     description: '',
     examples: [],
     constraints: [],
@@ -102,9 +100,6 @@ export const creatorSlice = createSlice({
     updateDifficulty: (state, action: PayloadAction<QuestionDifficulty>) => {
       state.question.difficulty = action.payload;
     },
-    updateTags: (state, action: PayloadAction<QuestionTag[]>) => {
-      state.question.tags = action.payload;
-    },
     updateDescription: (state, action: PayloadAction<QuestionDescription>) => {
       state.question.description = action.payload;
     },
@@ -171,7 +166,6 @@ export const creatorSlice = createSlice({
 export const {
   updateTitle,
   updateDifficulty,
-  updateTags,
   updateDescription,
   addExample,
   updateExample,
@@ -186,7 +180,6 @@ export const {
 export const selectTitle = (state: RootState) => state.creator.question.title;
 export const selectDifficulty = (state: RootState) =>
   state.creator.question.difficulty;
-export const selectTags = (state: RootState) => state.creator.question.tags;
 export const selectDescription = (state: RootState) =>
   state.creator.question.description;
 export const selectExamples = (state: RootState) =>

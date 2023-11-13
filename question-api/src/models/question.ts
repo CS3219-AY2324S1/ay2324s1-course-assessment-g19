@@ -7,7 +7,6 @@ export interface IQuestion {
   _id: Schema.Types.ObjectId;
   title: string;
   difficulty: string;
-  tags: string[];
   description: string;
   examples: {
     in: string;
@@ -23,13 +22,11 @@ const questionSchema = new Schema(
   {
     title: { type: String, required: true, unique: true },
     difficulty: { type: String, required: true },
-    tags: { type: [String], required: true },
     description: { type: String, required: true },
     examples: {
-      type: [{ in: String, out: String, explanation: String }],
-      required: true
+      type: [{ in: String, out: String, explanation: String }]
     },
-    constraints: { type: [String], required: true }
+    constraints: { type: [String] }
   },
   { timestamps: true }
 );
