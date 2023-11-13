@@ -90,11 +90,11 @@ const Settings = () => {
 
   return (
     <div className="flex flex-col justify-start h-screen p-4 gap-4 mt-12 m-32">
-      <h1 className="text-2xl text-gray-800 font-semibold bg-gray-400 rounded-lg p-4">
+      <h1 className="text-2xl text-gray-800 font-semibold bg-neutral-100 rounded-lg p-4">
         Settings
       </h1>
       <div className="flex flex-col items-center justify-center w-full gap-4 text-gray-800">
-        <div className="flex flex-col items-center justify-center w-full gap-4 bg-gray-400 rounded-lg shadow-lg p-6">
+        <div className="flex flex-col items-center justify-center w-full gap-4 bg-gray-300 rounded-lg shadow-lg p-6">
           <div className="flex text-lg font-semibold w-full">User Profile</div>
 
           <hr className="w-full border-gray-500 m-4" />
@@ -107,7 +107,7 @@ const Settings = () => {
           <div className="flex flex-row items-center justify-start w-full gap-4">
             <label className="font-semibold w-2/12">Name</label>
             <input
-              className="flex flex-grow rounded-lg p-2 bg-gray-300"
+              className="flex flex-grow rounded-lg p-2 bg-neutral-100"
               type="text"
               value={isEditMode ? form.name : currentUser.name}
               placeholder="Please enter your name"
@@ -119,7 +119,7 @@ const Settings = () => {
           <div className="flex flex-row items-center justify-start w-full gap-4">
             <label className="font-semibold w-2/12">Email</label>
             <input
-              className="flex flex-grow rounded-lg p-2 bg-gray-300"
+              className="flex flex-grow rounded-lg p-2 bg-neutral-100"
               type="text"
               value={isEditMode ? form.email : currentUser.email}
               placeholder="Please enter your email"
