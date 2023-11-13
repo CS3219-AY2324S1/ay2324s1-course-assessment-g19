@@ -5,14 +5,14 @@ collaborate on practicing Leetcode-style interview questions.
 
 ## Installation & Running the Application
 
-##### Download the Release
+#### Download the Release
 
 Navigate to the
 [Releases](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g19/releases)
 on the right and select `Project`. Open the _Assets_ tab and click on _Source
 code (zip)_ to download the release
 
-##### Software Required
+#### Software Required
 
 - [NodeJS](https://nodejs.org/en/)
 - [Python3](https://www.python.org/downloads/)
@@ -22,13 +22,13 @@ code (zip)_ to download the release
 - [Anaconda](https://www.anaconda.com/download) (or any Python environment
   management system)
 
-##### Setup
+#### Setup
 
 - Ensure that Docker is running on your machine.
 - Ensure ports 80, 3000, 3030, 5001, 5050, 5432, 6379, 8000, 9000 and 27017 are
   available on your machine.
 
-##### Installation
+#### Installation
 
 Navigate into the `ay2324s1-course-assessment-g19` directory from the downloaded
 release.
@@ -41,9 +41,12 @@ Run the following command to install all dependencies for the relevant modules.
 
 ```bash
 make install
+conda activate user-api
+pip install -r ./user-api/requirements.txt
 ```
 
-_If you do not have Makefile, then run the following commands_
+_If you do not have Makefile, then run the following commands in the command
+line_
 
 ```bash
 cd client/ && npm install
@@ -54,11 +57,12 @@ cd ../question-api/ && npm install
 cd ../user-api/
 conda create --name user-api python=3.9
 conda activate user-api
-pip install -r requirements.txt
-cd ..
+pip install -r ./user-api/requirements.txt
 ```
 
-##### Running the Application
+---
+
+#### Running the Application
 
 Run the following command to build and run the Docker containers for the
 relevant modules.
