@@ -1,18 +1,37 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Request } from 'express';
+import { Schema } from 'mongoose';
 
-const questionSchema = new Schema({
-  title: { type: String, required: true, unique: true },
-  difficulty: { type: String, required: true },
-  tags: { type: [String], required: true },
-  description: { type: String, required: true },
+const mongoose = require('mongoose');
+
+export interface IQuestion {
+  _id: Schema.Types.ObjectId;
+  title: string;
+  difficulty: string;
+  tags: string[];
+  description: string;
   examples: {
-    type: [{ in: String, out: String, explanation: String }],
-    required: true
+    in: string;
+    out: string;
+    explanation: string;
+  }[];
+  constraints: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const questionSchema = new Schema(
+  {
+    title: { type: String, required: true, unique: true },
+    difficulty: { type: String, required: true },
+    tags: { type: [String], required: true },
+    description: { type: String, required: true },
+    examples: {
+      type: [{ in: String, out: String, explanation: String }],
+      required: true
+    },
+    constraints: { type: [String], required: true }
   },
-  constraints: { type: [String], required: true },
-  createdAt: { type: Date, immutable: true, default: () => Date.now() },
-  updatedAt: { type: Date, default: () => Date.now() }
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model('Question', questionSchema);
