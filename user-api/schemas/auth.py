@@ -27,7 +27,8 @@ class LoginRequest(BaseModel):
 
 class RegisterRequest(LoginRequest):
     name: str
-    role: str
+    role: Literal["Admin", "User"]
+    admin_key: Union[str, None] = None
 
 
 class UpdateUserRequest(BaseModel):
@@ -35,5 +36,3 @@ class UpdateUserRequest(BaseModel):
     email: Union[str, None] = None
     password: Union[str, None] = None
     name: Union[str, None] = None
-    role: Literal["Admin", "User"]
-    admin_key: Union[str, None] = None
