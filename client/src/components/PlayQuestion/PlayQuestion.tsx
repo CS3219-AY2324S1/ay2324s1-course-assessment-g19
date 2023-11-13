@@ -7,7 +7,7 @@ import QuestionHeader from './Read/QuestionHeader';
 import { selectGameQuestions } from '../../features/play/gameSlice';
 import Chat from '../Chat/Chat';
 
-const Question = () => {
+const PlayQuestion = () => {
   const questions = useSelector(selectGameQuestions);
   const question = questions[questions.length - 1];
 
@@ -34,7 +34,6 @@ const Question = () => {
           title={question?.title}
           difficulty={question?.difficulty}
         />
-        {/* <QuestionTags tags={question?.tags} /> */}
         <hr className="w-full my-2" />
         <QuestionDescription description={question?.description} />
         <hr className="w-full my-2" />
@@ -53,4 +52,4 @@ const Question = () => {
   );
 };
 
-export default Question;
+export default PlayQuestion;
