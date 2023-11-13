@@ -1,12 +1,19 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { RootState } from '../../store';
-import { Question, QuestionDifficulty, StatusType } from '../../types';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { RootState, store } from '../../store';
+import {
+  Language,
+  Question,
+  QuestionDifficulty,
+  StatusType
+} from '../../types';
+import axios from 'axios';
 
 interface PlayState {
   isActive: boolean;
   currentQuestion?: Question;
-  language?: string;
+  language?: Language;
   difficulty?: QuestionDifficulty;
+  languages: Language[];
   status: StatusType;
 }
 
@@ -15,8 +22,25 @@ const initialState: PlayState = {
   currentQuestion: undefined,
   language: undefined,
   difficulty: undefined,
+  languages: [],
   status: 'DEFAULT'
 };
+
+export const fetchLanguages = createAsyncThunk(
+  '/playSlice/fetchLanguages',
+  async () => {
+    const response = await axios.get(`/code-api/languages`);
+    return response.data;
+  }
+);
+
+export const fetchLanguagesAndSetLanguage = createAsyncThunk(
+  '/playSlice/fetchLanguagesAndSetLanguage',
+  async (language: string) => {
+    await store.dispatch(fetchLanguages());
+    store.dispatch(setLanguage(language));
+  }
+);
 
 export const playSlice = createSlice({
   name: 'play',
@@ -26,11 +50,16 @@ export const playSlice = createSlice({
       state.isActive = action.payload;
     },
     setLanguage: (state, action) => {
-      state.language = action.payload;
+      state.language = state.languages.find((e) => e.name === action.payload);
     },
     setDifficulty: (state, action) => {
       state.difficulty = action.payload;
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchLanguages.fulfilled, (state, action) => {
+      state.languages = action.payload;
+    });
   }
 });
 
@@ -41,6 +70,7 @@ export const selectCurrentQuestion = (state: RootState) =>
   state.play.currentQuestion;
 export const selectLanguage = (state: RootState) => state.play.language;
 export const selectDifficulty = (state: RootState) => state.play.difficulty;
+export const selectLanguages = (state: RootState) => state.play.languages;
 export const selectStatus = (state: RootState) => state.play.status;
 
 export default playSlice.reducer;

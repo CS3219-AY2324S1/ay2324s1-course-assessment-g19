@@ -5,6 +5,7 @@ import { selectCurrentUser } from '../../features/user/authSlice';
 import { User } from '../../types';
 import SessionButtons from './SessionButtons';
 import Timer from './Timer';
+import LanguageSelect from './LanguageSelect';
 
 interface PlayerCardProps {
   self?: boolean;
@@ -49,7 +50,12 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ self, player }) => {
         </a>
       </div>
 
-      {isActive && <Timer />}
+      {isActive && (
+        <div className="flex flex-row gap-4">
+          <LanguageSelect />
+          <Timer />
+        </div>
+      )}
     </div>
   );
 };

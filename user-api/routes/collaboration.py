@@ -25,7 +25,7 @@ wait_channel = connection.channel()
 class CollaborationMessage(BaseModel):
     user: str
     difficulty: str
-    language: str
+    language: int
 
 
 class ConnectionMessage(BaseModel):

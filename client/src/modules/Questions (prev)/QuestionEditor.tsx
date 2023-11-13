@@ -25,7 +25,7 @@ const QuestionEditor = () => {
 
   useEffect(() => {
     if (question) {
-      setFormData(prevData => ({
+      setFormData((prevData) => ({
         ...prevData,
         title: question.title || prevData.title,
         description: question.description || prevData.description,
@@ -65,23 +65,23 @@ const QuestionEditor = () => {
       store.dispatch(editQuestion(_data));
       navigate('/questions');
       window.location.reload();
-
     },
     [formData]
   );
 
-  const handleChange = useCallback((e: { target: { name: any; value: any; }; }) => {
-    const { name, value } = e.target;
-    setFormData(prevData => {
-      const updatedData = {
-        ...prevData,
-        [name]: value
-      };
-      console.log("ok updated changes: ", updatedData); // Log the updated value
-      return updatedData;
-    });
-  }, []);
-  
+  const handleChange = useCallback(
+    (e: { target: { name: any; value: any } }) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          [name]: value
+        };
+        return updatedData;
+      });
+    },
+    []
+  );
 
   return (
     <div className="flex justify-center items-center h-screen">
