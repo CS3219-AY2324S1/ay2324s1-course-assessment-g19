@@ -24,9 +24,10 @@ const questionSchema = new Schema(
     difficulty: { type: String, required: true },
     description: { type: String, required: true },
     examples: {
-      type: [{ in: String, out: String, explanation: String }]
+      type: [{ in: String, out: String, explanation: String }],
+      required: true
     },
-    constraints: { type: [String] }
+    constraints: { type: [String], required: true }
   },
   { timestamps: true }
 );

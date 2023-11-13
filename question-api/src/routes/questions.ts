@@ -50,6 +50,14 @@ router.get('/', checkUserAuth, async (req: Request, res: Response) => {
 
 router.post('/', checkAdminAuth, async (req: Request, res: Response) => {
   try {
+    if (req.body.examples.lerngth === 0) {
+      return res.status(400).json({ message: 'Examples cannot be empty' });
+    }
+
+    if (req.body.constraints.length === 0) {
+      return res.status(400).json({ message: 'Constraints cannot be empty' });
+    }
+
     const question = new Question({
       title: req.body.title,
       difficulty: req.body.difficulty,
@@ -80,6 +88,14 @@ router.delete('/:id', checkAdminAuth, async (req: Request, res: Response) => {
 // New route to edit question by id
 router.put('/:id', checkAdminAuth, async (req: Request, res: Response) => {
   try {
+    if (req.body.examples.lerngth === 0) {
+      return res.status(400).json({ message: 'Examples cannot be empty' });
+    }
+
+    if (req.body.constraints.length === 0) {
+      return res.status(400).json({ message: 'Constraints cannot be empty' });
+    }
+
     const updatedQuestion = await Question.findByIdAndUpdate(
       req.params.id, // id of the question to be updated
       {
