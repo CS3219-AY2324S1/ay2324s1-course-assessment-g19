@@ -1,44 +1,76 @@
 # PeerPrep
 
-## Installation
+This is the GithubRepository for PeerPrep, a web-based platform for users to
+collaborate on practicing Leetcode-style interview questions.
 
-1. Go to Releases
-2. Click on Assignment X
-3. Download Source code (zip)
-4. Open up in code editor of choice
+## Installation & Running the Application
 
-## Install dependencies
+##### Download the Release
 
-Software required for development: Docker Makefile (if unavailable, check the
-Makefile commands and execute commands directly) Anaconda (or any other
-environment management system suitable for python interpreters)
+Navigate to the
+[Releases](https://github.com/CS3219-AY2324S1/ay2324s1-course-assessment-g19/releases)
+on the right and select `Project`. Open the _Assets_ tab and click on _Source
+code (zip)_ to download the release
+
+##### Software Required
+
+- [NodeJS](https://nodejs.org/en/)
+- [Python3](https://www.python.org/downloads/)
+- [Docker](https://www.docker.com/products/docker-desktop/)
+- [Makefile](https://www.gnu.org/software/make/) (or
+  [Make for Windows](https://gnuwin32.sourceforge.net/packages/make.htm))
+- [Anaconda](https://www.anaconda.com/download) (or any Python environment
+  management system)
+
+##### Setup
+
+- Ensure that Docker is running on your machine.
+- Ensure ports 80, 3000, 3030, 5001, 5050, 5432, 6379, 8000, 9000 and 27017 are
+  available on your machine.
+
+##### Installation
+
+Navigate into the `ay2324s1-course-assessment-g19` directory from the downloaded
+release.
 
 ```bash
 cd ay2324s1-course-assessment-g19
-cd client
-npm install
-cd ../question-api
-npm install
-cd ../user-api
+```
+
+Run the following command to install all dependencies for the relevant modules.
+
+```bash
+make install
+```
+
+_If you do not have Makefile, then run the following commands_
+
+```bash
+cd client/ && npm install
+cd ../assistant-api/ && npm install
+cd ../code-api/ && npm install
+cd ../collaboration-api/ && npm install
+cd ../question-api/ && npm install
+cd ../user-api/
 conda create --name user-api python=3.9
 conda activate user-api
 pip install -r requirements.txt
-# If there are any dependencies that are unable to be installed, (i.e. uvloop on windows)
-# Delete dependency from requirements.txt and reinstall
+cd ..
 ```
 
-## Start the development server
+##### Running the Application
 
-Ensure that Docker daemon is running
+Run the following command to build and run the Docker containers for the
+relevant modules.
 
 ```bash
 make dev
 ```
 
-Give the development version awhile (approximately 10-15 seconds depending on
-your machine) before testing
+_If you do not have Makefile, then run the following command_
 
-## Debugging
+```bash
+docker-compose up
+```
 
-Take note that installing new dependencies require a rebuilding of the Docker
-images that were fixed
+##### You can access the application @ [http://localhost:80](http://localhost:80)
