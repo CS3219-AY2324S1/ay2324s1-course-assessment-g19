@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
-import { selectCurrentUser, updateUser } from '../../features/user/authSlice';
+import {
+  removeUser,
+  selectCurrentUser,
+  updateUser
+} from '../../features/user/authSlice';
 import { store } from '../../store';
 
 const Settings = () => {
@@ -67,16 +71,33 @@ const Settings = () => {
     setMode('VIEW');
   };
 
+  const handleRemove = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this user?'
+    );
+
+    if (confirmDelete) {
+      await store.dispatch(removeUser(form.id));
+      setMode('VIEW');
+    }
+  };
+
   if (!currentUser) return null;
 
   return (
-    <div className="flex flex-col items-center justify-start h-screen p-4 gap-4">
-      <h1 className="text-2xl text-white font-semibold">Settings</h1>
-      <div className="flex flex-col items-center justify-center w-2/3 gap-4">
-        <div className="flex flex-col items-center justify-center w-full gap-4 bg-neutral-200 rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-center text-lg font-semibold w-full">
-            User Profile
-          </div>
+    <div className="flex flex-col justify-start h-screen p-4 gap-4 mt-12 m-32">
+      <h1 className="text-2xl text-gray-800 font-semibold bg-gray-400 rounded-lg p-4">
+        Settings
+      </h1>
+      <div className="flex flex-col items-center justify-center w-full gap-4 text-gray-800">
+        <div className="flex flex-col items-center justify-center w-full gap-4 bg-gray-400 rounded-lg shadow-lg p-6">
+          <div className="flex text-lg font-semibold w-full">User Profile</div>
+
+          <hr className="w-full border-gray-500 m-4" />
 
           <div className="flex flex-row items-center justify-start w-full gap-4">
             <label className="font-semibold w-2/12">Role</label>
@@ -86,7 +107,7 @@ const Settings = () => {
           <div className="flex flex-row items-center justify-start w-full gap-4">
             <label className="font-semibold w-2/12">Name</label>
             <input
-              className="flex flex-grow rounded-lg p-2 bg-neutral-100"
+              className="flex flex-grow rounded-lg p-2 bg-gray-300"
               type="text"
               value={isEditMode ? form.name : currentUser.name}
               placeholder="Please enter your name"
@@ -98,7 +119,7 @@ const Settings = () => {
           <div className="flex flex-row items-center justify-start w-full gap-4">
             <label className="font-semibold w-2/12">Email</label>
             <input
-              className="flex flex-grow rounded-lg p-2 bg-neutral-100"
+              className="flex flex-grow rounded-lg p-2 bg-gray-300"
               type="text"
               value={isEditMode ? form.email : currentUser.email}
               placeholder="Please enter your email"
@@ -106,6 +127,8 @@ const Settings = () => {
               onChange={handleChangeEmail}
             />
           </div>
+
+          <hr className="w-full border-gray-500 m-4" />
 
           {isEditMode && (
             <>
@@ -130,26 +153,42 @@ const Settings = () => {
                   onChange={handleChangeConfirmPassword}
                 />
               </div>
+
+              <hr className="w-full border-gray-500 m-4" />
             </>
           )}
-        </div>
-        <div className="flex flex-row items-center justify-center gap-4">
-          <button
-            className="bg-blue-500 rounded-lg shadow-lg px-4 py-2"
-            onClick={toggleMode}
-          >
-            <label className="text-white font-semibold">
-              {isEditMode ? 'CANCEL' : 'EDIT'}
-            </label>
-          </button>
-          {isEditMode && (
+
+          <div className="flex flex-row w-full justify-end gap-4">
+            {isEditMode && (
+              <>
+                <button
+                  className="bg-gray-100 rounded-lg shadow-lg px-6 py-2 hover:scale-95 transition"
+                  onClick={handleSave}
+                >
+                  <label className="text-gray-800 font-semibold cursor-pointer">
+                    Save Details
+                  </label>
+                </button>
+
+                <button
+                  className="bg-rose-700 rounded-lg shadow-lg px-6 py-2 hover:scale-95 transition"
+                  onClick={handleRemove}
+                >
+                  <label className="text-gray-800 font-semibold cursor-pointer">
+                    Delete Account
+                  </label>
+                </button>
+              </>
+            )}
             <button
-              className="bg-green-500 rounded-lg shadow-lg px-4 py-2"
-              onClick={handleSave}
+              className="bg-blue-500 rounded-lg shadow-lg px-6 py-2 hover:scale-95 transition"
+              onClick={toggleMode}
             >
-              <label className="text-white font-semibold">SAVE</label>
+              <label className="text-white cursor-pointer font-semibold">
+                {isEditMode ? 'Cancel' : 'Edit'}
+              </label>
             </button>
-          )}
+          </div>
         </div>
       </div>
     </div>

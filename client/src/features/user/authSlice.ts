@@ -116,6 +116,14 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const removeUser = createAsyncThunk(
+  '/profileSlice/removeUser',
+  async (id: string) => {
+    const response = await axios.delete(`/user-api/user/${id}`);
+    return response.data;
+  }
+);
+
 export const authSlice = createSlice({
   name: 'authentication',
   initialState,
@@ -182,6 +190,18 @@ export const authSlice = createSlice({
         state.status = 'ERROR';
         state.error = action.error.message;
         toast.error(action.error.message);
+      })
+      .addCase(removeUser.pending, (state) => {
+        state.status = 'LOADING';
+        state.error = undefined;
+      })
+      .addCase(removeUser.fulfilled, (state) => {
+        state.status = 'SUCCESS';
+        state.currentUser = undefined;
+      })
+      .addCase(removeUser.rejected, (state, action) => {
+        state.status = 'ERROR';
+        state.error = action.error.message;
       });
   }
 });

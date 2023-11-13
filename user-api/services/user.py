@@ -71,6 +71,15 @@ class UserService:
         self.db.refresh(existing_user)
         return existing_user
 
+    def delete_user(self, id: int):
+        existing_user = self.get_user_by_id(id=id)
+        if not existing_user:
+            raise HTTPException(
+                status_code=401, detail="User does not exist")
+        self.db.delete(existing_user)
+        self.db.commit()
+        return existing_user
+
 def is_valid_email(email):
     regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(regex, email) is not None
