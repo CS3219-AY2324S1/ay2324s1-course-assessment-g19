@@ -11,4 +11,4 @@ class UserModel(Base):
     name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
-    role= Column(String, immutable=True, nullable=False)
+    role= Column(String, nullable=False)
