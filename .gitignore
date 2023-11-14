@@ -1,13 +1,6 @@
-node_modules
-client/node_modules
-client/package-lock.json
-client/.env
-question-api/node_modules
-question-api/package-lock.json
-question-api/.env
+**/node_modules/
+**/package-lock.json
 user-api/__pycache__
-package-lock.json
-.env
 .DS_Store
 build
 dist

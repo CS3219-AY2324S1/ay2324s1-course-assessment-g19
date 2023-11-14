@@ -8,7 +8,7 @@ class UserBase(BaseModel):
 
 class User(UserBase):
     id: int
-    name: Union[str, None] = None
+    name: str
     disabled: Union[bool, None] = None
     role: str
 
@@ -29,3 +29,10 @@ class RegisterRequest(LoginRequest):
     name: str
     role: Literal["Admin", "User"]
     admin_key: Union[str, None] = None
+
+
+class UpdateUserRequest(BaseModel):
+    id: int
+    email: Union[str, None] = None
+    password: Union[str, None] = None
+    name: Union[str, None] = None

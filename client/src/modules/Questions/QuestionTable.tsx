@@ -17,6 +17,8 @@ import {
 } from '@heroicons/react/24/outline';
 import QuestionDetailsPopup from '../../components/Questions/QuestionDetailsPopup';
 import ConfirmDeleteToast from '../../components/Questions/ConfirmDeleteToast';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const QuestionTable = () => {
   const currentUser = useSelector(selectCurrentUser);
@@ -78,6 +80,17 @@ const QuestionTable = () => {
     setShowDeleteToast(false);
   };
 
+  // For testing
+  const onPrepopulate = async () => {
+    try {
+      await axios.post('/question-api/questions/prepopulate');
+      toast.success('Prepopulated questions successfully');
+      window.location.reload();
+    } catch (error) {
+      toast.error('Prepopulated questions failed');
+    }
+  };
+
   return !currentUser ? (
     <div className="flex h-screen justify-center items-center">
       <h1 className="text-lg text-white font-semibold">
@@ -96,9 +109,9 @@ const QuestionTable = () => {
           mode
         )}
       {showDeleteToast && ConfirmDeleteToast(questionInCreator, onCloseDelete)}
-      <div className="flex justify-center w-full">
-        <div className="flex flex-col flex-grow gap-4 w-full p-4">
-          <div className="flex flex-row justify-center items-center text-neutral-500 bg-slate-50 rounded-2xl p-4 shadow-lg sticky">
+      <div className="flex justify-center w-full overflow-auto rounded-lg">
+        <div className="flex flex-col flex-grow gap-4 w-full p-4 overflow-auto">
+          <div className="flex flex-row justify-center items-center text-neutral-500 bg-slate-50 rounded-lg p-4 shadow-lg sticky">
             <div className="w-1/12 flex justify-center">Index</div>
             <div className="w-3/12 flex justify-center">Title</div>
             <div className="w-4/12 flex justify-center">Description</div>
@@ -106,14 +119,14 @@ const QuestionTable = () => {
             <div className="w-2/12 flex justify-center">Actions</div>
           </div>
           {questions.length > 0 ? (
-            <div className="flex flex-col">
+            <div className="flex flex-col rounded-lg overflow-auto">
               {questions.map((question: Question, index: number) => (
                 <div
                   key={index}
                   className={`flex flex-row gap-4 justify-center bg-slate-50 transition ease-in-out duration-200 cursor-pointer p-4 hover:bg-neutral-300 hover:shadow-lg
               ${index !== 0 && 'border-t'} 
-              ${index === 0 && 'rounded-t-2xl'} 
-              ${index === questions.length - 1 && 'rounded-b-2xl'}
+              ${index === 0 && 'rounded-t-lg'} 
+              ${index === questions.length - 1 && 'rounded-b-lg'}
               `}
                 >
                   <div className="w-1/12 flex justify-center items-center">
@@ -161,14 +174,25 @@ const QuestionTable = () => {
             </div>
           )}
           {isAdmin && (
-            <div className="flex justify-center pt-4">
-              <button
-                onClick={() => onOpenCreate()}
-                className="bg-blue-500 text-white px-4 py-2 rounded-xl"
-              >
-                Create Question
-              </button>
-            </div>
+            <>
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => onOpenCreate()}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-xl"
+                >
+                  Create Question
+                </button>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={onPrepopulate}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-xl"
+                >
+                  Prepopulate Questions (For Testing)
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>

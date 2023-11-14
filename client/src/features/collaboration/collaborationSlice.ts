@@ -1,11 +1,13 @@
 import axios from 'axios';
 import { RootState } from '../../store';
-import { QuestionDifficulty } from '../../types';
+import { Language, QuestionDifficulty } from '../../types';
 
 interface FindMatchProps {
   onJoinGame: (
     gameId: string,
     difficulty: QuestionDifficulty,
+    language: string,
+    boilerplate: string,
     playerOneEmail: string,
     playerTwoEmail: string
   ) => void; // Callback function when joining a game
@@ -14,21 +16,20 @@ interface FindMatchProps {
   onPartnerNotFound: () => void; // Callback function when no partner is found
 }
 
-const consumeMessage = async (language: string, difficulty: string) => {
+const consumeMessage = async (language: number, difficulty: string) => {
   const queue_name = `${language}-${difficulty}`;
-  console.log('looking in queue: ', queue_name);
   return await axios.get(`/user-api/collaboration/check-queue/${queue_name}`);
 };
 
 const joinQueue = async (
   user: string,
   difficulty: string,
-  language: string
+  language: Language
 ) => {
   const postData = {
     user: user,
     difficulty: difficulty,
-    language: language
+    language: language.id
   };
 
   return await axios.post('/user-api/collaboration/join-queue', postData, {
@@ -47,20 +48,21 @@ export const findMatch = async (
   const currentUser = state.authentication.currentUser;
 
   if (!language || !difficulty || !currentUser) {
-    console.log('language, difficulty or currentUser is undefined');
     return;
   }
 
   try {
     // Check if there are any messages in the queue
-    const response = await consumeMessage(language, difficulty);
+    const response = await consumeMessage(language?.id, difficulty);
     callbacks.onFindingPartner();
 
-    if (response.data.message != 'empty') {
+    if (response.data.message.user == currentUser.email) {
+      console.log('Matched with self, rejoining queue');
+      await joinQueue(currentUser.email, difficulty, language);
+    } else if (response.data.message != 'empty') {
       // If there's a message in the queue, consume it
 
       const partnerUser = response.data.message.user;
-      console.log('found a partner :', partnerUser);
 
       const notification = {
         partner: partnerUser,
@@ -72,12 +74,13 @@ export const findMatch = async (
           'Content-Type': 'application/json'
         }
       });
-      console.log('notification sent to ', partnerUser);
 
       callbacks.onPartnerFound(partnerUser);
       callbacks.onJoinGame(
         `${currentUser.email}-${partnerUser}`,
         difficulty,
+        language.name,
+        language.boilerplate,
         currentUser.email,
         partnerUser
       );
@@ -88,7 +91,6 @@ export const findMatch = async (
         difficulty,
         language
       );
-      console.log('no partner found, queued:', postResponse.data.message);
 
       function delayAsync(ms: number) {
         return new Promise((resolve) => setTimeout(resolve, ms));
@@ -101,17 +103,17 @@ export const findMatch = async (
         );
         if (response.data.message != 'empty') {
           const partnerUser = response.data.message.user;
-          console.log('partner found! your partner is: ', partnerUser);
           callbacks.onPartnerFound(response.data.message.user);
           callbacks.onJoinGame(
             `${partnerUser}-${currentUser.email}`,
             difficulty,
-            currentUser.email,
-            partnerUser
+            language.name,
+            language.boilerplate,
+            partnerUser,
+            currentUser.email
           );
           break;
         } else if (i == 5) {
-          console.log('timeout 30 seconds no partner found');
           callbacks.onPartnerNotFound();
         }
         await delayAsync(5000);
@@ -128,22 +130,18 @@ export const leaveQueue = async (state: RootState) => {
   const currentUser = state.authentication.currentUser;
 
   if (!language || !difficulty || !currentUser) {
-    console.log('language, difficulty or currentUser is undefined');
     return;
   }
 
-  const response = await consumeMessage(language, difficulty);
+  const response = await consumeMessage(language?.id, difficulty);
 
   // someone has matched before you leave the queue
   if (response.data.message == 'empty') {
-    console.log('you are already matched');
   }
   // you have already been matched and another user has joined the queue
   else if (response.data.message.user != currentUser.email) {
-    console.log('you are already matched, re adding wrongly removed user');
     // add the wrongly removed user back to the queue
     await joinQueue(response.data.message.user, difficulty, language);
   } else {
-    console.log('left queue');
   }
 };

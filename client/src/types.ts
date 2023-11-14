@@ -10,7 +10,6 @@ export type Question = {
   _id: any;
   title: string;
   difficulty: QuestionDifficulty;
-  tags: QuestionTag[];
   description: QuestionDescription;
   examples: QuestionExample[];
   constraints: QuestionConstraint[];
@@ -19,8 +18,6 @@ export type Question = {
 };
 
 export type QuestionDifficulty = 'EASY' | 'MEDIUM' | 'HARD';
-
-export type QuestionTag = string;
 
 export type QuestionDescription = string;
 
@@ -40,4 +37,12 @@ export type ChatMessage = {
   sender: User | 'SYSTEM';
   message: string;
   timestamp: Date;
+  isPrompt?: boolean;
+};
+
+export type Language = {
+  id: number;
+  name: string;
+  slug: string;
+  boilerplate: string;
 };

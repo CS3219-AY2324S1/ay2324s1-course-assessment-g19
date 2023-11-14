@@ -1,10 +1,12 @@
-
-import React from 'react';
-import axios from 'axios';
 import AceEditor from 'react-ace';
-import "ace-builds/src-noconflict/mode-java";
-import "ace-builds/src-noconflict/theme-github";
-import { useCallback, useEffect, useState } from 'react';
+import 'ace-builds/src-noconflict/mode-java';
+import 'ace-builds/src-noconflict/mode-python';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-csharp';
+import 'ace-builds/src-noconflict/mode-ruby';
+import 'ace-builds/src-noconflict/mode-text';
+import 'ace-builds/src-noconflict/theme-github';
+import { useCallback, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import { socket } from '../../socket';
 import { store } from '../../store';
@@ -12,119 +14,84 @@ import {
   selectGameData,
   selectGameId,
   selectGameOpponent,
+  selectGameOutput,
   setGameData,
   setGameId,
+  setGameOutput,
   setGamePlayers,
-  setGameQuestion
+  setGameQuestions,
+  setGameStartedAt
 } from '../../features/play/gameSlice';
 import { useSelector } from 'react-redux';
-import { ChatMessage, QuestionDifficulty, User } from '../../types';
-import { setIsActive } from '../../features/play/playSlice';
+import {
+  fetchLanguagesAndSetLanguage,
+  selectIsActive,
+  selectLanguage,
+  setDifficulty,
+  setIsActive
+} from '../../features/play/playSlice';
 import { selectCurrentUser } from '../../features/user/authSlice';
-import { reset as resetChat } from '../../features/play/chatSlice';
+import {
+  setChatMessages,
+  setIsAssistantLoading
+} from '../../features/play/chatSlice';
+import 'ace-builds/src-noconflict/theme-tomorrow_night'; // A dark theme
+import './styles.css';
+import Cookies from 'js-cookie';
 
 const Editor = () => {
-
-  const [code, setCode] = React.useState('public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello, World!");\n  }\n}');
-  const [output, setOutput] = React.useState('');
-  const [isRunning, setIsRunning] = React.useState(false);
+  const isActive = useSelector(selectIsActive);
+  const output = useSelector(selectGameOutput);
   const currentUser = useSelector(selectCurrentUser);
   const gameId = useSelector(selectGameId);
   const data = useSelector(selectGameData);
   const opponentPlayer = useSelector(selectGameOpponent);
-        
-        
-  const onChange = useCallback(
-    (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const message = event.target.value;
+  const language = useSelector(selectLanguage);
 
-      socket.emit('message_send', { message, gameId });
+  const onChange = useCallback(
+    (data: string) => {
+      socket.emit('data_send', { data, gameId });
     },
     [socket, gameId]
   );
 
-  const handleCodeChange = (newCode: string) => {
-    setCode(newCode);
-  };
+  useEffect(() => {
+    const cachedGameId = Cookies.get('gameId');
 
-  const handleRunCode = async () => {
-    try {
-      console.log("handleRunCode called");
-      setIsRunning(true);
-
-      const response = await axios.post(`http://localhost:9000/run-code`, {
-        source_code: code,
-        language_id: 62, // Update this to the correct language_id for Java
-      });
-      console.log(code);
-  
-      const token = response.data.token;
-  
-      if (token) {
-        console.log('Submission token:', token);
-  
-        const maxAttempts = 10;
-        let attempts = 0;
-        let resultResponse;
-  
-        while (attempts < maxAttempts) {
-          resultResponse = await axios.get(`http://localhost:9000/submission/${token}`);
-          console.log('Submission result:', resultResponse.data);
-  
-          if (resultResponse.data.status_id === 3) { // Assuming status_id 3 means 'Finished'
-            setOutput(resultResponse.data.stdout || resultResponse.data.stderr || 'No output');
-            setIsRunning(false);
-            return;
-          } else if (resultResponse.data.status_id > 3) { // Statuses higher than 3 indicate an error or other non-successful state
-            setOutput('Error executing code');
-            setIsRunning(false);
-            return;
-          }
-  
-          attempts++;
-          await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before checking again
-        }
-  
-        setOutput('Execution timed out');
-        setIsRunning(false);
-
-      } else {
-        console.error('No token received from the server');
-        setOutput('Error executing code: No token received');
-        setIsRunning(false);
-
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error executing code:', error.response?.data || error.message);
-      } else {
-        console.error('An unknown error occurred');
-      }
-      setOutput('Error executing code');
-      setIsRunning(false);
-
+    if (!isActive && cachedGameId) {
+      socket.emit('check_game', { gameId: cachedGameId });
     }
-  };
+  }, [socket]);
 
   useEffect(() => {
-    socket.on(
-      'confirm_game',
-      (
-        id: string,
-        question: QuestionDifficulty,
-        playerOne: User,
-        playerTwo: User
-      ) => {
-        store.dispatch(setIsActive(true));
-        store.dispatch(setGameId(id));
-        store.dispatch(setGameQuestion(question));
-        store.dispatch(setGamePlayers([playerOne, playerTwo]));
-        store.dispatch(resetChat());
-      }
-    );
+    socket.on('update', (roomData) => {
+      const {
+        gameId,
+        startedAt,
+        difficulty,
+        questions,
+        language,
+        data,
+        output,
+        messages,
+        playerOne,
+        playerTwo,
+        isAssistantLoading
+      } = roomData;
 
-    socket.on('message_recv', (msg: string) => {
-      store.dispatch(setGameData(msg));
+      store.dispatch(setIsActive(true));
+      store.dispatch(setGameId(gameId));
+      store.dispatch(setGameStartedAt(startedAt));
+      store.dispatch(setDifficulty(difficulty));
+      store.dispatch(setGameQuestions(questions));
+      store.dispatch(setGamePlayers([playerOne, playerTwo]));
+      store.dispatch(setGameData(data));
+      store.dispatch(setGameOutput(output));
+      store.dispatch(setChatMessages(messages));
+      store.dispatch(setIsAssistantLoading(isAssistantLoading));
+      store.dispatch(fetchLanguagesAndSetLanguage(language));
+
+      Cookies.set('gameId', gameId);
     });
   }, [currentUser, socket, store]);
 
@@ -132,35 +99,27 @@ const Editor = () => {
     <div className="flex flex-col py-8 pl-8 w-full h-full">
       <PlayerCard player={opponentPlayer} />
 
-      {/* Code Execution Section */}
-      <div className="border-4 border-dashed border-gray-800 flex flex-grow rounded-lg my-4">
+      <div className="flex flex-col flex-grow rounded-lg gap-8 bg-gray-800 my-4 py-8">
         <AceEditor
-          mode="java"
-          theme="github"
-          onChange={handleCodeChange}
+          mode={language?.slug ?? 'text'}
+          theme="tomorrow_night"
+          onChange={onChange}
+          fontSize={14}
           name="code_editor"
-          value={code}
+          value={isActive ? data : language?.boilerplate ?? ''}
           editorProps={{ $blockScrolling: true }}
-          style={{ width: '100%', height: '300px' }} // Set a fixed height
+          style={{ width: '100%', height: '100%' }}
         />
       </div>
-      <button
-        onClick={handleRunCode}
-        className="my-4 px-4 py-2 bg-blue-500 text-white rounded"
-        disabled={isRunning}
-      >
-        {isRunning ? "Running..." : "Run Code"}
-      </button>
 
-      <div className="border-2 border-dashed border-gray-800 rounded-lg my-4 p-2">
-        <p>Output:</p>
-        <pre>{output}</pre>
+      <div className="flex flex-col gap-1 text-white text-sm mb-4">
+        <a className="text-semibold bg-gray-800 p-4 rounded-t-lg">Console</a>
+        <pre className="bg-gray-800 p-4 h-32 rounded-b-lg">{output}</pre>
       </div>
 
       <PlayerCard self />
     </div>
   );
-
 };
 
 export default Editor;

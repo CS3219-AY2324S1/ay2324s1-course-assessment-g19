@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 
 const mongoose = require('mongoose');
 const Question = require('../models/question');
+const prepopulateQuestions = require('../data/prepopulate.json');
 
 const router = Router();
 
@@ -53,7 +54,6 @@ router.post('/', checkAdminAuth, async (req: Request, res: Response) => {
     const question = new Question({
       title: req.body.title,
       difficulty: req.body.difficulty,
-      tags: req.body.tags,
       description: req.body.description,
       examples: req.body.examples,
       constraints: req.body.constraints
@@ -81,19 +81,24 @@ router.delete('/:id', checkAdminAuth, async (req: Request, res: Response) => {
 // New route to edit question by id
 router.put('/:id', checkAdminAuth, async (req: Request, res: Response) => {
   try {
+    if (req.body.examples.lerngth === 0) {
+      return res.status(400).json({ message: 'Examples cannot be empty' });
+    }
+
+    if (req.body.constraints.length === 0) {
+      return res.status(400).json({ message: 'Constraints cannot be empty' });
+    }
+
     const updatedQuestion = await Question.findByIdAndUpdate(
       req.params.id, // id of the question to be updated
       {
-        $set: {
-          title: req.body.title,
-          difficulty: req.body.difficulty,
-          tags: req.body.tags,
-          description: req.body.description,
-          examples: req.body.examples,
-          constraints: req.body.constraints
-        }
+        title: req.body.title,
+        difficulty: req.body.difficulty,
+        description: req.body.description,
+        examples: req.body.examples,
+        constraints: req.body.constraints
       },
-      { new: true } // Return the updated question after the update
+      { new: true, runValidators: true } // Return the updated question after the update
     );
 
     if (!updatedQuestion) {
@@ -131,10 +136,11 @@ router.get('/search', checkUserAuth, async (req: Request, res: Response) => {
 });
 
 // New route to search for one question based on difficulty and language
-router.get('/where', checkUserAuth, async (req: Request, res: Response) => {
+router.get('/where', async (req: Request, res: Response) => {
   try {
     // Extract query parameters for difficulty and language
-    const { difficulty } = req.query;
+    const { difficulty, questionIds } = req.query;
+    const questionIdsArray = (questionIds as string).split(',');
 
     // Create a query object to filter questions
     const query: any = {};
@@ -143,14 +149,26 @@ router.get('/where', checkUserAuth, async (req: Request, res: Response) => {
       query.difficulty = difficulty;
     }
 
-    // Perform the search based on the query
-    const question = await Question.findOne(query);
+    const questions = await Question.find(query);
+    const shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    const question = shuffledQuestions.find(
+      (question: any) => !questionIdsArray.includes(question._id.toString())
+    );
 
     // Send the matching questions as a JSON response
     res.json(question);
   } catch (error) {
     // Handle errors and send a 500 internal server error response
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/prepopulate', async (req: Request, res: Response) => {
+  try {
+    await Question.insertMany(prepopulateQuestions);
+    // await Question.deleteMany({});
+  } catch (error) {
+    console.log(error);
   }
 });
 

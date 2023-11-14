@@ -4,23 +4,27 @@ import avatar from '../../assets/avatar.png';
 import logo from '../../assets/logo.png';
 import { logoutUser, selectCurrentUser } from '../../features/user/authSlice';
 import { store } from '../../store';
-import Footertab from './Footertab';
 import Sidetab from './Sidetab';
+import { useCallback } from 'react';
+import { socket } from '../../socket';
+import { selectGameId } from '../../features/play/gameSlice';
 
 const Sidebar = () => {
   const currentUser = useSelector(selectCurrentUser);
+  const gameId = useSelector(selectGameId);
 
   const tabs = [
     { label: 'Play', href: '/play' },
-    { label: 'Questions', href: '/questions' },
-    { label: 'Friends', href: '/friends' }
+    { label: 'Questions', href: '/questions' }
   ];
 
-  const footers = [
-    { label: 'Settings', href: '/settings' },
-    { label: 'Help', href: '/help' },
-    { label: 'Terms', href: '/terms' }
-  ];
+  const onLogout = useCallback(() => {
+    if (gameId && currentUser) {
+      socket.emit('leave_game', { gameId, currentUser });
+    }
+
+    store.dispatch(logoutUser());
+  }, [store, gameId, currentUser]);
 
   return (
     <div className="flex flex-col justify-between bg-gray-800 rounded-r-xl w-36">
@@ -52,28 +56,21 @@ const Sidebar = () => {
 
       <div className="flex flex-col pb-8">
         {currentUser && (
-          <div className="flex flex-col items-center gap-4 p-4">
+          <a className="flex flex-col items-center gap-4 p-4" href="/settings">
             <img
-              onClick={() => alert('to implement')}
               className="h-12 w-12 rounded-full border-2 border-gray-500 cursor-pointer"
               src={currentUser.imgSrc || avatar}
               alt="Your avatar"
             />
-            <span
-              onClick={() => alert('to implement')}
-              className="text-gray-100 bg-gray-700 w-full text-center text-sm p-1 rounded-md cursor-pointer transition hover:bg-gray-500"
-            >
+            <span className="text-gray-100 bg-gray-700 w-full text-center text-sm p-1 rounded-md cursor-pointer transition hover:bg-gray-500">
               {currentUser.name}
             </span>
-          </div>
+          </a>
         )}
 
-        {footers.map((footer, index) => (
-          <Footertab key={index} label={footer.label} href={footer.href} />
-        ))}
         {currentUser && (
           <button
-            onClick={() => store.dispatch(logoutUser())}
+            onClick={onLogout}
             className="text-white text-sm rounded-lg p-2 m-4 bg-gray-700 transition hover:bg-gray-500 cursor-pointer"
           >
             <ArrowLeftOnRectangleIcon className="h-5 w-5 inline-block mr-2" />

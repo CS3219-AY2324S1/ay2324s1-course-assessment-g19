@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import Editor from '../../components/Editor/Editor';
 import PlayBox from '../../components/Playbox/PlayBox';
-import Question from '../../components/Questions (prev)/Question';
+import PlayQuestion from '../../components/PlayQuestion/PlayQuestion';
 import { selectIsActive } from '../../features/play/playSlice';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,7 +13,7 @@ const Play = () => {
       {/* CODE EDITOR */}
       <Editor />
       {/* PLAYBOX */}
-      {isActive ? <Question /> : <PlayBox />}
+      {isActive ? <PlayQuestion /> : <PlayBox />}
     </div>
   );
 };
