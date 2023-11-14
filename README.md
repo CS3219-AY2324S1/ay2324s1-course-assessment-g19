@@ -77,4 +77,11 @@ _If you do not have Makefile, then run the following command_
 docker-compose up
 ```
 
-##### You can access the application @ [http://localhost:80](http://localhost:80)
+#### You can access the application @ [http://localhost:80](http://localhost:80)
+
+#### Testing
+
+You may sign in with an Admin account, use password 032190, and navigate to the
+Questions tab on the sidebar. From there, you have access to a
+`Prepopulate Questions (For Testing)` button to prepopulate your local database
+with questions.

@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 
 const mongoose = require('mongoose');
 const Question = require('../models/question');
+const prepopulateQuestions = require('../data/prepopulate.json');
 
 const router = Router();
 
@@ -159,6 +160,15 @@ router.get('/where', async (req: Request, res: Response) => {
   } catch (error) {
     // Handle errors and send a 500 internal server error response
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/prepopulate', async (req: Request, res: Response) => {
+  try {
+    await Question.insertMany(prepopulateQuestions);
+    // await Question.deleteMany({});
+  } catch (error) {
+    console.log(error);
   }
 });
 
