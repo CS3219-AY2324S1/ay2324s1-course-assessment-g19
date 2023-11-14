@@ -45,6 +45,7 @@ export const fetchAiResponse = async (
     return aiResponse.data;
   } catch (error) {
     console.log(error);
+    return "Sorry I'm unavailable right now";
   }
 };
 

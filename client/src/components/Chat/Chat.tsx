@@ -50,6 +50,8 @@ const Chat = () => {
     >
       <div className="flex flex-col-reverse flex-grow gap-2 justify-end items-center w-full px-4 pt-4">
         {messages.toReversed().map((message, index) => {
+          if (!message.message) return null;
+
           const parts = message.message.split('```');
 
           return (
