@@ -1,7 +1,7 @@
 [
   {
     "title": "Two Sum",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
     "examples": [
       {
@@ -19,7 +19,7 @@
   },
   {
     "title": "Add Two Numbers",
-    "difficulty": "Medium",
+    "difficulty": "MEDIUM",
     "description": "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.",
     "examples": [
       {
@@ -36,7 +36,7 @@
   },
   {
     "title": "Array Pair Sum",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Given an array of integers, return indices of the two numbers such that they add up to a specific target.",
     "examples": [
       {
@@ -56,7 +56,7 @@
   },
   {
     "title": "Reverse Integer",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Given a 32-bit signed integer, reverse digits of an integer.",
     "examples": [
       {
@@ -74,7 +74,7 @@
   },
   {
     "title": "Palindrome Number",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Determine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward.",
     "examples": [
       {
@@ -92,7 +92,7 @@
   },
   {
     "title": "Roman to Integer",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Given a roman numeral, convert it to an integer.",
     "examples": [
       {
@@ -111,7 +111,7 @@
   },
   {
     "title": "Longest Common Prefix",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string \"\".",
     "examples": [
       {
@@ -131,7 +131,7 @@
   },
   {
     "title": "Merge Two Sorted Lists",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Merge two sorted linked lists and return it as a new sorted list. The new list should be made by splicing together the nodes of the first two lists.",
     "examples": [
       {
@@ -150,7 +150,7 @@
   },
   {
     "title": "Remove Duplicates from Sorted Array",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Given a sorted array nums, remove the duplicates in-place such that each element appears only once and returns the new length.",
     "examples": [
       {
@@ -170,7 +170,7 @@
   },
   {
     "title": "Remove Element",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Given an array nums and a value val, remove all instances of that value in-place and return the new length.",
     "examples": [
       {
@@ -190,7 +190,7 @@
   },
   {
     "title": "Implement strStr()",
-    "difficulty": "Easy",
+    "difficulty": "EASY",
     "description": "Implement strStr(). Return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.",
     "examples": [
       {
@@ -209,7 +209,7 @@
   },
   {
     "title": "Balanced Substring Finder",
-    "difficulty": "Medium",
+    "difficulty": "MEDIUM",
     "description": "Given a string s consisting of only '0's and '1's, write a function to find the length of the longest substring where the number of '0's and '1's are equal. If no such substring exists, return 0.",
     "examples": [
       {
@@ -228,7 +228,7 @@
   },
   {
     "title": "Array Peak Element",
-    "difficulty": "Medium",
+    "difficulty": "MEDIUM",
     "description": "Given an array of integers, find a peak element in it. An element is peak if it is NOT smaller than its neighbors. For corner elements, we need to consider only one neighbor.",
     "examples": [
       {
@@ -247,7 +247,7 @@
   },
   {
     "title": "Matrix Diagonal Sum",
-    "difficulty": "Medium",
+    "difficulty": "MEDIUM",
     "description": "Given a square matrix mat, return the sum of the matrix diagonals. Only include the sum of all the elements on the primary diagonal and all the elements on the secondary diagonal that are not part of the primary diagonal.",
     "examples": [
       {
@@ -267,7 +267,7 @@
   },
   {
     "title": "Valid Parentheses String",
-    "difficulty": "Medium",
+    "difficulty": "MEDIUM",
     "description": "Given a string s containing only three types of characters: '(', ')' and '*', write a function to check whether this string is valid. The '*' character can be treated as a single right parenthesis ')' or a single left parenthesis '(' or an empty string.",
     "examples": [
       {
@@ -286,7 +286,7 @@
   },
   {
     "title": "Maximum Product Subarray",
-    "difficulty": "Medium",
+    "difficulty": "MEDIUM",
     "description": "Given an integer array nums, find a contiguous non-empty subarray within the array that has the largest product, and return the product.",
     "examples": [
       {
@@ -306,7 +306,7 @@
   },
   {
     "title": "Longest Increasing Path in a Matrix",
-    "difficulty": "Hard",
+    "difficulty": "HARD",
     "description": "Given an m x n integers matrix, return the length of the longest increasing path in the matrix. From each cell, you can either move in four directions: left, right, up, or down. You may not move diagonally or move outside the boundary.",
     "examples": [
       {
@@ -327,7 +327,7 @@
   },
   {
     "title": "Minimum Window Substring",
-    "difficulty": "Hard",
+    "difficulty": "HARD",
     "description": "Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that every character in t (including duplicates) is included in the window. If there is no such substring, return the empty string ''.",
     "examples": [
       {
@@ -346,7 +346,7 @@
   },
   {
     "title": "Binary Tree Maximum Path Sum",
-    "difficulty": "Hard",
+    "difficulty": "HARD",
     "description": "Given a non-empty binary tree, find the maximum path sum. The path may start and end at any node in the tree.",
     "examples": [
       {
@@ -365,7 +365,7 @@
   },
   {
     "title": "Serialize and Deserialize Binary Tree",
-    "difficulty": "Hard",
+    "difficulty": "HARD",
     "description": "Design an algorithm to serialize and deserialize a binary tree. Serialization is the process of converting a binary tree into a string so that it can be stored on disk. Deserialization is the opposite process, turning a string back into a binary tree.",
     "examples": [
       {
