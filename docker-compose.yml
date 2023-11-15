@@ -1,0 +1,177 @@
+version: '3'
+
+services:
+  peerprep-client:
+    image: client:peerprep
+    container_name: peerprep-client
+    build:
+      context: ./client
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./client:/usr/src/app # Mount the client source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-question-api
+      - peerprep-user-api
+      - peerprep-collaboration-api
+      - peerprep-code-api
+      - peerprep-assistant-api
+
+  peerprep-user-api:
+    image: user-api:peerprep
+    container_name: peerprep-user-api
+    build:
+      context: ./user-api
+    ports:
+      - '5050:5050' # FastAPI running on 5050
+    volumes:
+      - ./user-api:/usr/src/app # Mount the FastAPI source code directory as a volume
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-postgres
+      - peerprep-rabbitmq
+    command: sh -c "sleep 20 && uvicorn main:app --host 0.0.0.0 --port 5050 --reload" # Override with 20 second delay to allow rabbitmq to fully boot up
+
+  peerprep-question-api:
+    image: question-api:peerprep
+    container_name: peerprep-question-api
+    build:
+      context: ./question-api
+    ports:
+      - '8000:8000'
+    logging:
+      driver: json-file
+    volumes:
+      - ./question-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-mongo
+
+  peerprep-code-api:
+    image: code-api:peerprep
+    container_name: peerprep-code-api
+    build:
+      context: ./code-api
+    ports:
+      - '9000:9000'
+    logging:
+      driver: json-file
+    volumes:
+      - ./code-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+
+  peerprep-assistant-api:
+    image: assistant-api:peerprep
+    container_name: peerprep-assistant-api
+    build:
+      context: ./assistant-api
+    ports:
+      - '3030:3030'
+    logging:
+      driver: json-file
+    volumes:
+      - ./assistant-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+
+  peerprep-collaboration-api:
+    image: collaboration-api:peerprep
+    container_name: peerprep-collaboration-api
+    build:
+      context: ./collaboration-api
+    ports:
+      - '5001:5001'
+    volumes:
+      - ./collaboration-api:/usr/src/app # Mount the Server source code directory as a volume
+      - /usr/src/app/node_modules # Mount the node_modules ONLY IN CONTAINER
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-redis
+
+  peerprep-postgres:
+    image: postgres:latest
+    container_name: peerprep-postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=peerprep
+      - POSTGRES_PASSWORD=peerprep
+      - POSTGRES_DB=database
+    networks:
+      - peerprep-network
+
+  peerprep-mongo:
+    image: mongo:latest
+    container_name: peerprep-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - peerprep-network
+
+  peerprep-nginx:
+    image: nginx:latest
+    container_name: peerprep-nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - peerprep-network
+    depends_on:
+      - peerprep-client
+      - peerprep-question-api 
+      - peerprep-user-api
+      - peerprep-collaboration-api
+      - peerprep-rabbitmq
+      - peerprep-code-api
+
+  peerprep-rabbitmq:
+    hostname: 'gareth-rabbit'
+    image: rabbitmq:3-management
+    container_name: peerprep-rabbitmq
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - peerprep-network
+
+  peerprep-redis:
+    image: redis:latest
+    container_name: peerprep-redis
+    command: redis-server --requirepass ppredis123
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+    networks:
+      - peerprep-network
+
+
+networks:
+  peerprep-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
